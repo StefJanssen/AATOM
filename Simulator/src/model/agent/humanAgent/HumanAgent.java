@@ -2,6 +2,7 @@ package model.agent.humanAgent;
 
 import java.awt.Color;
 import java.util.Collection;
+import java.util.List;
 
 import model.agent.Agent;
 import model.agent.humanAgent.operationalLevel.OperationalModel;
@@ -71,8 +72,8 @@ public abstract class HumanAgent extends Agent implements CircularShape {
 	 *            The operational model.
 	 * 
 	 */
-	public HumanAgent(Position position, double radius, double mass,
-			StrategicModel strategicModel, TacticalModel tacticalModel, OperationalModel operationalModel) {
+	public HumanAgent(Position position, double radius, double mass, StrategicModel strategicModel,
+			TacticalModel tacticalModel, OperationalModel operationalModel) {
 		this(position, radius, mass, strategicModel, tacticalModel, operationalModel, Color.RED);
 	}
 
@@ -104,7 +105,7 @@ public abstract class HumanAgent extends Agent implements CircularShape {
 		this.mass = mass;
 		this.color = color;
 		operationalModel.init(this, tacticalModel.getNavigationModule());
-		strategicModel.init(operationalModel.getObservationModule());	
+		strategicModel.init(operationalModel.getObservationModule());
 		tacticalModel.init(this, operationalModel.getMovementModel(), operationalModel.getObservationModule(),
 				strategicModel.getActivityPlanner(), strategicModel.getGoalModule().getGoalActivities());
 	}
@@ -140,6 +141,34 @@ public abstract class HumanAgent extends Agent implements CircularShape {
 	}
 
 	/**
+	 * Gets the current speed from the {@link OperationalModel}.
+	 * 
+	 * @return The current speed.
+	 */
+	public Vector getCurrentSpeed() {
+		return operationalModel.getCurrentSpeed();
+	}
+
+	/**
+	 * Gets the goal {@link Position} from the {@link StrategicModel}.
+	 * 
+	 * @return The goal position.
+	 */
+	public Position getGoalPosition() {
+		return tacticalModel.getGoalPosition();
+	}
+
+	/**
+	 * Gets a list of all goal {@link Position}s from the {@link StrategicModel}
+	 * .
+	 * 
+	 * @return The goal position.
+	 */
+	public List<Position> getGoalPositions() {
+		return tacticalModel.getGoalPositions();
+	}
+
+	/**
 	 * Gets the mass.
 	 * 
 	 * @return The mass.
@@ -167,6 +196,15 @@ public abstract class HumanAgent extends Agent implements CircularShape {
 		return radius;
 	}
 
+	/**
+	 * Check if we reached the goal {@link Position}.
+	 * 
+	 * @return True if we reached the goal, false otherwise.
+	 */
+	public boolean getReachedGoal() {
+		return tacticalModel.getReachedGoal();
+	}
+
 	@Override
 	public boolean getWantsToBeRemoved() {
 		return strategicModel.getWantsToBeRemoved() || isDestroyed();
@@ -176,7 +214,7 @@ public abstract class HumanAgent extends Agent implements CircularShape {
 	public String toString() {
 		return Integer.toString(hashCode());
 	}
-	
+
 	/**
 	 * Update the agent's position and internal representations using the
 	 * generated move of the {@link OperationalModel}, the

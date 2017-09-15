@@ -3,8 +3,8 @@ package simulation.simulation.endingCondition;
 import model.agent.humanAgent.Passenger;
 
 /**
- * The no passengers ending conditions for a simulation ensure that a simulation ends
- * after there are no more passengers.
+ * The no passengers ending conditions for a simulation ensure that a simulation
+ * ends after there are no more passengers.
  * 
  * @author S.A.M. Janssen
  */

@@ -10,8 +10,7 @@ import model.environment.position.Position;
 import util.math.FastMath;
 
 /**
- * The stop moving activity is executed when the agent needs to stop for some
- * reason.
+ * The queue activity is executed when the agent needs to stop for some reason.
  * 
  * @author S.A.M. Janssen
  */
@@ -25,14 +24,6 @@ public class QueueActivity extends Activity {
 	 * Determines if the agent is in front of the queue.
 	 */
 	private boolean inFrontOfQueue;
-	/**
-	 * Stuck parameter.
-	 */
-	private double timeSamePos = 0;
-	/**
-	 * Previous position for stuck detection.
-	 */
-	private Position prevPos = Position.NO_POSITION;
 
 	@Override
 	public boolean canStart(int timeStep) {
@@ -76,6 +67,11 @@ public class QueueActivity extends Activity {
 		inFrontOfQueue = false;
 		time = 0;
 		movement.setStopOrder(0);
+	}
+
+	@Override
+	public Position getActivityPosition() {
+		return Position.NO_POSITION;
 	}
 
 	/**
@@ -141,28 +137,6 @@ public class QueueActivity extends Activity {
 	}
 
 	/**
-	 * Prevents the agent from being stuck.
-	 * 
-	 * @param timeStep
-	 *            The time step.
-	 */
-	private void preventBeingStuck(int timeStep) {
-		if (prevPos.equals(movement.getPosition())) {
-			timeSamePos += timeStep / 1000.0;
-		} else {
-			prevPos = movement.getPosition();
-			timeSamePos = 0.0;
-		}
-
-		if (timeSamePos > 60) {
-			// System.out.println("here " + this);
-			timeSamePos = 0;
-			endActivity();
-		}
-
-	}
-
-	/**
 	 * Sets the agent in front of the queue.
 	 */
 	public void setInFrontOfQueue() {
@@ -189,8 +163,6 @@ public class QueueActivity extends Activity {
 
 	@Override
 	public void update(int timeStep) {
-		preventBeingStuck(timeStep);
-
 		if (time > 0) {
 			time -= timeStep / 1000.0;
 			return;

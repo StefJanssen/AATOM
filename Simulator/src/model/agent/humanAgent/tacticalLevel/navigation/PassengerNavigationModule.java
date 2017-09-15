@@ -73,12 +73,11 @@ public class PassengerNavigationModule extends NavigationModule {
 			current = checkInGoals.get(i);
 			positions.addAll(positions2);
 		}
-		return pathFinder.smooth(positions);
-	}
 
-	@Override
-	protected void handleStuckBehavior(int timeStep) {
-		super.handleStuckBehavior(timeStep);
+		if (positions.isEmpty())
+			positions = pathFinder.getPath(position, flight.getCheckInQueue().getLeavingPosition());
+
+		return positions;
 	}
 
 	@Override

@@ -74,6 +74,21 @@ public class JumpPointSearchPathFinder extends PathFinder {
 	}
 
 	/**
+	 * Empties the map and sets all values to null. This method is used to
+	 * prevent memory from large amounts of memory being stored in the agents
+	 * for no reason.
+	 */
+	private void emptyMap() {
+		for (int i = 0; i < graph[0].length; i++) {
+			for (int j = 0; j < graph.length; j++) {
+				if (discretizedMap[j][i] != 1) {
+					graph[j][i] = null;
+				}
+			}
+		}
+	}
+
+	/**
 	 * Gets the distance between two nodes.
 	 * 
 	 * @param first
@@ -288,8 +303,11 @@ public class JumpPointSearchPathFinder extends PathFinder {
 		Collections.reverse(positions);
 		if (!positions.isEmpty())
 			positions.remove(0);
-		if (smooth)
-			return smooth(positions);
+
+		// empty map to prevent memory 'leaks'
+		emptyMap();
+		// if (smooth)
+		// return smooth(positions);
 		return positions;
 	}
 
@@ -389,4 +407,5 @@ public class JumpPointSearchPathFinder extends PathFinder {
 			}
 		}
 	}
+
 }

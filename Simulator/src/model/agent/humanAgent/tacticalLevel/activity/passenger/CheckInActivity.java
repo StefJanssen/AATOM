@@ -8,6 +8,7 @@ import model.agent.humanAgent.Passenger;
 import model.agent.humanAgent.tacticalLevel.activity.Activity;
 import model.environment.objects.flight.Flight;
 import model.environment.objects.physicalObject.Desk;
+import model.environment.position.Position;
 
 /**
  * The check in activity is responsible for checking in an agent.
@@ -77,6 +78,11 @@ public class CheckInActivity extends Activity {
 		return false;
 	}
 
+	@Override
+	public Position getActivityPosition() {
+		return flight.getCheckInQueue().getLeavingPosition();
+	}
+
 	/**
 	 * Gets the closest desk.
 	 * 
@@ -90,7 +96,8 @@ public class CheckInActivity extends Activity {
 
 		for (Desk desk : desks) {
 			if (closestDesks.size() == 0) {
-				closestDesks.add(desk);
+				if (desk.isOpen())
+					closestDesks.add(desk);
 			} else {
 				int position = 0;
 				for (int i = 0; i < closestDesks.size(); i++) {
@@ -101,7 +108,8 @@ public class CheckInActivity extends Activity {
 					} else
 						break;
 				}
-				closestDesks.add(position, desk);
+				if (desk.isOpen())
+					closestDesks.add(position, desk);
 			}
 		}
 		return closestDesks.subList(0, flight.getCheckInDesks().size());
@@ -114,7 +122,7 @@ public class CheckInActivity extends Activity {
 
 		if (isGoingToActivity())
 			return;
-		navigationModule.setGoal(flight.getCheckInQueue().getLeavingPosition());
+		navigationModule.setGoal(getActivityPosition());
 		super.goToActivity();
 		return;
 	}

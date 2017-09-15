@@ -38,7 +38,7 @@ public class Shop extends Facility {
 	public Shop(List<Position> corners) {
 		super(corners);
 	}
-	
+
 	@Override
 	public String toString() {
 		return corners.toString();

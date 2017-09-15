@@ -8,18 +8,23 @@ import model.agent.Agent;
 import model.agent.humanAgent.Passenger;
 import model.environment.map.Map;
 import model.environment.map.MapComponent;
+import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.objects.physicalObject.sensor.XRaySystem;
 import simulation.simulation.agentGenerator.AgentGenerator;
 import simulation.simulation.agentGenerator.EmptyAgentGenerator;
 import simulation.simulation.endingCondition.BaseEndingConditions;
 import simulation.simulation.endingCondition.EndingConditions;
 import simulation.simulation.util.DirectlyUpdatable;
+import simulation.simulation.util.SimulationConstants;
 import simulation.simulation.util.SimulationObject;
+import simulation.simulation.util.Utilities;
 import util.analytics.Analytics;
 import util.analytics.Analyzer;
 import util.io.logger.BaseLogger;
 import util.io.logger.Logger;
+import util.math.RandomPlus;
 import view.GUI;
+import view.mapComponents.MapComponentView;
 
 /**
  * The Simulator simulates our system. It contains a {@link Map} and a set of
@@ -70,6 +75,10 @@ public class Simulator extends Thread {
 	 * Speed up the simulation. Volatile for thread safety.
 	 */
 	private volatile int speedUpFactor;
+	/**
+	 * The name of the simulation.
+	 */
+	private String simulationName;
 
 	/**
 	 * Creates a simulator with default properties.
@@ -153,7 +162,7 @@ public class Simulator extends Thread {
 	 * Creates a simulator with a set of properties.
 	 * 
 	 * @param map
-	 *            The {@link Map}.
+	 *            The map.
 	 * @param gui
 	 *            With or without {@link GUI}.
 	 * @param timeStep
@@ -167,6 +176,29 @@ public class Simulator extends Thread {
 	 */
 	public Simulator(Map map, boolean gui, int timeStep, EndingConditions endingConditions,
 			AgentGenerator agentGenerator, Logger logger) {
+		this(new Map(), gui, timeStep, endingConditions, agentGenerator, logger, "");
+	}
+
+	/**
+	 * Creates a simulator with a set of properties.
+	 * 
+	 * @param map
+	 *            The {@link Map}.
+	 * @param gui
+	 *            With or without {@link GUI}.
+	 * @param timeStep
+	 *            The time step in ms.
+	 * @param endingConditions
+	 *            The {@link EndingConditions}.
+	 * @param agentGenerator
+	 *            The {@link AgentGenerator}.
+	 * @param logger
+	 *            The {@link Logger}.
+	 * @param simulationName
+	 *            The name of the simulation.
+	 */
+	public Simulator(Map map, boolean gui, int timeStep, EndingConditions endingConditions,
+			AgentGenerator agentGenerator, Logger logger, String simulationName) {
 		this.map = map;
 		if (gui) {
 			this.gui = new GUI(map, this);
@@ -181,6 +213,8 @@ public class Simulator extends Thread {
 		logger.setSimulator(this);
 		speedUpFactor = 1;
 		numberOfSteps = 0;
+		Utilities.RANDOM_GENERATOR = new RandomPlus(SimulationConstants.randomSeed);
+		this.simulationName = simulationName;
 	}
 
 	/**
@@ -211,6 +245,19 @@ public class Simulator extends Thread {
 	}
 
 	/**
+	 * Add a map component view to the gui.
+	 * 
+	 * @param view
+	 *            The view.
+	 */
+	public void add(Class<? extends MapComponentView> view) {
+		if (!map.getMapComponents(MapComponent.class).isEmpty())
+			System.err.println(
+					"Please add all your MapComponentViews to the simulator BEFORE you add any map components. Simulation will continue, but your visualization might not show.");
+		gui.add(view);
+	}
+
+	/**
 	 * Add a simulation object.
 	 * 
 	 * @param object
@@ -224,8 +271,11 @@ public class Simulator extends Thread {
 		if (object instanceof XRaySystem)
 			map.add(((XRaySystem) object).getXRaySensor());
 
-		if (object instanceof Passenger)
+		if (object instanceof Passenger) {
 			analytics.addPassenger((Passenger) object);
+			for (Luggage l : ((Passenger) object).getLuggage())
+				map.add(l);
+		}
 
 		// add to GUI
 		if (gui != null && object instanceof MapComponent)
@@ -256,6 +306,7 @@ public class Simulator extends Thread {
 		if (logger != null) {
 			analytics.update(timeStep);
 			logger.update(numberOfSteps * timeStep, true);
+			logger.printLine(simulationName);
 			logger.closeLog();
 		}
 

@@ -3,7 +3,6 @@ package model.agent.humanAgent;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import model.agent.humanAgent.operationalLevel.BasicPassengerOperationalModel;
 import model.agent.humanAgent.operationalLevel.OperationalModel;
@@ -15,11 +14,8 @@ import model.environment.map.Map;
 import model.environment.objects.area.Facility;
 import model.environment.objects.flight.Flight;
 import model.environment.objects.physicalObject.Chair;
-import model.environment.objects.physicalObject.PhysicalObject;
 import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.position.Position;
-import model.environment.position.Vector;
-import simulation.simulation.util.Utilities;
 
 /**
  * A Passenger is a type of {@link HumanAgent} that is a passenger in the
@@ -158,7 +154,7 @@ public class Passenger extends HumanAgent {
 	public Passenger(Map map, Flight flight, Position position, double radius, double mass, Color color) {
 		this(map, flight, false, null, position, radius, mass, Luggage.NO_LUGGAGE, color);
 	}
-	
+
 	/**
 	 * Gets checked in flag.
 	 * 
@@ -166,15 +162,6 @@ public class Passenger extends HumanAgent {
 	 */
 	public boolean getCheckedIn() {
 		return checkedIn;
-	}
-
-	/**
-	 * Gets the current speed from the {@link OperationalModel}.
-	 * 
-	 * @return The current speed.
-	 */
-	public Vector getCurrentSpeed() {
-		return operationalModel.getCurrentSpeed();
 	}
 
 	/**
@@ -196,40 +183,12 @@ public class Passenger extends HumanAgent {
 	}
 
 	/**
-	 * Gets the goal {@link Position} from the {@link StrategicModel}.
-	 * 
-	 * @return The goal position.
-	 */
-	public Position getGoalPosition() {
-		return tacticalModel.getGoalPosition();
-	}
-
-	/**
-	 * Gets a list of all goal {@link Position}s from the {@link StrategicModel}
-	 * .
-	 * 
-	 * @return The goal position.
-	 */
-	public List<Position> getGoalPositions() {
-		return tacticalModel.getGoalPositions();
-	}
-
-	/**
 	 * Gets the {@link Luggage}.
 	 * 
 	 * @return The luggage.
 	 */
 	public Collection<Luggage> getLuggage() {
 		return luggage;
-	}
-
-	/**
-	 * Check if we reached the goal {@link Position}.
-	 * 
-	 * @return True if we reached the goal, false otherwise.
-	 */
-	public boolean getReachedGoal() {
-		return tacticalModel.getReachedGoal();
 	}
 
 	/**
@@ -289,33 +248,11 @@ public class Passenger extends HumanAgent {
 
 	@Override
 	public void update(int timeStep) {
+		Position prev = position;
 		super.update(timeStep);
-		for (Luggage l : luggage)
-			l.setPosition(position);
-	}
-
-	/**
-	 * TODO this method should be removed over time.
-	 * 
-	 * Updates the position if the agent is stuck.
-	 */
-	@Deprecated
-	public void updateStuckPosition() {
-		double x = Utilities.RANDOM_GENERATOR.nextDouble() - .5;
-		double y = Utilities.RANDOM_GENERATOR.nextDouble() - .5;
-		Position newPosition = new Position(position.x + x, position.y + y);
-
-		while (Utilities.isLineCollision(position, newPosition, getObservation(PhysicalObject.class))) {
-			x = Utilities.RANDOM_GENERATOR.nextDouble() - .5;
-			y = Utilities.RANDOM_GENERATOR.nextDouble() - .5;
-			newPosition = new Position(position.x + x, position.y + y);
-		}
-
 		for (Luggage l : luggage) {
-			if (!l.equals(Luggage.NO_LUGGAGE) && l.getPosition().equals(position))
-				l.setPosition(newPosition);
+			if (l.getPosition().equals(prev))
+				l.setPosition(position);
 		}
-		position = newPosition;
 	}
-
 }

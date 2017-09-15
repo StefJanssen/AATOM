@@ -19,9 +19,10 @@ import simulation.simulation.util.Utilities;
 public final class DiscretizedMap {
 
 	/**
-	 * Singleton object.
+	 * Singleton object. // TODO make it Threadlocal.
 	 */
 	private static DiscretizedMap instance;
+
 	/**
 	 * Gets the singleton instance of the map.
 	 * 

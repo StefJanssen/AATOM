@@ -7,7 +7,9 @@ import java.util.List;
 import model.agent.humanAgent.tacticalLevel.activity.Activity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.CheckInActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.CheckpointActivity;
+import model.agent.humanAgent.tacticalLevel.activity.passenger.FacilityActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.GateActivity;
+import model.environment.objects.flight.Flight;
 
 /**
  * A basic passenger activity planner.
@@ -15,6 +17,21 @@ import model.agent.humanAgent.tacticalLevel.activity.passenger.GateActivity;
  * @author S.A.M. Janssen
  */
 public class BasicPassengerPlanner extends ActivityPlanner {
+
+	/**
+	 * The flight.
+	 */
+	private Flight flight;
+
+	/**
+	 * Creates a basic passenger planner.
+	 * 
+	 * @param flight
+	 *            The flight.
+	 */
+	public BasicPassengerPlanner(Flight flight) {
+		this.flight = flight;
+	}
 
 	/**
 	 * @param activityType
@@ -52,7 +69,7 @@ public class BasicPassengerPlanner extends ActivityPlanner {
 		// TODO add border control to planning
 
 		// TODO randomize location and check feasibility
-		// planning.add(getActivityFromType(FacilityActivity.class));
+		planning.add(getActivityFromType(FacilityActivity.class));
 
 		// gate
 		planning.add(getActivityFromType(GateActivity.class));
@@ -65,8 +82,17 @@ public class BasicPassengerPlanner extends ActivityPlanner {
 
 	@Override
 	public void update(int timeStep) {
+		// remove completed activities.
 		while (!planning.isEmpty() && planning.get(0).isFinished()) {
 			planning.remove(0);
+		}
+
+		// remove a facility activity if only 30 minutes until flight.
+		if (!planning.isEmpty()) {
+			if (flight.getTimeToFlight() < 1800
+					&& planning.get(0).equals(getActivityFromType(FacilityActivity.class))) {
+				planning.remove(0);
+			}
 		}
 	}
 }

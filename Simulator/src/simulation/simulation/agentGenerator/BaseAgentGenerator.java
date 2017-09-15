@@ -53,7 +53,7 @@ public class BaseAgentGenerator extends AgentGenerator {
 	 * @return True if it is, false otherwise.
 	 */
 	protected boolean canGenerate(int timeStep) {
-		return Utilities.RANDOM_GENERATOR.nextDouble() < (1 / (double) timeStep) / interArrivalTime;
+		return Utilities.RANDOM_GENERATOR.nextDouble() < 1.0 / interArrivalTime / (1000.0 / timeStep);
 	}
 
 	@Override

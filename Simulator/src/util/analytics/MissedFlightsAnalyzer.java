@@ -6,10 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import model.agent.humanAgent.Passenger;
-import model.agent.humanAgent.tacticalLevel.activity.Activity;
-import model.agent.humanAgent.tacticalLevel.activity.passenger.GateActivity;
 import model.environment.objects.flight.Flight;
 import simulation.simulation.Simulator;
+import simulation.simulation.util.Utilities;
 
 /**
  * A parameter tracker for missed flights.
@@ -63,11 +62,7 @@ public class MissedFlightsAnalyzer extends Analyzer {
 	 * @return True if it reached the gate, false otherwise.
 	 */
 	private boolean reachedGate(Passenger passenger) {
-		for (Activity a : passenger.getActiveActivities()) {
-			if (a instanceof GateActivity)
-				return true;
-		}
-		return false;
+		return Utilities.getDistance(passenger, passenger.getFlight().getGateArea()) < 10;
 	}
 
 	@Override
@@ -88,6 +83,11 @@ public class MissedFlightsAnalyzer extends Analyzer {
 				for (Passenger passenger : passengers) {
 					if (passenger.getFlight().equals(f)) {
 						if (!reachedGate(passenger)) {
+							passenger.setLog(new String[] { "missed Flight", "Flight name " + f.toString(),
+									"Passenger position " + passenger.getPosition().toString(),
+									"Active activities " + passenger.getActiveActivities().toString(),
+									"Gate area corners "
+											+ passenger.getFlight().getGateArea().getCorners().toString() });
 							misses++;
 						}
 					}

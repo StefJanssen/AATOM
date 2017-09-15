@@ -1,6 +1,7 @@
 package model.agent.humanAgent.operationalLevel.action.movement;
 
 import model.agent.humanAgent.Passenger;
+import model.environment.position.Position;
 import model.environment.position.Vector;
 
 /**
@@ -24,10 +25,20 @@ public class BasicModel extends MovementModel {
 
 	@Override
 	public Vector getMove(int timeStep) {
+		if (((Passenger) agent).getGoalPosition().equals(Position.NO_POSITION)) {
+			currentVelocity = new Vector(0, 0);
+			return currentVelocity;
+		}
 		double xDiff = ((Passenger) agent).getGoalPosition().x - getPosition().x;
 		double yDiff = ((Passenger) agent).getGoalPosition().y - getPosition().y;
 		double distance = Math.sqrt(Math.abs(xDiff) * Math.abs(xDiff) + Math.abs(yDiff) * Math.abs(yDiff));
-		currentVelocity = new Vector(xDiff / distance, yDiff / distance).scalarMultiply(desiredSpeed);
-		return currentVelocity;
+		if (distance < 0.00001) {
+			currentVelocity = new Vector(0, 0);
+			return currentVelocity;
+		}
+		Vector newSpeed = new Vector(xDiff / distance, yDiff / distance);
+
+		currentVelocity = newSpeed.scalarMultiply(desiredSpeed);
+		return currentVelocity.scalarMultiply(timeStep / 1000.0);
 	}
 }

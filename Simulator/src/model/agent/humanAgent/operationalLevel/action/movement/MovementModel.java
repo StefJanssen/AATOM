@@ -71,7 +71,9 @@ public abstract class MovementModel implements Updatable {
 	}
 
 	/**
-	 * Gets the next move.
+	 * Gets the next move. When overriding this method, please ensure that you
+	 * scalar multiply the generated vector with the timestep/1000.0, and update
+	 * the field {@link MovementModel#currentVelocity} to the generated value.
 	 * 
 	 * @param timeStep
 	 *            The time step (in milliseconds).
@@ -157,21 +159,4 @@ public abstract class MovementModel implements Updatable {
 		else if (stopMovingTime != -1)
 			stopMovingTime = 0;
 	}
-
-	/**
-	 * Updates the move vector to a 0 vector if the move results in an out of
-	 * bound position. TODO this method needs the map, but doesn't get it.
-	 * 
-	 * @param vector
-	 *            The move.
-	 * @return The updated vector.
-	 */
-	protected Vector updateOutOfBounds(Vector vector) {
-		// Position newPosition = new Position(agent.getPosition().x + vector.x,
-		// agent.getPosition().y + vector.y);
-		// if (agent.getMap().isOutOfBounds(newPosition))
-		// return new Vector(0, 0);
-		return vector;
-	}
-
 }

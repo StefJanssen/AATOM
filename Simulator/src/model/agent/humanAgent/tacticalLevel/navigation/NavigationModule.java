@@ -5,18 +5,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import model.agent.humanAgent.HumanAgent;
 import model.agent.humanAgent.operationalLevel.action.movement.MovementModel;
 import model.agent.humanAgent.operationalLevel.observation.ObservationModule;
+import model.agent.humanAgent.tacticalLevel.activity.Activity;
 import model.agent.humanAgent.tacticalLevel.activity.ActivityModule;
+import model.agent.humanAgent.tacticalLevel.activity.passenger.QueueActivity;
 import model.agent.humanAgent.tacticalLevel.navigation.pathfinder.JumpPointSearchPathFinder;
 import model.agent.humanAgent.tacticalLevel.navigation.pathfinder.PathFinder;
 import model.environment.map.Map;
 import model.environment.objects.area.Area;
-import model.environment.objects.area.Facility;
 import model.environment.objects.area.QueuingArea;
 import model.environment.objects.physicalObject.PhysicalObject;
-import model.environment.objects.physicalObject.QueueSeparator;
 import model.environment.objects.physicalObject.sensor.WalkThroughMetalDetector;
 import model.environment.objects.physicalObject.sensor.XRaySystem;
 import model.environment.position.Position;
@@ -30,12 +29,8 @@ import simulation.simulation.util.Utilities;
  * 
  * @author S.A.M. Janssen
  */
-public abstract class NavigationModule implements Updatable {
+public class NavigationModule implements Updatable {
 
-	/**
-	 * The total time stuck
-	 */
-	private double completeStuckTime;
 	/**
 	 * The goal {@link Position}s.
 	 */
@@ -49,18 +44,9 @@ public abstract class NavigationModule implements Updatable {
 	 */
 	protected PathFinder pathFinder;
 	/**
-	 * The previous position is the previous position of the agent.
+	 * The stuck detector.
 	 */
-	private Position previousPosition;
-	/**
-	 * Timer to indicate out how long the agent is stuck in a position.
-	 */
-	protected double timeStuck;
-	/**
-	 * The total time stuck of an agent. This timer resets if there is a new
-	 * goal set.
-	 */
-	private double totalTimeStuck;
+	protected StuckDetector stuckDetector;
 	/**
 	 * The movement model.
 	 */
@@ -104,27 +90,6 @@ public abstract class NavigationModule implements Updatable {
 	}
 
 	/**
-	 * Generates a position close to the agent.
-	 * 
-	 * @return The position.
-	 */
-	private Position generateClosePosition() {
-		double xOffset = Utilities.RANDOM_GENERATOR.nextDouble() - .5;
-		double yOffset = Utilities.RANDOM_GENERATOR.nextDouble() - .5;
-		Position newPos = new Position(movementModel.getPosition().x + xOffset,
-				movementModel.getPosition().y + yOffset);
-		List<Position> positions = pathFinder.getPath(movementModel.getPosition(), newPos);
-		double distance = 0.0;
-		for (int i = 0; i < positions.size() - 1; i++) {
-			distance += positions.get(i).distanceTo(positions.get(i + 1));
-		}
-		if (distance > 3) {
-			return generateClosePosition();
-		}
-		return newPos;
-	}
-
-	/**
 	 * Gets the closest goal position.
 	 * 
 	 * @return Tue closest goal position.
@@ -145,6 +110,21 @@ public abstract class NavigationModule implements Updatable {
 	}
 
 	/**
+	 * Gets the queue goal.
+	 * 
+	 * @return The goal.
+	 */
+	private Position getQueueGoal() {
+		Collection<Area> areas = observationModule.getObservation(Area.class);
+		for (Area area : areas) {
+			if (area instanceof QueuingArea) {
+				return ((QueuingArea) area).getLeavingPosition();
+			}
+		}
+		return Position.NO_POSITION;
+	}
+
+	/**
 	 * Determines if the goal is reached.
 	 * 
 	 * @return True if the goal is reached, false otherwise.
@@ -160,56 +140,24 @@ public abstract class NavigationModule implements Updatable {
 	 *            The time step.
 	 */
 	protected void handleStuckBehavior(int timeStep) {
-		int multiplier = 1;
-		if (isInQueue())
-			multiplier = 5;
+		stuckDetector.update(timeStep);
 
-		updateStuckPosition(timeStep);
-
-		if (activityModule.getActiveActivities().size() != 0 && multiplier == 1)
-			return;
-
-		for (Facility f : map.getMapComponents(Facility.class)) {
-			if (positionsInShape(getGoalPositions(), f))
-				return;
-		}
-
-		if (multiplier == 5) {
-			if (!getReachedGoal()) {
-				if (Utilities.isLineCollision(movementModel.getPosition(), getGoalPositions().get(0),
-						map.getMapComponents(QueueSeparator.class)))
-					setGoal(getGoalPositions().get(getGoalPositions().size() - 1));
+		// if queuing, go to front of queue
+		if (isQueuing()) {
+			if (stuckDetector.isStuck(false, 60)) {
+				setGoal(getQueueGoal());
+				stuckDetector.reset();
 			}
 		}
 
-		if (isStuck(4 * multiplier)) {
-			if (!getReachedGoal()) {
-				timeStuck = 0.0;
-				setShortTermGoal(getGoalPosition());
+		// if stuck, go to next activity OR current goal
+		if (stuckDetector.isStuck(20)) {
+			if (getGoalPosition().equals(Position.NO_POSITION) && activityModule.getActiveActivities().size() == 0) {
+				setGoal(activityModule.getNextActivityPosition());
+			} else {
+				setGoal(getGoalPosition());
 			}
-		}
-
-		// generates a random position close by to get out of a locked position.
-		if (totalTimeStuck > 7 * multiplier) {
-			boolean veryBusy = isVeryBusy();
-			if ((veryBusy && totalTimeStuck > 10) || !veryBusy) {
-				if (!getReachedGoal()) {
-					Position p = generateClosePosition();
-					setShortTermGoal(p);
-					timeStuck = 0;
-					totalTimeStuck = 0;
-				}
-			}
-		}
-
-		if (completeStuckTime > 45 * multiplier) {
-			if (!getReachedGoal()) {
-				// agent.updateStuckPosition();
-				timeStuck = 0;
-				totalTimeStuck = 0;
-				completeStuckTime = 0;
-			}
-
+			stuckDetector.reset();
 		}
 	}
 
@@ -227,7 +175,7 @@ public abstract class NavigationModule implements Updatable {
 		this.movementModel = movementModel;
 		this.activityModule = activityModule;
 		this.observationModule = observationModule;
-		previousPosition = movementModel.getPosition();
+		stuckDetector = new StuckDetector(movementModel);
 		pathFinder = new JumpPointSearchPathFinder(map, 0.4);
 		if (goalPositions.size() == 1) {
 			Position p = goalPositions.get(0);
@@ -260,11 +208,11 @@ public abstract class NavigationModule implements Updatable {
 	 * 
 	 * @return True if it is, false otherwise.
 	 */
-	private boolean isInQueue() {
-		Collection<Area> areas = observationModule.getObservation(Area.class);
-		for (Area a : areas) {
-			if (a instanceof QueuingArea)
+	private boolean isQueuing() {
+		for (Activity a : activityModule.getActiveActivities()) {
+			if (a instanceof QueueActivity) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -279,53 +227,7 @@ public abstract class NavigationModule implements Updatable {
 	 * @return True if the agent is stuck, false otherwise.
 	 */
 	public boolean isStuck(double secondsStuck) {
-		if (movementModel.getStopOrder()) {
-			return false;
-		}
-
-		if (timeStuck > secondsStuck) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Checks if it is very busy around the agent.
-	 * 
-	 * @return True if it is busy, false otherwise.
-	 */
-	private boolean isVeryBusy() {
-		return observationModule.getObservation(HumanAgent.class).size() > 20;
-	}
-
-	/**
-	 * Determines if a position is located in a facility.
-	 * 
-	 * @param p
-	 *            The position.
-	 * @param facility
-	 *            The facility.
-	 * @return True if it is, false otherwise.
-	 */
-	private boolean positionInShape(Position p, Area facility) {
-		return facility.getShape().contains(p.x, p.y);
-	}
-
-	/**
-	 * Determines if any of the positions in a list is located in a facility.
-	 * 
-	 * @param positions
-	 *            The positions.
-	 * @param facility
-	 *            The facility.
-	 * @return True if any of the positions is in the facility, false otherwise.
-	 */
-	private boolean positionsInShape(List<Position> positions, Area facility) {
-		for (Position p : positions) {
-			if (positionInShape(p, facility))
-				return true;
-		}
-		return false;
+		return stuckDetector.isStuck(secondsStuck);
 	}
 
 	/**
@@ -362,7 +264,7 @@ public abstract class NavigationModule implements Updatable {
 	 *            The position.
 	 */
 	public void setGoal(Position position) {
-		timeStuck = 0.0;
+		stuckDetector.reset();
 		goalPositions.clear();
 		if (!position.equals(Position.NO_POSITION))
 			goalPositions = pathFinder.getPath(movementModel.getPosition(), position);
@@ -438,28 +340,6 @@ public abstract class NavigationModule implements Updatable {
 				else if (!isCollision(2))
 					removeGoals(2);
 			}
-		}
-	}
-
-	/**
-	 * Updates the stuck parameters.
-	 * 
-	 * @param timeStep
-	 *            The time step in the simulation.
-	 */
-	private void updateStuckPosition(int timeStep) {
-		if (movementModel.getStopOrder() || movementModel.isSitting())
-			return;
-
-		if (movementModel.getPosition().distanceTo(previousPosition) < 0.2) {
-			timeStuck += (timeStep / 1000.0);
-			totalTimeStuck += (timeStep / 1000.0);
-			completeStuckTime += (timeStep / 1000.0);
-		} else {
-			timeStuck = 0;
-			totalTimeStuck = 0;
-			completeStuckTime = 0;
-			previousPosition = movementModel.getPosition();
 		}
 	}
 }

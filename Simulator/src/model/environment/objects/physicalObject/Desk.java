@@ -20,6 +20,10 @@ public class Desk extends PhysicalObject {
 	 * The agent at the desk.
 	 */
 	private Passenger agentAtDesk;
+	/**
+	 * The system is open or closed.
+	 */
+	private boolean isOpen;
 
 	/**
 	 * Creates a wall from four corner coordinates.
@@ -47,6 +51,7 @@ public class Desk extends PhysicalObject {
 			Position servingPosition) {
 		super(x0, x1, x2, x3, y0, y1, y2, y3);
 		this.servingPosition = servingPosition;
+		isOpen = true;
 	}
 
 	/**
@@ -67,6 +72,7 @@ public class Desk extends PhysicalObject {
 	public Desk(double topX, double topY, double width, double height, Position servingPosition) {
 		super(topX, topY, width, height);
 		this.servingPosition = servingPosition;
+		isOpen = true;
 	}
 
 	/**
@@ -82,6 +88,7 @@ public class Desk extends PhysicalObject {
 	public Desk(double[] x, double[] y, Position servingPosition) {
 		super(x, y);
 		this.servingPosition = servingPosition;
+		isOpen = true;
 	}
 
 	/**
@@ -125,6 +132,15 @@ public class Desk extends PhysicalObject {
 	}
 
 	/**
+	 * Is open or not.
+	 * 
+	 * @return True if open, false if closed.
+	 */
+	public boolean isOpen() {
+		return isOpen;
+	}
+
+	/**
 	 * Sets the agent at the desk.
 	 * 
 	 * @param agentAtDesk
@@ -132,6 +148,16 @@ public class Desk extends PhysicalObject {
 	 */
 	public void setAgentAtDesk(Passenger agentAtDesk) {
 		this.agentAtDesk = agentAtDesk;
+	}
+
+	/**
+	 * Sets open.
+	 * 
+	 * @param isOpen
+	 *            Open or not.
+	 */
+	public void setOpen(boolean isOpen) {
+		this.isOpen = isOpen;
 	}
 
 	@Override

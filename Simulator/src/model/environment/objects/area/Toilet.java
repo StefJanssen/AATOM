@@ -27,7 +27,7 @@ public class Toilet extends Facility {
 	public Toilet(double topX, double topY, double width, double height) {
 		super(topX, topY, width, height);
 	}
-	
+
 	/**
 	 * Creates a restaurant with a set of specified corner points.
 	 * 

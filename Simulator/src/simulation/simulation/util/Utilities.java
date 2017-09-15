@@ -26,7 +26,7 @@ import util.math.RandomPlus;
 public class Utilities {
 
 	/**
-	 * A random generator.
+	 * A random generator. TODO make it thread local.
 	 */
 	public static RandomPlus RANDOM_GENERATOR = new RandomPlus(0);
 
@@ -73,8 +73,8 @@ public class Utilities {
 
 		int count = 0;
 		while (!shape.contains(x, y)) {
-			x = (float) (r.getX() + 0.5 + (r.getWidth() - 1) * RANDOM_GENERATOR.nextFloat());
-			y = (float) (r.getY() + 0.5 + (r.getHeight() - 1) * RANDOM_GENERATOR.nextFloat());
+			x = (float) (r.getX() + 1 + (r.getWidth() - 2) * RANDOM_GENERATOR.nextFloat());
+			y = (float) (r.getY() + 1 + (r.getHeight() - 2) * RANDOM_GENERATOR.nextFloat());
 			// preventing infinite loops from happening.
 			count++;
 			if (count == 100)
@@ -285,9 +285,10 @@ public class Utilities {
 	public static Vector getVector(Position position, MapComponent component) {
 		if (component instanceof CircularShape)
 			return new Vector(position.x - component.getPosition().x, position.y - component.getPosition().y);
-		if (component instanceof PolygonShape)
+		if (component instanceof PolygonShape) {
 			return getVector(position, (PolygonShape) component);
-		return null;
+		}
+		throw new RuntimeException("Failed to find a vector between: " + position + " and " + component);
 	}
 
 	/**

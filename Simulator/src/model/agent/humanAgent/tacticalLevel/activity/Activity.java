@@ -4,6 +4,7 @@ import model.agent.humanAgent.HumanAgent;
 import model.agent.humanAgent.operationalLevel.action.movement.MovementModel;
 import model.agent.humanAgent.operationalLevel.observation.ObservationModule;
 import model.agent.humanAgent.tacticalLevel.navigation.NavigationModule;
+import model.environment.position.Position;
 import simulation.simulation.util.Updatable;
 
 /**
@@ -61,6 +62,13 @@ public abstract class Activity implements Updatable {
 	}
 
 	/**
+	 * Gets the activity position.
+	 * 
+	 * @return The position.
+	 */
+	public abstract Position getActivityPosition();
+
+	/**
 	 * Gets the activity state.
 	 * 
 	 * @return The activity state.
@@ -115,6 +123,8 @@ public abstract class Activity implements Updatable {
 	 * @return True if it is, false otherwise.
 	 */
 	protected boolean isGoingToActivity() {
+		if (navigationModule.getReachedGoal())
+			return false;
 		return goingToActivity;
 	}
 

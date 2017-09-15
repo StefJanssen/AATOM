@@ -8,6 +8,7 @@ import model.agent.humanAgent.operationalLevel.action.communication.Communicatio
 import model.agent.humanAgent.tacticalLevel.activity.Activity;
 import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.objects.physicalObject.sensor.XRaySystem;
+import model.environment.position.Position;
 import simulation.simulation.util.Utilities;
 
 /**
@@ -41,7 +42,7 @@ public class LuggageCheckActivity extends Activity {
 	 *            The system.
 	 */
 	public LuggageCheckActivity(XRaySystem system) {
-		this(system,30);
+		this(system, 30);
 	}
 
 	/**
@@ -68,6 +69,11 @@ public class LuggageCheckActivity extends Activity {
 				return true;
 		}
 		return false;
+	}
+
+	@Override
+	public Position getActivityPosition() {
+		return Position.NO_POSITION;
 	}
 
 	/**
@@ -99,6 +105,9 @@ public class LuggageCheckActivity extends Activity {
 
 	@Override
 	public void update(int timeStep) {
+		if (system.getCollectPassenger().getStopOrder())
+			return;
+
 		endActivity();
 	}
 

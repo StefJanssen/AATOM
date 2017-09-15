@@ -5,6 +5,7 @@ import model.agent.humanAgent.tacticalLevel.activity.Activity;
 import model.environment.objects.area.GateArea;
 import model.environment.objects.flight.Flight;
 import model.environment.objects.physicalObject.Chair;
+import model.environment.position.Position;
 import simulation.simulation.util.Utilities;
 
 /**
@@ -46,6 +47,11 @@ public class GateActivity extends Activity {
 		if (Utilities.getDistance(movement.getPosition(), gateArea) < 0.5)
 			return true;
 		return false;
+	}
+
+	@Override
+	public Position getActivityPosition() {
+		return gateArea.getCorners().get(0);
 	}
 
 	@Override

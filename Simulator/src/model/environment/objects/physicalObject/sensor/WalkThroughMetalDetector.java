@@ -40,10 +40,6 @@ public class WalkThroughMetalDetector extends Sensor implements PolygonShape {
 	 * The last observed passenger.
 	 */
 	private Passenger lastObservedPassenger;
-	/**
-	 * The passenger to check.
-	 */
-	private Passenger passengerToCheck;
 
 	/**
 	 * Creates a WTMD from its corner {@link Position}s.
@@ -127,15 +123,6 @@ public class WalkThroughMetalDetector extends Sensor implements PolygonShape {
 	}
 
 	/**
-	 * Gets the passenger to check.
-	 * 
-	 * @return The passenger to check.
-	 */
-	public Passenger getPassengerToCheck() {
-		return passengerToCheck;
-	}
-
-	/**
 	 * Gets the {@link Path2D} shape of the shop.
 	 * 
 	 * @return The shape.
@@ -143,16 +130,6 @@ public class WalkThroughMetalDetector extends Sensor implements PolygonShape {
 	@Override
 	public Path2D getShape() {
 		return shape;
-	}
-
-	/**
-	 * Sets the passenger to check.
-	 * 
-	 * @param passengerToCheck
-	 *            The passenger to check.
-	 */
-	public void setPassengerToCheck(Passenger passengerToCheck) {
-		this.passengerToCheck = passengerToCheck;
 	}
 
 	/**

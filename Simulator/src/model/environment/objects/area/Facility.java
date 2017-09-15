@@ -13,8 +13,8 @@ import model.environment.position.Position;
 public abstract class Facility extends Area {
 
 	/**
-	 * Creates a rectangular facility from a specified (x,y) coordinate, width and
-	 * height.
+	 * Creates a rectangular facility from a specified (x,y) coordinate, width
+	 * and height.
 	 * 
 	 * @param topX
 	 *            The x coordinate.
@@ -28,7 +28,7 @@ public abstract class Facility extends Area {
 	public Facility(double topX, double topY, double width, double height) {
 		super(topX, topY, width, height);
 	}
-	
+
 	/**
 	 * Creates a restaurant with a set of specified corner points.
 	 * 

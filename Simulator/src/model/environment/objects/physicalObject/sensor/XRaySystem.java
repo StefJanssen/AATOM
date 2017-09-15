@@ -12,6 +12,7 @@ import model.environment.objects.physicalObject.PhysicalObject;
 import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.position.Position;
 import model.environment.position.Vector;
+import simulation.simulation.util.DirectlyUpdatable;
 import simulation.simulation.util.Utilities;
 
 /**
@@ -20,39 +21,39 @@ import simulation.simulation.util.Utilities;
  * around it.
  * 
  * It is seen as an {@link Agent}, as it is able to perform actions in its
- * environment (i.e. it moves baggage that is in the system).
+ * environment (i.e. it moves luggage that is in the system).
  * 
  * @author S.A.M. Janssen
  */
-public class XRaySystem extends PhysicalObject {
+public class XRaySystem extends PhysicalObject implements DirectlyUpdatable {
 
 	/**
 	 * The collect position for bags.
 	 */
-	private Position baggageCollectPosition;
+	private Position luggageCollectPosition;
 
 	/**
 	 * The drop off position for bags.
 	 */
-	private Position baggageDropOffPosition;
+	private Position luggageDropOffPosition;
 
 	/**
-	 * The ending position of the baggage.
+	 * The ending position of the luggage.
 	 */
-	private Position baggageEndPosition;
+	private Position luggageEndPosition;
 	/**
-	 * The baggage that is in the system.
+	 * The luggage that is in the system.
 	 */
-	private Collection<Luggage> baggageInSystem;
+	private Collection<Luggage> luggageInSystem;
 	/**
-	 * The starting position of the baggage.
+	 * The starting position of the luggage.
 	 */
-	private Position baggageStartPosition;
+	private Position luggageStartPosition;
 	/**
-	 * The vector point in the direction of the baggage end position, from the
-	 * baggage start position.
+	 * The vector point in the direction of the luggage end position, from the
+	 * luggage start position.
 	 */
-	private Vector moveBagVector;
+	private Vector moveLuggageVector;
 	/**
 	 * The {@link XRaySensor}.
 	 */
@@ -65,6 +66,14 @@ public class XRaySystem extends PhysicalObject {
 	 * The collect passenger.
 	 */
 	private Passenger collectPassenger;
+	/**
+	 * The system is paused.
+	 */
+	private boolean paused;
+	/**
+	 * The system is open or closed.
+	 */
+	private boolean isOpen;
 
 	/**
 	 * Creates an x-ray system from a set of corner points.
@@ -73,16 +82,16 @@ public class XRaySystem extends PhysicalObject {
 	 *            The corner points of the system.
 	 * @param machineCornerPoints
 	 *            The corner points of the machine.
-	 * @param baggageStart
-	 *            The starting position of the baggage.
-	 * @param baggageEnd
-	 *            The ending position of the baggage.
+	 * @param luggageStart
+	 *            The starting position of the luggage.
+	 * @param luggageEnd
+	 *            The ending position of the luggage.
 	 * @param map
 	 *            The map.
 	 */
-	public XRaySystem(List<Position> systemCornerPoints, List<Position> machineCornerPoints, Position baggageStart,
-			Position baggageEnd, Map map) {
-		this(systemCornerPoints, machineCornerPoints, baggageStart, baggageEnd, map, false);
+	public XRaySystem(List<Position> systemCornerPoints, List<Position> machineCornerPoints, Position luggageStart,
+			Position luggageEnd, Map map) {
+		this(systemCornerPoints, machineCornerPoints, luggageStart, luggageEnd, map, false);
 	}
 
 	/**
@@ -92,56 +101,58 @@ public class XRaySystem extends PhysicalObject {
 	 *            The corner points of the system.
 	 * @param machineCornerPoints
 	 *            The corner points of the machine.
-	 * @param baggageStart
-	 *            The starting position of the baggage.
-	 * @param baggageEnd
-	 *            The ending position of the baggage.
+	 * @param luggageStart
+	 *            The starting position of the luggage.
+	 * @param luggageEnd
+	 *            The ending position of the luggage.
 	 * @param map
 	 *            The map.
 	 * @param otherWayAround
 	 *            An mirrored x-ray or not.
 	 */
-	public XRaySystem(List<Position> systemCornerPoints, List<Position> machineCornerPoints, Position baggageStart,
-			Position baggageEnd, Map map, boolean otherWayAround) {
+	public XRaySystem(List<Position> systemCornerPoints, List<Position> machineCornerPoints, Position luggageStart,
+			Position luggageEnd, Map map, boolean otherWayAround) {
 		super(systemCornerPoints);
 		xray = new XRaySensor(machineCornerPoints, map);
 
-		baggageInSystem = new ArrayList<>();
-		baggageStartPosition = baggageStart;
-		baggageEndPosition = baggageEnd;
+		luggageInSystem = new ArrayList<>();
+		luggageStartPosition = luggageStart;
+		luggageEndPosition = luggageEnd;
 
-		Vector start = new Vector(baggageStart.x, baggageStart.y);
-		Vector end = new Vector(baggageEnd.x, baggageEnd.y);
+		Vector start = new Vector(luggageStart.x, luggageStart.y);
+		Vector end = new Vector(luggageEnd.x, luggageEnd.y);
 
 		Vector v = end.subtractVector(start);
 		v = v.normalize();
-		baggageDropOffPosition = Utilities.transform(new Position(baggageStart.x + v.x, baggageStart.y + v.y),
-				baggageStart, 90);
+		luggageDropOffPosition = Utilities.transform(new Position(luggageStart.x + v.x, luggageStart.y + v.y),
+				luggageStart, 90);
 		if (otherWayAround)
-			baggageDropOffPosition = Utilities.transform(new Position(baggageStart.x + v.x, baggageStart.y + v.y),
-					baggageStart, 270);
+			luggageDropOffPosition = Utilities.transform(new Position(luggageStart.x + v.x, luggageStart.y + v.y),
+					luggageStart, 270);
 
 		v = start.subtractVector(end);
 		v = v.normalize();
-		baggageCollectPosition = Utilities.transform(new Position(baggageEnd.x + v.x, baggageEnd.y + v.y), baggageEnd,
+		luggageCollectPosition = Utilities.transform(new Position(luggageEnd.x + v.x, luggageEnd.y + v.y), luggageEnd,
 				270);
 		if (otherWayAround)
-			baggageCollectPosition = Utilities.transform(new Position(baggageEnd.x + v.x, baggageEnd.y + v.y),
-					baggageEnd, 90);
+			luggageCollectPosition = Utilities.transform(new Position(luggageEnd.x + v.x, luggageEnd.y + v.y),
+					luggageEnd, 90);
 
-		moveBagVector = end.subtractVector(start);
-		moveBagVector = moveBagVector.normalize().scalarMultiply(0.5);
+		moveLuggageVector = end.subtractVector(start);
+		moveLuggageVector = moveLuggageVector.normalize().scalarMultiply(0.5);
+
+		isOpen = true;
 	}
 
 	/**
-	 * Adds baggage to the system at the {@link #baggageStartPosition}.
+	 * Adds luggage to the system at the {@link #luggageStartPosition}.
 	 * 
-	 * @param baggage
-	 *            The baggage.
+	 * @param luggage
+	 *            The luggage.
 	 */
-	public void addBaggage(Luggage baggage) {
-		baggageInSystem.add(baggage);
-		baggage.setPosition(baggageStartPosition);
+	public void addBaggage(Luggage luggage) {
+		luggageInSystem.add(luggage);
+		luggage.setPosition(luggageStartPosition);
 	}
 
 	/**
@@ -152,21 +163,21 @@ public class XRaySystem extends PhysicalObject {
 	 * @return True if successful, false otherwise.
 	 */
 	public boolean collectBaggage(Luggage bag) {
-		if (bag.getPosition().distanceTo(baggageEndPosition) <= 0.1) {
+		if (bag.getPosition().distanceTo(luggageEndPosition) <= 0.1) {
 			bag.setPosition(bag.getOwner().getPosition());
-			baggageInSystem.remove(bag);
+			luggageInSystem.remove(bag);
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * Gets the baggage in the system.
+	 * Gets the luggage in the system.
 	 * 
-	 * @return The baggage.
+	 * @return The luggage.
 	 */
 	public Collection<Luggage> getBaggageInSystem() {
-		return baggageInSystem;
+		return luggageInSystem;
 	}
 
 	/**
@@ -179,12 +190,12 @@ public class XRaySystem extends PhysicalObject {
 	}
 
 	/**
-	 * Gets the baggage collect position.
+	 * Gets the luggage collect position.
 	 * 
 	 * @return The position
 	 */
 	public Position getCollectPosition() {
-		return baggageCollectPosition;
+		return luggageCollectPosition;
 	}
 
 	/**
@@ -197,12 +208,12 @@ public class XRaySystem extends PhysicalObject {
 	}
 
 	/**
-	 * Gets the baggage drop off position.
+	 * Gets the luggage drop off position.
 	 * 
 	 * @return The position
 	 */
 	public Position getDropOffPosition() {
-		return baggageDropOffPosition;
+		return luggageDropOffPosition;
 	}
 
 	/**
@@ -215,32 +226,35 @@ public class XRaySystem extends PhysicalObject {
 	}
 
 	/**
-	 * Move the baggage forward.
+	 * Is open or not.
 	 * 
-	 * @param timeStep
-	 *            The time step.
+	 * @return True if open, false if closed.
 	 */
-	public void move(int timeStep) {
-		for (Luggage bag : baggageInSystem) {
-			if (bag.getPosition().distanceTo(baggageEndPosition) > 0.1) {
-				Position current = bag.getPosition();
-				Vector move = moveBagVector.scalarMultiply(timeStep / 1000.0);
-				bag.setPosition(new Position(current.x + move.x, current.y + move.y));
-			}
-		}
+	public boolean isOpen() {
+		return isOpen;
+	}
+
+	/**
+	 * Pauses or unpaused the system.
+	 * 
+	 * @param paused
+	 *            True if it is paused, false otherwise.
+	 */
+	public void pauseSystem(boolean paused) {
+		this.paused = paused;
 	}
 
 	/**
 	 * Removes {@link Luggage} from the system and returns it to the
-	 * {@link HumanAgent} that owns the baggage.
+	 * {@link HumanAgent} that owns the luggage.
 	 * 
-	 * @param baggage
-	 *            The baggage.
+	 * @param luggage
+	 *            The luggage.
 	 */
-	public void removeBaggage(Luggage baggage) {
-		baggageInSystem.remove(baggage);
-		Position ownerPosition = baggage.getOwner().getPosition();
-		baggage.setPosition(ownerPosition);
+	public void removeBaggage(Luggage luggage) {
+		luggageInSystem.remove(luggage);
+		Position ownerPosition = luggage.getOwner().getPosition();
+		luggage.setPosition(ownerPosition);
 	}
 
 	/**
@@ -262,4 +276,28 @@ public class XRaySystem extends PhysicalObject {
 	public void setDropOffPassenger(Passenger dropOffPassenger) {
 		this.dropOffPassenger = dropOffPassenger;
 	}
+
+	/**
+	 * Sets open.
+	 * 
+	 * @param isOpen
+	 *            Open or not.
+	 */
+	public void setOpen(boolean isOpen) {
+		this.isOpen = isOpen;
+	}
+
+	@Override
+	public void update(int timeStep) {
+		if (!paused) {
+			for (Luggage bag : luggageInSystem) {
+				if (bag.getPosition().distanceTo(luggageEndPosition) > 0.1) {
+					Position current = bag.getPosition();
+					Vector move = moveLuggageVector.scalarMultiply(timeStep / 1000.0);
+					bag.setPosition(new Position(current.x + move.x, current.y + move.y));
+				}
+			}
+		}
+	}
+
 }

@@ -10,6 +10,7 @@ import model.agent.humanAgent.operationalLevel.observation.ObservationModule;
 import model.agent.humanAgent.strategicLevel.reasoning.planning.ActivityPlanner;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.QueueActivity;
 import model.agent.humanAgent.tacticalLevel.navigation.NavigationModule;
+import model.environment.position.Position;
 import simulation.simulation.util.Updatable;
 
 /**
@@ -58,6 +59,15 @@ public class ActivityModule implements Updatable {
 	 */
 	public Collection<Activity> getActivities() {
 		return activities;
+	}
+
+	/**
+	 * Get the next activity position.
+	 * 
+	 * @return The next activity position.
+	 */
+	public Position getNextActivityPosition() {
+		return planner.getNextActivity().getActivityPosition();
 	}
 
 	/**
@@ -140,6 +150,7 @@ public class ActivityModule implements Updatable {
 
 		// Do the current activity
 		Activity curr = planner.getNextActivity();
+
 		if (curr != null) {
 			if (curr.isInProgress()) {
 				curr.update(timeStep);

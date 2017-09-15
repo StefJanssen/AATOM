@@ -7,6 +7,7 @@ import model.agent.humanAgent.Passenger;
 import model.agent.humanAgent.operationalLevel.action.communication.CommunicationType;
 import model.agent.humanAgent.tacticalLevel.activity.Activity;
 import model.environment.objects.physicalObject.Desk;
+import model.environment.position.Position;
 import simulation.simulation.util.Utilities;
 
 /**
@@ -52,6 +53,11 @@ public class CheckInActivity extends Activity {
 				return true;
 		}
 		return false;
+	}
+
+	@Override
+	public Position getActivityPosition() {
+		return Position.NO_POSITION;
 	}
 
 	@Override

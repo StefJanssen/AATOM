@@ -40,12 +40,13 @@ public abstract class Agent extends MapComponent implements DirectlyUpdatable {
 	 * @param log
 	 *            The log.
 	 */
-	protected void setLog(String[] log) {
+	public void setLog(String[] log) {
 		this.log = log;
 	}
 
 	/**
-	 * Gets the log of the agent and empties it.
+	 * Gets the log of the agent and empties it. Only to be used by the logging
+	 * classes.
 	 * 
 	 * @return The log.
 	 */

@@ -5,6 +5,7 @@ import model.agent.humanAgent.operationalLevel.action.communication.Communicatio
 import model.agent.humanAgent.tacticalLevel.activity.Activity;
 import model.environment.objects.physicalObject.sensor.Observation;
 import model.environment.objects.physicalObject.sensor.WalkThroughMetalDetector;
+import model.environment.position.Position;
 
 /**
  * The ETD check activity.
@@ -17,7 +18,6 @@ public class ETDCheckActivity extends Activity {
 	 * The WTMD.
 	 */
 	private WalkThroughMetalDetector wtmd;
-
 	/**
 	 * The passenger to check.
 	 */
@@ -66,9 +66,9 @@ public class ETDCheckActivity extends Activity {
 	public boolean canStart(int timeStep) {
 		if (isInProgress())
 			return false;
+
 		passengerToCheck = checkObservation();
 		return passengerToCheck != null;
-
 	}
 
 	/**
@@ -81,6 +81,7 @@ public class ETDCheckActivity extends Activity {
 		if (!observation.equals(Observation.NO_OBSERVATION)) {
 			if ((int) observation.getObservation() == 2) {
 				return wtmd.getLastObservedPassenger();
+			} else if ((int) observation.getObservation() == 1) {
 			}
 		}
 		return null;
@@ -88,10 +89,8 @@ public class ETDCheckActivity extends Activity {
 	}
 
 	@Override
-	public void startActivity() {
-		if (wtmd.getPassengerToCheck() != null)
-			passengerToCheck.communicate(CommunicationType.WAIT, -1);
-		super.startActivity();
+	public Position getActivityPosition() {
+		return Position.NO_POSITION;
 	}
 
 	@Override
@@ -99,7 +98,7 @@ public class ETDCheckActivity extends Activity {
 		if (nextPassenger == null) {
 			nextPassenger = checkObservation();
 			if (nextPassenger != null)
-				nextPassenger.communicate(CommunicationType.WAIT, -1);
+				nextPassenger.communicate(CommunicationType.WAIT, 2 * passengerWaitingTime);
 		}
 
 		// passenger is at checking position
@@ -111,7 +110,7 @@ public class ETDCheckActivity extends Activity {
 			}
 			// check when done
 			else if (!passengerToCheck.getStopOrder()) {
-				wtmd.setPassengerToCheck(null);
+				// wtmd.setPassengerToCheck(null);
 				passengerToCheck = nextPassenger;
 				nextPassenger = null;
 				waited = false;

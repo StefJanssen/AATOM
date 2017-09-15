@@ -59,7 +59,7 @@ public class BasicPassengerObservationModel extends ObservationModule {
 					map.getMapComponents(Area.class));
 			return (Collection<T>) areas;
 		} else if (type.equals(XRaySystem.class)) {
-			Collection<XRaySystem> xray = Utilities.getMapComponentsInNeighborhood(movementModel.getPosition(), 10,
+			Collection<XRaySystem> xray = Utilities.getMapComponentsInNeighborhood(movementModel.getPosition(), 15,
 					map.getMapComponents(XRaySystem.class));
 			return (Collection<T>) xray;
 		} else if (type.equals(WalkThroughMetalDetector.class)) {
@@ -71,19 +71,19 @@ public class BasicPassengerObservationModel extends ObservationModule {
 					map.getMapComponents(Chair.class));
 			return (Collection<T>) chairs;
 		} else if (type.equals(Shop.class)) {
-			Collection<Shop> chairs = Utilities.getMapComponentsInNeighborhood(movementModel.getPosition(), 30,
+			Collection<Shop> chairs = Utilities.getMapComponentsInNeighborhood(movementModel.getPosition(), 100,
 					map.getMapComponents(Shop.class));
 			return (Collection<T>) chairs;
 		} else if (type.equals(Restaurant.class)) {
-			Collection<Restaurant> chairs = Utilities.getMapComponentsInNeighborhood(movementModel.getPosition(), 30,
+			Collection<Restaurant> chairs = Utilities.getMapComponentsInNeighborhood(movementModel.getPosition(), 100,
 					map.getMapComponents(Restaurant.class));
 			return (Collection<T>) chairs;
 		} else if (type.equals(Toilet.class)) {
-			Collection<Toilet> chairs = Utilities.getMapComponentsInNeighborhood(movementModel.getPosition(), 30,
+			Collection<Toilet> chairs = Utilities.getMapComponentsInNeighborhood(movementModel.getPosition(), 100,
 					map.getMapComponents(Toilet.class));
 			return (Collection<T>) chairs;
 		}
-		return null;
+		throw new RuntimeException("The observation of type " + type + " cannot be made by the agent.");
 	}
 
 	@Override

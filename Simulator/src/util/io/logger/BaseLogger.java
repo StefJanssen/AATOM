@@ -38,8 +38,8 @@ public class BaseLogger extends Logger {
 		String logLocation = initLog(folderName);
 		loggerList = new ArrayList<>();
 		loggerList.add(new SimulationLogger(logLocation));
-		loggerList.add(new AgentLogger(logLocation));
 		loggerList.add(new AnalyticsLogger(logLocation));
+		loggerList.add(new AgentLogger(logLocation));
 	}
 
 	@Override
@@ -72,6 +72,21 @@ public class BaseLogger extends Logger {
 				throw new RuntimeException("Log location creation failed");
 		}
 		return logLocation.toString();
+	}
+
+	/**
+	 * Print a line.
+	 * 
+	 * @param string
+	 *            The string.
+	 */
+	@Override
+	public void printLine(String string) {
+		for (Logger logger : loggerList) {
+			if (logger instanceof AgentLogger) {
+				logger.printLine(string);
+			}
+		}
 	}
 
 	@Override

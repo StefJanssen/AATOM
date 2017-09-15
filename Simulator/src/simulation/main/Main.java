@@ -159,7 +159,7 @@ public class Main {
 	 */
 	public static void performSimulation(int trialNumber) {
 		Utilities.RANDOM_GENERATOR = new RandomPlus(SimulationConstants.randomSeed + trialNumber);
-		Simulator sim = SimulationBuilder.eindhovenAirport(gui, SimulationConstants.timeStep);
+		Simulator sim = SimulationBuilder.rotterdamTheHagueAirport(gui, SimulationConstants.timeStep);
 		sim.start();
 		try {
 			sim.join();

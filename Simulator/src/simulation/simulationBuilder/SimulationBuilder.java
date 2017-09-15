@@ -238,7 +238,7 @@ public final class SimulationBuilder {
 		walls.add(w);
 		w = new Wall(37.77, 28.82, 2.2, 0.1);
 		walls.add(w);
-		
+
 		// facilities
 		walls.add(new Shop(11.6, 32, 19.8, 16.7));
 		walls.add(new Toilet(5.3, 32, 6.0, 3.3));
@@ -854,7 +854,7 @@ public final class SimulationBuilder {
 			else
 				break;
 		}
-		
+
 		GateArea gateaArea = new GateArea(12, 22, 21, 9.5);
 		sim.addAll(mapBuilder.gate(new Position(13, 23), 5, 10, 0));
 		sim.add(gateaArea);

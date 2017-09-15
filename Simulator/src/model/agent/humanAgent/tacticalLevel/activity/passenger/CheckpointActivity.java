@@ -7,6 +7,7 @@ import java.util.List;
 import model.agent.humanAgent.Passenger;
 import model.agent.humanAgent.tacticalLevel.activity.Activity;
 import model.environment.objects.flight.Flight;
+import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.objects.physicalObject.sensor.WalkThroughMetalDetector;
 import model.environment.objects.physicalObject.sensor.XRaySystem;
 import model.environment.position.Position;
@@ -39,6 +40,10 @@ public class CheckpointActivity extends Activity {
 	 * The phase.
 	 */
 	private int phase;
+	/**
+	 * The time in a specific checkpoint activity phase.
+	 */
+	private double timeInPhase = 0;
 
 	/**
 	 * Creates a checkpoint activity with a specified high level model of an
@@ -87,6 +92,16 @@ public class CheckpointActivity extends Activity {
 	}
 
 	/**
+	 * Gets the activity position.
+	 * 
+	 * @return The activity position.
+	 */
+	@Override
+	public Position getActivityPosition() {
+		return activityPosition;
+	}
+
+	/**
 	 * Gets the closest systems.
 	 * 
 	 * @return The closest systems.
@@ -97,23 +112,27 @@ public class CheckpointActivity extends Activity {
 		if (systems.isEmpty())
 			return closestSystems;
 
-		for (XRaySystem desk : systems) {
+		// loop through systems
+		for (XRaySystem system : systems) {
 			if (closestSystems.size() == 0) {
-				closestSystems.add(desk);
+				if (system.isOpen())
+					closestSystems.add(system);
 			} else {
 				int position = 0;
 				for (int i = 0; i < closestSystems.size(); i++) {
 					XRaySystem curr = closestSystems.get(i);
-					if (desk.getDropOffPosition().distanceTo(movement.getPosition()) > curr.getDropOffPosition()
+					if (system.getDropOffPosition().distanceTo(movement.getPosition()) > curr.getDropOffPosition()
 							.distanceTo(movement.getPosition())) {
 						position = i + 1;
 					} else
 						break;
 				}
-				closestSystems.add(position, desk);
+				if (system.isOpen())
+					closestSystems.add(position, system);
 			}
 		}
-		return closestSystems.subList(0, closestSystems.size()); // TODO PARAMETER
+		return closestSystems.subList(0, closestSystems.size()); // TODO
+																	// PARAMETER
 	}
 
 	/**
@@ -174,6 +193,8 @@ public class CheckpointActivity extends Activity {
 
 	@Override
 	public void update(int timeStep) {
+		timeInPhase += timeStep / 1000.0;
+
 		// waiting
 		if (!movement.getStopOrder() && phase == 1
 				&& movement.getPosition().distanceTo(xRaySystem.getDropOffPosition()) < 0.4) {
@@ -185,17 +206,23 @@ public class CheckpointActivity extends Activity {
 				if (wtmd.canGo()) {
 					// go to wtmd
 					xRaySystem.setDropOffPassenger(null);
+					for (Luggage l : ((Passenger) agent).getLuggage()) {
+						xRaySystem.addBaggage(l);
+					}
 					wtmd.setPersonsInConsideration((Passenger) agent);
 					navigationModule.setGoal(wtmd.getPosition());
+					timeInPhase = 0;
 					phase++;
 				}
 			}
 		}
-		if (!movement.getStopOrder() && phase == 2) {
+		if ((timeInPhase > 120 || !movement.getStopOrder()) && phase == 2) {
 			// go to luggage collect area
 			if (navigationModule.getReachedGoal() && xRaySystem.getCollectPassenger() == null) {
+				movement.setStopOrder(0);
 				navigationModule.setGoal(xRaySystem.getCollectPosition());
 				xRaySystem.setCollectPassenger((Passenger) agent);
+				timeInPhase = 0;
 				phase++;
 			}
 		}
@@ -207,6 +234,9 @@ public class CheckpointActivity extends Activity {
 		if (!movement.getStopOrder() && phase == 3
 				&& movement.getPosition().distanceTo(xRaySystem.getCollectPosition()) < 0.4) {
 			xRaySystem.setCollectPassenger(null);
+			for (Luggage l : ((Passenger) agent).getLuggage()) {
+				xRaySystem.removeBaggage(l);
+			}
 			endActivity();
 		}
 	}

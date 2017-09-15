@@ -48,12 +48,13 @@ public class PassengerView extends MapComponentView {
 		String internalName = "Internal name: <i>" + agent + "</i>.<br>";
 		String type = "Agent Type:  <i>" + agent.getClass().getSimpleName() + "</i>.<br>";
 		String goal = "Goal Position:  <i>" + agent.getGoalPosition() + "</i>.<br>";
+		String position = "Position:  <i>" + agent.getPosition() + "</i>.<br>";
 		String baggage = "Baggage: <i>" + agent.getLuggage() + "</i>.<br>";
 		String active = "Active: <i>" + agent.getActiveActivities() + "</i>.<br>";
 		String flight = "Flight information: <i>" + agent.getFlight().getFlightTime() + "</i>.<br>";
 		String other = "Other information?<br>";
 		String end = "</html>";
-		return information + internalName + type + goal + baggage + active + flight + other + end;
+		return information + internalName + type + position + goal + baggage + active + flight + other + end;
 	}
 
 	/**

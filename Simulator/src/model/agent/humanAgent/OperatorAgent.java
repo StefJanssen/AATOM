@@ -1,5 +1,7 @@
 package model.agent.humanAgent;
 
+import java.awt.Color;
+
 import model.agent.humanAgent.operationalLevel.BasicOperatorOperationalModel;
 import model.agent.humanAgent.strategicLevel.BasicOperatorStrategicModel;
 import model.agent.humanAgent.tacticalLevel.BasicOperatorTacticalModel;
@@ -35,8 +37,28 @@ public class OperatorAgent extends HumanAgent {
 	 *            The assignment.
 	 */
 	public OperatorAgent(Map map, Position position, double radius, double mass, Activity assignment) {
+		this(map, position, radius, mass, assignment, Color.RED);
+	}
+
+	/**
+	 * Creates an operator agent.
+	 * 
+	 * @param map
+	 *            The map.
+	 * @param position
+	 *            The position.
+	 * @param radius
+	 *            The radius.
+	 * @param mass
+	 *            The mass.
+	 * @param assignment
+	 *            The assignment.
+	 * @param color
+	 *            The color.
+	 */
+	public OperatorAgent(Map map, Position position, double radius, double mass, Activity assignment, Color color) {
 		super(position, radius, mass, new BasicOperatorStrategicModel(assignment), new BasicOperatorTacticalModel(map),
-				new BasicOperatorOperationalModel(map, assignment));
+				new BasicOperatorOperationalModel(map, assignment), color);
 		this.assignment = assignment;
 	}
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import model.environment.map.Map;
 import model.environment.objects.physicalObject.luggage.Luggage;
+import model.environment.objects.physicalObject.luggage.LuggageType;
 import model.environment.position.Position;
 import model.environment.shapes.PolygonShape;
 import simulation.simulation.util.Utilities;
@@ -74,11 +75,13 @@ public class XRaySensor extends Sensor implements PolygonShape {
 	@Override
 	public Observation<?> getObservation() {
 		for (Luggage luggage : map.getMapComponents(Luggage.class)) {
-			if (!checkedLuggage.contains(luggage)) {
-				if (shape.contains(luggage.getPosition().x, luggage.getPosition().y)) {
-					lastObservedLuggage = luggage;
-					checkedLuggage.add(luggage);
-					return new Observation<Double>(luggage.getThreatLevel());
+			if (luggage.getLuggageType().equals(LuggageType.CARRY_ON)) {
+				if (!checkedLuggage.contains(luggage)) {
+					if (shape.contains(luggage.getPosition().x, luggage.getPosition().y)) {
+						lastObservedLuggage = luggage;
+						checkedLuggage.add(luggage);
+						return new Observation<Double>(luggage.getThreatLevel());
+					}
 				}
 			}
 		}

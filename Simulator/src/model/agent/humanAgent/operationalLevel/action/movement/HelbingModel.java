@@ -76,7 +76,7 @@ public class HelbingModel extends MovementModel {
 	 * @return The force.
 	 */
 	private Vector getInternalAccelerationForce() {
-		Position goalPosition = ((Passenger) agent).getGoalPosition();
+		Position goalPosition = agent.getGoalPosition();
 		Vector e0 = new Vector(goalPosition.x - getPosition().x, goalPosition.y - getPosition().y).normalize();
 		Vector numerator = e0.scalarMultiply(desiredSpeed).subtractVector(currentVelocity);
 		return numerator.scalarMultiply(15 / accelerationTime);
@@ -84,7 +84,7 @@ public class HelbingModel extends MovementModel {
 
 	@Override
 	public Vector getMove(int timeStep) {
-		if (((Passenger) agent).getGoalPosition().equals(Position.NO_POSITION))
+		if (agent.getGoalPosition().equals(Position.NO_POSITION))
 			return new Vector(0, 0);
 
 		Vector vector = getInternalAccelerationForce();
@@ -103,13 +103,13 @@ public class HelbingModel extends MovementModel {
 
 		// we have a shaking effect
 		if (newSpeed.isAproximateRotation(90, currentVelocity)) {
-			newSpeed = new Vector(((Passenger) agent).getGoalPosition().x - getPosition().x,
-					((Passenger) agent).getGoalPosition().y - getPosition().y).normalize();
+			newSpeed = new Vector(agent.getGoalPosition().x - getPosition().x,
+					agent.getGoalPosition().y - getPosition().y).normalize();
 			newSpeed = newSpeed.scalarMultiply(desiredSpeed);
 		}
 
 		currentVelocity = newSpeed;
-		return updateOutOfBounds(currentVelocity.scalarMultiply(timeStep / 1000.0));
+		return currentVelocity.scalarMultiply(timeStep / 1000.0);
 	}
 
 	/**

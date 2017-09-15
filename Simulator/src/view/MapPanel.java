@@ -86,6 +86,10 @@ public class MapPanel extends JPanel {
 	 * The image used to visualize a zoomed in map.
 	 */
 	private Image zoomImage;
+	/**
+	 * The user created views.
+	 */
+	private List<Class<? extends MapComponentView>> views;
 
 	/**
 	 * Creates the map panel.
@@ -107,6 +111,7 @@ public class MapPanel extends JPanel {
 		maxX = 0;
 		maxY = 0;
 		zoomImage = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/img/zoom.png"));
+		views = new ArrayList<>();
 	}
 
 	/**
@@ -150,9 +155,18 @@ public class MapPanel extends JPanel {
 			if (className.equals("MapComponent"))
 				return;
 
-			Class<?> c = Class.forName("view.mapComponents." + className + "View");
+			Constructor<?> cons = null;
+			for (Class<? extends MapComponentView> v : views) {
+				if (v.getSimpleName().substring(0, v.getSimpleName().length() - 4).equals(className)) {
+					cons = v.getConstructor(myClass);
+				}
+			}
 
-			Constructor<?> cons = c.getConstructor(myClass);
+			// if not in our list of added views
+			if (cons == null) {
+				Class<?> c = Class.forName("view.mapComponents." + className + "View");
+				cons = c.getConstructor(myClass);
+			}
 			Object object = cons.newInstance(component);
 			mapComponents.put(component, (MapComponentView) object);
 			if (component instanceof Area)
@@ -166,6 +180,16 @@ public class MapPanel extends JPanel {
 			e.printStackTrace();
 		}
 		repaint();
+	}
+
+	/**
+	 * Adds a map component view.
+	 * 
+	 * @param view
+	 *            The view.
+	 */
+	public void addMapComponentView(Class<? extends MapComponentView> view) {
+		views.add(view);
 	}
 
 	/**

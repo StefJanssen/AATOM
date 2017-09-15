@@ -80,11 +80,13 @@ public class BeliefModule implements Updatable {
 	 */
 	private Area getLocation() {
 		Area mostSpecific = null;
-		for (Area a : observationModule.getObservation(Area.class)) {
-			if (mostSpecific == null) {
-				mostSpecific = a;
-			} else {
-				// TODO how to determine which is most specific
+		if (observationModule.getObservation(Area.class) != null) {
+			for (Area a : observationModule.getObservation(Area.class)) {
+				if (mostSpecific == null) {
+					mostSpecific = a;
+				} else {
+					// TODO how to determine which is most specific
+				}
 			}
 		}
 		return mostSpecific;
@@ -145,8 +147,8 @@ public class BeliefModule implements Updatable {
 
 	@Override
 	public void update(int timeStep) {
-		Belief newBelief = generateBelief();
-		updateBelief(newBelief);
+		// Belief newBelief = generateBelief();
+		// updateBelief(newBelief);
 	}
 
 	/**
@@ -155,6 +157,7 @@ public class BeliefModule implements Updatable {
 	 * @param newBelief
 	 *            The new belief.
 	 */
+	@SuppressWarnings("unused")
 	private void updateBelief(Belief newBelief) {
 		Belief current = getCurrentBelief();
 

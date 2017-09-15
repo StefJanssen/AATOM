@@ -27,7 +27,7 @@ public class BasicPassengerStrategicModel extends StrategicModel {
 	 *            The flight.
 	 */
 	public BasicPassengerStrategicModel(Class<? extends Facility> facility, Flight flight) {
-		super(new BasicPassengerPlanner(), new BasicPassengerGoalModule(facility, flight), new BeliefModule());
+		super(new BasicPassengerPlanner(flight), new BasicPassengerGoalModule(facility, flight), new BeliefModule());
 		this.flight = flight;
 	}
 

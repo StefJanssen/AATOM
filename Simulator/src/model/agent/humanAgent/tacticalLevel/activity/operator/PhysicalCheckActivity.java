@@ -3,6 +3,7 @@ package model.agent.humanAgent.tacticalLevel.activity.operator;
 import model.agent.humanAgent.Passenger;
 import model.agent.humanAgent.tacticalLevel.activity.Activity;
 import model.environment.objects.physicalObject.sensor.WalkThroughMetalDetector;
+import model.environment.position.Position;
 
 /**
  * TODO this activity is not yet implemented.
@@ -37,6 +38,11 @@ public class PhysicalCheckActivity extends Activity {
 		if (isInProgress())
 			return false;
 		return false;
+	}
+
+	@Override
+	public Position getActivityPosition() {
+		return Position.NO_POSITION;
 	}
 
 	@Override

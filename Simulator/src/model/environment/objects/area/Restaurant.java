@@ -14,8 +14,8 @@ import model.environment.position.Position;
 public class Restaurant extends Facility {
 
 	/**
-	 * Creates a rectangular restaurant from a specified (x,y) coordinate, width and
-	 * height.
+	 * Creates a rectangular restaurant from a specified (x,y) coordinate, width
+	 * and height.
 	 * 
 	 * @param topX
 	 *            The x coordinate.
@@ -29,7 +29,7 @@ public class Restaurant extends Facility {
 	public Restaurant(double topX, double topY, double width, double height) {
 		super(topX, topY, width, height);
 	}
-	
+
 	/**
 	 * Creates a restaurant with a set of specified corner points.
 	 * 

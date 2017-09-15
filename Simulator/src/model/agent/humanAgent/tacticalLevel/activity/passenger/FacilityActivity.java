@@ -79,6 +79,13 @@ public class FacilityActivity extends Activity {
 		return false;
 	}
 
+	@Override
+	public Position getActivityPosition() {
+		if (currentFacility == null)
+			return Position.NO_POSITION;
+		return currentFacility.getPosition();
+	}
+
 	/**
 	 * Determine if there is a goal position in the current shop.
 	 * 
@@ -114,14 +121,6 @@ public class FacilityActivity extends Activity {
 
 	}
 
-	// @Override
-	// public void init(Passenger agent, MovementModel<Passenger> movement,
-	// ObservationModule<Passenger> observations,
-	// TacticalModel<Passenger> highLevel) {
-	// super.init(agent, movement, observations, highLevel);
-	// this.tacticalModel = (PassengerTacticalModel) highLevel;
-	// }
-
 	/**
 	 * Sets the facility.
 	 */
@@ -142,6 +141,7 @@ public class FacilityActivity extends Activity {
 	@Override
 	public void startActivity() {
 		super.startActivity();
+
 		if (currentFacility instanceof Shop) {
 			List<Position> inAreaPoints = Utilities.generatePositions(10, currentFacility.getShape());
 			navigationModule.setGoal(Position.NO_POSITION);

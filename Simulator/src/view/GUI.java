@@ -34,6 +34,7 @@ import model.environment.map.MapComponent;
 import simulation.simulation.Simulator;
 import util.analytics.Analyzer;
 import view.graphPanel.GraphCollectionPanel;
+import view.mapComponents.MapComponentView;
 
 /**
  * Creates the entire GUI of the program.
@@ -174,7 +175,7 @@ public class GUI extends JFrame {
 	public GUI(Map map, Simulator simulator) {
 		this.map = map;
 		this.simulator = simulator;
-		
+
 		// Set layout
 		setLayout(new BorderLayout());
 
@@ -205,6 +206,16 @@ public class GUI extends JFrame {
 	 */
 	public void add(Analyzer tracker) {
 		graphCollectionPanel.add(tracker);
+	}
+
+	/**
+	 * Adds a map component view to the GUI.
+	 * 
+	 * @param view
+	 *            The view.
+	 */
+	public void add(Class<? extends MapComponentView> view) {
+		mapPanel.addMapComponentView(view);
 	}
 
 	/**
@@ -435,7 +446,7 @@ public class GUI extends JFrame {
 			}
 		});
 	}
-	
+
 	/**
 	 * Update the GUI.
 	 * 

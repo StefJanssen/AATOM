@@ -6,7 +6,25 @@ import model.environment.map.MapComponent;
 
 /**
  * Superclass for each of the MapComponentViews. It visualizes a
- * {@link MapComponent}.
+ * {@link MapComponent}. If you wish to extend this class to create your own
+ * views, the name of your class should be MyMapComponentView, where
+ * MyMapComponent can be replaced with any type of map component that you
+ * created.
+ * 
+ * Also make sure that your code contains at least following elements, where
+ * MyMapComponent can be replaced by the actual map component you are creating a
+ * view for.
+ * 
+ * <pre>
+ * <code>
+ * 
+ * private MyMapComponent myMapComponent;
+ * 
+ * public MyMapComponentView(MyMapComponent myMapComponent) {
+ * 	this.myMapComponent = myMapComponent;
+ * }
+ * </code>
+ * </pre>
  * 
  * @author S.A.M. Janssen
  *

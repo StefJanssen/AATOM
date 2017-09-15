@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import model.agent.humanAgent.tacticalLevel.activity.Activity;
 import model.environment.objects.area.EntranceArea;
+import model.environment.position.Position;
 import simulation.simulation.util.Utilities;
 
 /**
@@ -16,6 +17,11 @@ public class ExitActivity extends Activity {
 	@Override
 	public boolean canStart(int timeStep) {
 		return true;
+	}
+
+	@Override
+	public Position getActivityPosition() {
+		return Position.NO_POSITION;
 	}
 
 	@Override

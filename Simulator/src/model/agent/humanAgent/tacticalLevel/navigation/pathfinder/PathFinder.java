@@ -163,6 +163,7 @@ public abstract class PathFinder {
 				corners.add(0, B);
 			}
 		}
+		corners.add(0, path.get(path.size() - 1));
 		corners.add(path.get(0));
 		return corners;
 	}

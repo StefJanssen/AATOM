@@ -47,6 +47,6 @@ public class BasicOperatorObservationModel extends ObservationModule {
 					map.getMapComponents(Area.class));
 			return (Collection<T>) area;
 		}
-		return null;
+		throw new RuntimeException("The observation of type " + type + " cannot be made by the agent.");
 	}
 }
