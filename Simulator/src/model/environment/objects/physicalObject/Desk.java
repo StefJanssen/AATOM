@@ -10,7 +10,7 @@ import model.environment.position.Position;
  * 
  * @author S.A.M. Janssen
  */
-public class Desk extends PhysicalObject {
+public class Desk extends PhysicalObject implements Openable {
 
 	/**
 	 * The serving position.
@@ -102,6 +102,7 @@ public class Desk extends PhysicalObject {
 	public Desk(List<Position> corners, Position servingPosition) {
 		super(corners);
 		this.servingPosition = servingPosition;
+		isOpen = true;
 	}
 
 	/**
@@ -131,11 +132,7 @@ public class Desk extends PhysicalObject {
 		return agentAtDesk != null;
 	}
 
-	/**
-	 * Is open or not.
-	 * 
-	 * @return True if open, false if closed.
-	 */
+	@Override
 	public boolean isOpen() {
 		return isOpen;
 	}
@@ -150,12 +147,7 @@ public class Desk extends PhysicalObject {
 		this.agentAtDesk = agentAtDesk;
 	}
 
-	/**
-	 * Sets open.
-	 * 
-	 * @param isOpen
-	 *            Open or not.
-	 */
+	@Override
 	public void setOpen(boolean isOpen) {
 		this.isOpen = isOpen;
 	}

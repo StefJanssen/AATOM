@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.tacticalLevel.activity.Activity;
+import model.agent.humanAgent.tacticalLevel.activity.passenger.GateActivity;
 import model.environment.position.Position;
 import simulation.simulation.Simulator;
 
@@ -60,6 +62,20 @@ public class DistanceAnalyzer extends Analyzer implements PassengerAnalyzer {
 		return "Average distance (m)";
 	}
 
+	/**
+	 * Determines if a passenger is performing its gate activity.
+	 * 
+	 * @param p
+	 *            The passenger.
+	 * @return True if it is, false otherwise.
+	 */
+	private boolean isPerformingGateActivity(Passenger p) {
+		for (Activity a : p.getActiveActivities())
+			if (a instanceof GateActivity)
+				return true;
+		return false;
+	}
+
 	@Override
 	public void setSimulator(Simulator simulator) {
 		super.setSimulator(simulator);
@@ -76,10 +92,12 @@ public class DistanceAnalyzer extends Analyzer implements PassengerAnalyzer {
 	@Override
 	public void update(int timeStep) {
 		for (Entry<Passenger, Double> p : distanceCovered.entrySet()) {
-			double curr = p.getValue();
-			double distance = currentPosition.get(p.getKey()).distanceTo(p.getKey().getPosition());
-			distanceCovered.put(p.getKey(), curr + distance);
-			currentPosition.put(p.getKey(), p.getKey().getPosition());
+			if (!isPerformingGateActivity(p.getKey())) {
+				double curr = p.getValue();
+				double distance = currentPosition.get(p.getKey()).distanceTo(p.getKey().getPosition());
+				distanceCovered.put(p.getKey(), curr + distance);
+				currentPosition.put(p.getKey(), p.getKey().getPosition());
+			}
 		}
 		super.update(timeStep);
 	}

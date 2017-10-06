@@ -22,15 +22,22 @@ public class BasicPassengerPlanner extends ActivityPlanner {
 	 * The flight.
 	 */
 	private Flight flight;
+	/**
+	 * Checked in or not.
+	 */
+	private boolean checkedIn;
 
 	/**
 	 * Creates a basic passenger planner.
 	 * 
 	 * @param flight
 	 *            The flight.
+	 * @param checkedIn
+	 *            Checked in or not.
 	 */
-	public BasicPassengerPlanner(Flight flight) {
+	public BasicPassengerPlanner(Flight flight, boolean checkedIn) {
 		this.flight = flight;
+		this.checkedIn = checkedIn;
 	}
 
 	/**
@@ -61,7 +68,8 @@ public class BasicPassengerPlanner extends ActivityPlanner {
 		planning = new ArrayList<>();
 
 		// check-in
-		planning.add(getActivityFromType(CheckInActivity.class));
+		if (!checkedIn)
+			planning.add(getActivityFromType(CheckInActivity.class));
 
 		// checkpoint
 		planning.add(getActivityFromType(CheckpointActivity.class));

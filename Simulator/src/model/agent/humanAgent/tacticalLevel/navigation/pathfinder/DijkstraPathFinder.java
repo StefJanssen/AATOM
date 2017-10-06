@@ -111,7 +111,7 @@ public class DijkstraPathFinder extends PathFinder {
 
 		for (int i = 0; i < discretizedMap[0].length; i++) {
 			for (int j = 0; j < discretizedMap.length; j++) {
-				if (discretizedMap[j][i] != 1) {
+				if (!discretizedMap[j][i]) {
 					DijkstraNode n = new DijkstraNode(i, j);
 					n.distance = Double.MAX_VALUE;
 					unvisited.add(n);

@@ -26,7 +26,7 @@ public abstract class PathFinder {
 	/**
 	 * The discretized map.
 	 */
-	protected int[][] discretizedMap;
+	protected boolean[][] discretizedMap;
 	/**
 	 * The {@link Map}.
 	 */

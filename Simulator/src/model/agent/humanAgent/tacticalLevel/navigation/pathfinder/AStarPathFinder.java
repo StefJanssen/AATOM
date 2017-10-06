@@ -46,7 +46,7 @@ public class AStarPathFinder extends PathFinder {
 		graph = new AStarNode[discretizedMap.length][discretizedMap[0].length];
 		for (int i = 0; i < graph[0].length; i++) {
 			for (int j = 0; j < graph.length; j++) {
-				if (discretizedMap[j][i] != 1) {
+				if (!discretizedMap[j][i]) {
 					graph[j][i] = new AStarNode(i, j);
 					graph[j][i].distance = Double.MAX_VALUE;
 				}

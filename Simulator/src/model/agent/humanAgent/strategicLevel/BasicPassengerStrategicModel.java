@@ -25,9 +25,11 @@ public class BasicPassengerStrategicModel extends StrategicModel {
 	 *            The facility.
 	 * @param flight
 	 *            The flight.
+	 * @param checkedIn
+	 *            Checked in or not.
 	 */
-	public BasicPassengerStrategicModel(Class<? extends Facility> facility, Flight flight) {
-		super(new BasicPassengerPlanner(flight), new BasicPassengerGoalModule(facility, flight), new BeliefModule());
+	public BasicPassengerStrategicModel(Class<? extends Facility> facility, Flight flight, boolean checkedIn) {
+		super(new BasicPassengerPlanner(flight,checkedIn), new BasicPassengerGoalModule(facility, flight), new BeliefModule());
 		this.flight = flight;
 	}
 

@@ -30,7 +30,7 @@ public class OperatorAgentView extends MapComponentView {
 
 	@Override
 	public String getAboutString() {
-		return agent.getAssignment().getClass().getSimpleName();
+		return agent.getAssignment().getClass().getSimpleName() + " " + agent.hashCode();
 	}
 
 	/**

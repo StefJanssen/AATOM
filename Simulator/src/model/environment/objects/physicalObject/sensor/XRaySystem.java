@@ -8,6 +8,7 @@ import model.agent.Agent;
 import model.agent.humanAgent.HumanAgent;
 import model.agent.humanAgent.Passenger;
 import model.environment.map.Map;
+import model.environment.objects.physicalObject.Openable;
 import model.environment.objects.physicalObject.PhysicalObject;
 import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.position.Position;
@@ -25,7 +26,7 @@ import simulation.simulation.util.Utilities;
  * 
  * @author S.A.M. Janssen
  */
-public class XRaySystem extends PhysicalObject implements DirectlyUpdatable {
+public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Openable {
 
 	/**
 	 * The collect position for bags.
@@ -225,11 +226,8 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable {
 		return xray;
 	}
 
-	/**
-	 * Is open or not.
-	 * 
-	 * @return True if open, false if closed.
-	 */
+
+	@Override
 	public boolean isOpen() {
 		return isOpen;
 	}
@@ -277,12 +275,7 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable {
 		this.dropOffPassenger = dropOffPassenger;
 	}
 
-	/**
-	 * Sets open.
-	 * 
-	 * @param isOpen
-	 *            Open or not.
-	 */
+	@Override
 	public void setOpen(boolean isOpen) {
 		this.isOpen = isOpen;
 	}
@@ -299,5 +292,4 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable {
 			}
 		}
 	}
-
 }

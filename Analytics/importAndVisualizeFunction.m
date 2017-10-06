@@ -15,6 +15,8 @@ end;
 %% Visualize and stats
 if(nargin == 3)
     graphData = processGraphs(graphData, vis);
-    generateTracePlot(agentTrace);
+    if(~any(ignore==2))
+        generateTracePlot(agentTrace);
+    end;
 end;
 end

@@ -81,7 +81,7 @@ public class JumpPointSearchPathFinder extends PathFinder {
 	private void emptyMap() {
 		for (int i = 0; i < graph[0].length; i++) {
 			for (int j = 0; j < graph.length; j++) {
-				if (discretizedMap[j][i] != 1) {
+				if (!discretizedMap[j][i]) {
 					graph[j][i] = null;
 				}
 			}
@@ -401,7 +401,7 @@ public class JumpPointSearchPathFinder extends PathFinder {
 	private void resetMap() {
 		for (int i = 0; i < graph[0].length; i++) {
 			for (int j = 0; j < graph.length; j++) {
-				if (discretizedMap[j][i] != 1) {
+				if (!discretizedMap[j][i]) {
 					graph[j][i] = new JumpPointNode(i, j);
 				}
 			}

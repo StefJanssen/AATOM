@@ -3,12 +3,15 @@ package model.agent.humanAgent.strategicLevel.goal;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import model.agent.humanAgent.tacticalLevel.activity.passenger.CheckInActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.CheckpointActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.ExitActivity;
-import model.agent.humanAgent.tacticalLevel.activity.passenger.FacilityActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.GateActivity;
-import model.agent.humanAgent.tacticalLevel.activity.passenger.PassengerBorderControlActivity;
+import model.agent.humanAgent.tacticalLevel.activity.passenger.impl.BasicCheckInActivity;
+import model.agent.humanAgent.tacticalLevel.activity.passenger.impl.BasicCheckpointActivity;
+import model.agent.humanAgent.tacticalLevel.activity.passenger.impl.BasicExitActivity;
+import model.agent.humanAgent.tacticalLevel.activity.passenger.impl.BasicFacilityActivity;
+import model.agent.humanAgent.tacticalLevel.activity.passenger.impl.BasicGateActivity;
+import model.agent.humanAgent.tacticalLevel.activity.passenger.impl.BasicPassengerBorderControlActivity;
 import model.environment.objects.area.Facility;
 import model.environment.objects.flight.Flight;
 import model.environment.objects.flight.FlightType;
@@ -35,19 +38,19 @@ public class BasicPassengerGoalModule extends GoalModule {
 			return goals;
 
 		if (!flight.getType().equals(FlightType.DEPARTING)) {
-			ExitActivity exit = new ExitActivity();
+			ExitActivity exit = new BasicExitActivity();
 			goals.add(new Goal(exit, -1));
 			if (facility != null)
-				goals.add(new Goal(new FacilityActivity(facility), exit));
+				goals.add(new Goal(new BasicFacilityActivity(facility), exit));
 		} else {
-			GateActivity gate = new GateActivity(flight);
-			CheckpointActivity checkpoint = new CheckpointActivity(flight);
-			goals.add(new Goal(new CheckInActivity(flight), checkpoint));
+			GateActivity gate = new BasicGateActivity(flight);
+			CheckpointActivity checkpoint = new BasicCheckpointActivity(flight);
+			goals.add(new Goal(new BasicCheckInActivity(flight), checkpoint));
 			goals.add(new Goal(checkpoint, gate));
-			goals.add(new Goal(new PassengerBorderControlActivity(), gate));
+			goals.add(new Goal(new BasicPassengerBorderControlActivity(), gate));
 			goals.add(new Goal(gate, flight.getTimeToFlight()));
 			if (facility != null)
-				goals.add(new Goal(new FacilityActivity(facility), gate));
+				goals.add(new Goal(new BasicFacilityActivity(facility), gate));
 		}
 		return goals;
 	}

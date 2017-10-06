@@ -68,7 +68,7 @@ public class BaseAgentGenerator extends AgentGenerator {
 			Position start = Utilities.generatePosition(area.getShape());
 			Flight flight = getEligibleFlight();
 			if (flight != null) {
-				return new Passenger(simulator.getMap(), flight, false, getFacility(), start, 0.2, 80, luggage,
+				return new Passenger(simulator.getMap(), flight, Utilities.RANDOM_GENERATOR.nextBoolean(), getFacility(), start, 0.2, 80, luggage,
 						Color.RED);
 			}
 		}

@@ -41,7 +41,22 @@ public final class DiscretizedMap {
 	/**
 	 * A discrete version of the {@link Map}.
 	 */
-	private int[][] discretizedMap;
+	private boolean[][] discretizedMap;
+
+	/**
+	 * This constructor can be used if you have a boolean representation of the
+	 * map already. This saves computational time for larger maps. To generate a
+	 * boolean representation, use the {@link DiscretizedMap#printMap()}
+	 * function after generating the map using the standard
+	 * {@link DiscretizedMap#getInstance(Map, double)} method.
+	 * 
+	 * @param discretizedMap
+	 *            The boolean representation of the map.
+	 */
+	public DiscretizedMap(boolean[][] discretizedMap) {
+		this.discretizedMap = discretizedMap;
+		instance = this;
+	}
 
 	/**
 	 * Private method to prevent object creation.
@@ -65,19 +80,19 @@ public final class DiscretizedMap {
 	 *            The precision.
 	 * @return The discrete map.
 	 */
-	private int[][] discretizeMap(Map map, double precision) {
+	private boolean[][] discretizeMap(Map map, double precision) {
 		if (discretizedMap != null)
 			return discretizedMap;
 
 		int xSize = (int) (map.getWidth() / precision);
 		int ySize = (int) (map.getHeight() / precision);
-		int[][] discreteMap = new int[ySize][xSize];
+		boolean[][] discreteMap = new boolean[ySize][xSize];
 
 		for (int i = 0; i < xSize; i++) {
 			for (int j = 0; j < ySize; j++) {
 				for (PolygonShape shape : map.getMapComponents(PhysicalObject.class)) {
 					if (Utilities.isCollision(getShape(new Position(i * precision, j * precision), precision), shape)) {
-						discreteMap[j][i] = 1;
+						discreteMap[j][i] = true;
 					}
 				}
 			}
@@ -90,7 +105,7 @@ public final class DiscretizedMap {
 	 * 
 	 * @return The map.
 	 */
-	public int[][] getMap() {
+	public boolean[][] getMap() {
 		return discretizedMap;
 	}
 
@@ -141,11 +156,18 @@ public final class DiscretizedMap {
 	 * Prints the discrete {@link Map}.
 	 */
 	public void printMap() {
+		System.out.println("boolean[][] map = new boolean[][] {");
 		for (int i = 0; i < discretizedMap.length; i++) {
+			System.out.print("{");
 			for (int j = 0; j < discretizedMap[0].length; j++) {
 				System.out.print(discretizedMap[i][j]);
+				if (j != discretizedMap[0].length - 1)
+					System.out.print(",");
 			}
-			System.out.println();
+			System.out.print("}");
+			if (i != discretizedMap.length - 1)
+				System.out.println(",");
 		}
+		System.out.println("};");
 	}
 }

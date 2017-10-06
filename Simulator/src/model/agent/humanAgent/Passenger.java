@@ -69,7 +69,7 @@ public class Passenger extends HumanAgent {
 	public Passenger(Map map, Flight flight, boolean checkedIn, Class<? extends Facility> facility, Position position,
 			double radius, double mass, Luggage luggage, Color color) {
 		this(map, flight, checkedIn, facility, position, radius, mass, luggage,
-				new BasicPassengerStrategicModel(facility, flight), new BasicPassengerTacticalModel(map, flight),
+				new BasicPassengerStrategicModel(facility, flight, checkedIn), new BasicPassengerTacticalModel(map, flight),
 				new BasicPassengerOperationalModel(map, 1), color);
 
 	}
@@ -109,6 +109,8 @@ public class Passenger extends HumanAgent {
 		super(position, radius, mass, strategicModel, tacticalModel, operationalModel, color);
 		this.flight = flight;
 		this.checkedIn = checkedIn;
+		if(checkedIn)
+			flight.checkIn(this);
 		this.luggage = new ArrayList<>();
 		this.luggage.add(luggage);
 		this.facility = facility;

@@ -5,13 +5,13 @@ import java.util.Collections;
 import java.util.List;
 
 import model.agent.humanAgent.OperatorAgent;
-import model.agent.humanAgent.tacticalLevel.activity.operator.CheckInActivity;
-import model.agent.humanAgent.tacticalLevel.activity.operator.ETDCheckActivity;
-import model.agent.humanAgent.tacticalLevel.activity.operator.LuggageCheckActivity;
-import model.agent.humanAgent.tacticalLevel.activity.operator.LuggageDropActivity;
-import model.agent.humanAgent.tacticalLevel.activity.operator.PhysicalCheckActivity;
-import model.agent.humanAgent.tacticalLevel.activity.operator.TravelDocumentCheckActivity;
-import model.agent.humanAgent.tacticalLevel.activity.operator.XRayActivity;
+import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicCheckInActivity;
+import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicETDCheckActivity;
+import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicLuggageCheckActivity;
+import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicLuggageDropActivity;
+import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicPhysicalCheckActivity;
+import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicTravelDocumentCheckActivity;
+import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicXRayActivity;
 import model.environment.objects.area.QueuingArea;
 import model.environment.objects.physicalObject.Chair;
 import model.environment.objects.physicalObject.Desk;
@@ -81,7 +81,7 @@ public final class MapBuilder {
 					degreeRotation);
 			Desk desk = createDesk(new Position(start.x + i * 2, start.y), 1, 0.2, start, degreeRotation, deskPosition);
 			components.add(desk);
-			OperatorAgent agent = new OperatorAgent(map, agentPosition, 0.25, 80, new CheckInActivity(desk, 60));
+			OperatorAgent agent = new OperatorAgent(map, agentPosition, 0.25, 80, new BasicCheckInActivity(desk, 60));
 			components.add(agent);
 		}
 
@@ -158,7 +158,7 @@ public final class MapBuilder {
 						new Position(start.x - 0.3 + xOffsetXray, start.y + yOffsetXray + 0.5), start, degreeRotation);
 
 			OperatorAgent luggageCheck = new OperatorAgent(map, agentPosition2, 0.25, 80,
-					new LuggageCheckActivity(xray));
+					new BasicLuggageCheckActivity(xray));
 			components.add(luggageCheck);
 
 			// luggage drop
@@ -170,7 +170,7 @@ public final class MapBuilder {
 						new Position(start.x - 0.3 + xOffsetXray, start.y + yOffsetXray + systemHeight - 0.5), start,
 						degreeRotation);
 
-			OperatorAgent luggageDrop = new OperatorAgent(map, agentPosition3, 0.25, 80, new LuggageDropActivity(xray));
+			OperatorAgent luggageDrop = new OperatorAgent(map, agentPosition3, 0.25, 80, new BasicLuggageDropActivity(xray));
 			components.add(luggageDrop);
 
 			// x-ray
@@ -182,7 +182,7 @@ public final class MapBuilder {
 				agentPosition = Utilities.transform(
 						new Position(start.x - 0.3 + xOffsetXray, start.y + yOffsetXray + systemHeight / 2 + 0.5),
 						start, degreeRotation);
-			components.add(new OperatorAgent(map, agentPosition, 0.25, 80, new XRayActivity(xray, luggageCheck)));
+			components.add(new OperatorAgent(map, agentPosition, 0.25, 80, new BasicXRayActivity(xray, luggageCheck)));
 
 			if (otherWayAround) {
 				// WTMD
@@ -211,13 +211,13 @@ public final class MapBuilder {
 						new Position(start.x + xOffsetWTMD + wtmdWidth / 4, start.y + yOffsetWTMD - 2), start,
 						degreeRotation);
 				OperatorAgent physicalCheck = new OperatorAgent(map, directionsPosition, 0.25, 80,
-						new PhysicalCheckActivity(wtmd));
+						new BasicPhysicalCheckActivity(wtmd));
 				components.add(physicalCheck);
 
 				Position directionsPosition2 = Utilities.transform(
 						new Position(start.x + xOffsetWTMD + 3 * wtmdWidth / 4, start.y + yOffsetWTMD - 2), start,
 						degreeRotation);
-				OperatorAgent etd = new OperatorAgent(map, directionsPosition2, 0.25, 80, new ETDCheckActivity(wtmd));
+				OperatorAgent etd = new OperatorAgent(map, directionsPosition2, 0.25, 80, new BasicETDCheckActivity(wtmd));
 				components.add(etd);
 			}
 		}
@@ -232,7 +232,7 @@ public final class MapBuilder {
 							Utilities.transform(
 									new Position(start.x + xOffsetQueue - 0.35, start.y + yOffsetQueue - 0.35), start,
 									degreeRotation),
-							0.25, 80, new TravelDocumentCheckActivity()));
+							0.25, 80, new BasicTravelDocumentCheckActivity()));
 		}
 
 		int numberOfQueueLanes = 5;

@@ -114,7 +114,8 @@ public class PassengerNavigationModule extends NavigationModule {
 
 	@Override
 	public void setGoal(Position position) {
-		if (position.distanceTo(flight.getCheckInQueue().getLeavingPosition()) < 0.5)
+		if (!flight.equals(Flight.NO_FLIGHT)
+				&& position.distanceTo(flight.getCheckInQueue().getLeavingPosition()) < 0.5)
 			goalPositions = getCheckInGoal(movementModel.getPosition());
 		else
 			super.setGoal(position);

@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import model.agent.humanAgent.OperatorAgent;
-import model.agent.humanAgent.tacticalLevel.activity.operator.CheckInActivity;
+import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicCheckInActivity;
 import model.environment.map.Map;
 import model.environment.map.MapBuilder;
 import model.environment.objects.area.EntranceArea;
@@ -938,7 +938,7 @@ public final class SimulationBuilder {
 
 		for (Desk d : map.getMapComponents(Desk.class)) {
 			sim.add(new OperatorAgent(map, new Position(d.getServingPosition().x, d.getServingPosition().y - 1), 0.25,
-					80, new CheckInActivity(d, 30)));
+					80, new BasicCheckInActivity(d, 30)));
 		}
 
 		sim.add(new QueueAnalyzer());

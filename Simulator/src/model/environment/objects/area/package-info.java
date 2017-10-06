@@ -1,5 +1,5 @@
 /**
- * 
+ * Airport areas.
  *
  * @author S.A.M. Janssen
  */

@@ -235,5 +235,4 @@ public abstract class HumanAgent extends Agent implements CircularShape {
 		Vector move = operationalModel.getMove(timeStep);
 		position = new Position(position.x + move.x, position.y + move.y);
 	}
-
 }
