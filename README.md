@@ -2,7 +2,7 @@
 
 For model description, see: TODO.
 
-For documentation, see: http://stefjanssen.com/doc/
+For documentation, see: https://stefjanssen.github.io/AATOM/
 
 For tutorials, see: TODO.
 
