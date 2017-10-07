@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import model.agent.humanAgent.OperatorAgent;
-import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicCheckInActivity;
+import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicOperatorCheckInActivity;
 import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicETDCheckActivity;
 import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicLuggageCheckActivity;
 import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicLuggageDropActivity;
@@ -81,7 +81,7 @@ public final class MapBuilder {
 					degreeRotation);
 			Desk desk = createDesk(new Position(start.x + i * 2, start.y), 1, 0.2, start, degreeRotation, deskPosition);
 			components.add(desk);
-			OperatorAgent agent = new OperatorAgent(map, agentPosition, 0.25, 80, new BasicCheckInActivity(desk, 60));
+			OperatorAgent agent = new OperatorAgent(map, agentPosition, 0.25, 80, new BasicOperatorCheckInActivity(desk, 60));
 			components.add(agent);
 		}
 

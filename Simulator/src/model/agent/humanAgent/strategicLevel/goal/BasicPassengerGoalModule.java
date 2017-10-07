@@ -6,7 +6,7 @@ import java.util.Collection;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.CheckpointActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.ExitActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.GateActivity;
-import model.agent.humanAgent.tacticalLevel.activity.passenger.impl.BasicCheckInActivity;
+import model.agent.humanAgent.tacticalLevel.activity.passenger.impl.BasicPassengerCheckInActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.impl.BasicCheckpointActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.impl.BasicExitActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.impl.BasicFacilityActivity;
@@ -45,7 +45,7 @@ public class BasicPassengerGoalModule extends GoalModule {
 		} else {
 			GateActivity gate = new BasicGateActivity(flight);
 			CheckpointActivity checkpoint = new BasicCheckpointActivity(flight);
-			goals.add(new Goal(new BasicCheckInActivity(flight), checkpoint));
+			goals.add(new Goal(new BasicPassengerCheckInActivity(flight), checkpoint));
 			goals.add(new Goal(checkpoint, gate));
 			goals.add(new Goal(new BasicPassengerBorderControlActivity(), gate));
 			goals.add(new Goal(gate, flight.getTimeToFlight()));

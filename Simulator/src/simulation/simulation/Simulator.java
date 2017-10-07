@@ -176,7 +176,7 @@ public class Simulator extends Thread {
 	 */
 	public Simulator(Map map, boolean gui, int timeStep, EndingConditions endingConditions,
 			AgentGenerator agentGenerator, Logger logger) {
-		this(new Map(), gui, timeStep, endingConditions, agentGenerator, logger, "");
+		this(map, gui, timeStep, endingConditions, agentGenerator, logger, "");
 	}
 
 	/**

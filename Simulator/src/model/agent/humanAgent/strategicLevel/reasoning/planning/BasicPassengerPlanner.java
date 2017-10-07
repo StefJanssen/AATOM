@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import model.agent.humanAgent.tacticalLevel.activity.Activity;
-import model.agent.humanAgent.tacticalLevel.activity.passenger.CheckInActivity;
+import model.agent.humanAgent.tacticalLevel.activity.passenger.PassengerCheckInActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.CheckpointActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.FacilityActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.GateActivity;
@@ -69,7 +69,7 @@ public class BasicPassengerPlanner extends ActivityPlanner {
 
 		// check-in
 		if (!checkedIn)
-			planning.add(getActivityFromType(CheckInActivity.class));
+			planning.add(getActivityFromType(PassengerCheckInActivity.class));
 
 		// checkpoint
 		planning.add(getActivityFromType(CheckpointActivity.class));

@@ -55,7 +55,6 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 	 */
 	public BasicCheckpointActivity(Flight flight) {
 		this.activityPosition = flight.getCheckPointQueue().getLeavingPosition();
-
 	}
 
 	@Override
@@ -131,7 +130,7 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 					closestSystems.add(position, system);
 			}
 		}
-		return closestSystems.subList(0, closestSystems.size()); 
+		return closestSystems.subList(0, closestSystems.size());
 	}
 
 	/**
@@ -196,7 +195,7 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 
 		// waiting
 		if (!movement.getStopOrder() && phase == 1
-				&& movement.getPosition().distanceTo(xRaySystem.getDropOffPosition()) < 0.4) {
+				&& movement.getPosition().distanceTo(xRaySystem.getDropOffPosition()) < 0.5) {
 
 			if (wtmd == null)
 				wtmd = getClosestWTMD();
@@ -231,7 +230,7 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 			xRaySystem.setCollectPassenger((Passenger) agent);
 		}
 		if (!movement.getStopOrder() && phase == 3
-				&& movement.getPosition().distanceTo(xRaySystem.getCollectPosition()) < 0.4) {
+				&& movement.getPosition().distanceTo(xRaySystem.getCollectPosition()) < 0.5) {
 			xRaySystem.setCollectPassenger(null);
 			for (Luggage l : ((Passenger) agent).getLuggage()) {
 				xRaySystem.removeBaggage(l);

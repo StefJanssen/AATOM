@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import model.agent.humanAgent.OperatorAgent;
-import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicCheckInActivity;
+import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicOperatorCheckInActivity;
 import model.environment.map.Map;
 import model.environment.map.MapBuilder;
 import model.environment.objects.area.EntranceArea;
@@ -837,13 +837,13 @@ public final class SimulationBuilder {
 	 * @return The simulator.
 	 */
 	public static Simulator rotterdamTheHagueAirport(boolean gui, int timeStep) {
-		Map map = new Map();
-		MapBuilder mapBuilder = new MapBuilder(map);
 
 		BaseAgentGenerator agentGenerator = new BaseAgentGenerator(10);
-		Simulator sim = new Simulator(map, gui, timeStep, new NoPassengerEndingConditions(), agentGenerator,
+		Simulator sim = new Simulator(gui, timeStep, new NoPassengerEndingConditions(), agentGenerator,
 				new BaseLogger());
 
+		MapBuilder mapBuilder = new MapBuilder(sim);
+		Map map = sim.getMap();
 		sim.addAll(generateRTHAWalls(mapBuilder));
 
 		Collection<Desk> desks1 = map.getMapComponents(Desk.class);
@@ -938,7 +938,7 @@ public final class SimulationBuilder {
 
 		for (Desk d : map.getMapComponents(Desk.class)) {
 			sim.add(new OperatorAgent(map, new Position(d.getServingPosition().x, d.getServingPosition().y - 1), 0.25,
-					80, new BasicCheckInActivity(d, 30)));
+					80, new BasicOperatorCheckInActivity(d, 30)));
 		}
 
 		sim.add(new QueueAnalyzer());
