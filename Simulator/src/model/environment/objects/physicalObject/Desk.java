@@ -111,6 +111,10 @@ public class Desk extends PhysicalObject implements Openable {
 	 * @return The agent at the desk.
 	 */
 	public Passenger getAgentAtDesk() {
+		if (agentAtDesk != null) {
+			if (agentAtDesk.isDestroyed())
+				agentAtDesk = null;
+		}
 		return agentAtDesk;
 	}
 
@@ -129,7 +133,13 @@ public class Desk extends PhysicalObject implements Openable {
 	 * @return True if it is, false otherwise.
 	 */
 	public boolean isOccupied() {
-		return agentAtDesk != null;
+		if (agentAtDesk == null)
+			return false;
+		if (agentAtDesk.isDestroyed()) {
+			agentAtDesk = null;
+			return false;
+		}
+		return true;
 	}
 
 	@Override

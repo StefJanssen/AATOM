@@ -187,6 +187,10 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Ope
 	 * @return The passenger.
 	 */
 	public Passenger getCollectPassenger() {
+		if (collectPassenger != null) {
+			if (collectPassenger.isDestroyed())
+				collectPassenger = null;
+		}
 		return collectPassenger;
 	}
 
@@ -205,6 +209,10 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Ope
 	 * @return The passenger.
 	 */
 	public Passenger getDropOffPassenger() {
+		if (dropOffPassenger != null) {
+			if (dropOffPassenger.isDestroyed())
+				dropOffPassenger = null;
+		}
 		return dropOffPassenger;
 	}
 
@@ -225,7 +233,6 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Ope
 	public XRaySensor getXRaySensor() {
 		return xray;
 	}
-
 
 	@Override
 	public boolean isOpen() {
