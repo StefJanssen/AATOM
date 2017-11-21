@@ -5,10 +5,12 @@ import java.util.Collections;
 import java.util.List;
 
 import model.agent.humanAgent.tacticalLevel.activity.Activity;
-import model.agent.humanAgent.tacticalLevel.activity.passenger.PassengerCheckInActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.CheckpointActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.FacilityActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.GateActivity;
+import model.agent.humanAgent.tacticalLevel.activity.passenger.PassengerBorderControlActivity;
+import model.agent.humanAgent.tacticalLevel.activity.passenger.PassengerCheckInActivity;
+import model.environment.objects.area.BorderControlGateArea;
 import model.environment.objects.flight.Flight;
 
 /**
@@ -74,7 +76,8 @@ public class BasicPassengerPlanner extends ActivityPlanner {
 		// checkpoint
 		planning.add(getActivityFromType(CheckpointActivity.class));
 
-		// TODO add border control to planning
+		if (flight.getGateArea() instanceof BorderControlGateArea)
+			planning.add(getActivityFromType(PassengerBorderControlActivity.class));
 
 		// TODO randomize location and check feasibility
 		planning.add(getActivityFromType(FacilityActivity.class));

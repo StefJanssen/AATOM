@@ -28,11 +28,11 @@ public class Flight implements DirectlyUpdatable, SimulationObject {
 	/**
 	 * The time of flight (in seconds from the start of the simulation).
 	 */
-	private double flightTime;
+	protected double flightTime;
 	/**
 	 * The time to flight.
 	 */
-	private double timeToFlight;
+	protected double timeToFlight;
 	/**
 	 * The gate area.
 	 */
@@ -53,6 +53,10 @@ public class Flight implements DirectlyUpdatable, SimulationObject {
 	 * The flight type.
 	 */
 	private FlightType flightType;
+	/**
+	 * The flight size.
+	 */
+	private final int size;
 
 	/**
 	 * Creates a new flight.
@@ -72,6 +76,29 @@ public class Flight implements DirectlyUpdatable, SimulationObject {
 	 */
 	public Flight(FlightType flightType, double flightTime, GateArea gateArea, Collection<Desk> checkInDesks,
 			QueuingArea checkInQueue, QueuingArea checkpointQueue) {
+		this(flightType, 200, flightTime, gateArea, checkInDesks, checkInQueue, checkpointQueue);
+	}
+
+	/**
+	 * Creates a new flight.
+	 * 
+	 * @param flightType
+	 *            The flight type.
+	 * @param size
+	 *            The flight size.
+	 * @param flightTime
+	 *            The flight time.
+	 * @param gateArea
+	 *            The gate area.
+	 * @param checkInDesks
+	 *            The check in desks.
+	 * @param checkInQueue
+	 *            The check in queue.
+	 * @param checkpointQueue
+	 *            The checkpoint queue.
+	 */
+	public Flight(FlightType flightType, int size, double flightTime, GateArea gateArea, Collection<Desk> checkInDesks,
+			QueuingArea checkInQueue, QueuingArea checkpointQueue) {
 		this.flightType = flightType;
 		this.flightTime = flightTime;
 		timeToFlight = flightTime;
@@ -79,6 +106,7 @@ public class Flight implements DirectlyUpdatable, SimulationObject {
 		this.checkPointQueue = checkpointQueue;
 		this.gateArea = gateArea;
 		this.checkInDesks = checkInDesks;
+		this.size = size;
 		checkedIn = new ArrayList<>();
 	}
 
@@ -129,6 +157,15 @@ public class Flight implements DirectlyUpdatable, SimulationObject {
 	 */
 	public QueuingArea getCheckPointQueue() {
 		return checkPointQueue;
+	}
+
+	/**
+	 * Gets the size of the flight.
+	 * 
+	 * @return The flight size.
+	 */
+	public int getFlightSize() {
+		return size;
 	}
 
 	/**

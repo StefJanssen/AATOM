@@ -38,7 +38,6 @@ public class BasicPassengerObservationModel extends ObservationModule {
 	@Override
 	public <T> Collection<T> getObservation(Class<T> type) {
 		if (type.equals(HumanAgent.class)) {
-			// TODO PARAMETERS
 			Collection<HumanAgent> agentsInNeighborhood = Utilities.getMapComponentsInNeighborhood(
 					movementModel.getPosition(), 1, map.getMapComponents(HumanAgent.class));
 			return (Collection<T>) agentsInNeighborhood;
@@ -59,7 +58,7 @@ public class BasicPassengerObservationModel extends ObservationModule {
 					map.getMapComponents(Area.class));
 			return (Collection<T>) areas;
 		} else if (type.equals(XRaySystem.class)) {
-			Collection<XRaySystem> xray = Utilities.getMapComponentsInNeighborhood(movementModel.getPosition(), 15,
+			Collection<XRaySystem> xray = Utilities.getMapComponentsInNeighborhood(movementModel.getPosition(), 30,
 					map.getMapComponents(XRaySystem.class));
 			return (Collection<T>) xray;
 		} else if (type.equals(WalkThroughMetalDetector.class)) {

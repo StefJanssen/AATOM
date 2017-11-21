@@ -19,7 +19,7 @@ import simulation.simulation.util.Utilities;
 public final class DiscretizedMap {
 
 	/**
-	 * Singleton object. // TODO make it Threadlocal.
+	 * Singleton object.
 	 */
 	private static DiscretizedMap instance;
 
@@ -156,6 +156,7 @@ public final class DiscretizedMap {
 	 * Prints the discrete {@link Map}.
 	 */
 	public void printMap() {
+		System.out.println("private static boolean[][] getMap() {");
 		System.out.println("boolean[][] map = new boolean[][] {");
 		for (int i = 0; i < discretizedMap.length; i++) {
 			System.out.print("{");
@@ -169,5 +170,7 @@ public final class DiscretizedMap {
 				System.out.println(",");
 		}
 		System.out.println("};");
+		System.out.println("return map;");
+		System.out.println("}");
 	}
 }

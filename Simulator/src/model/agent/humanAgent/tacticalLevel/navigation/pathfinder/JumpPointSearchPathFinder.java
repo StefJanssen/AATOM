@@ -297,7 +297,10 @@ public class JumpPointSearchPathFinder extends PathFinder {
 		// translate to real world coordinates
 		List<Position> positions = new ArrayList<>();
 		for (JumpPointNode pathNode : path) {
-			positions.add(getPositionFromNode(pathNode));
+			if (pathNode.equals(goalNode))
+				positions.add(goal);
+			else
+				positions.add(getPositionFromNode(pathNode));
 		}
 
 		Collections.reverse(positions);

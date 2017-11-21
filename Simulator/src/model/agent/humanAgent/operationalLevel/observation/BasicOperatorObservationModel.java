@@ -30,7 +30,6 @@ public class BasicOperatorObservationModel extends ObservationModule {
 	@Override
 	public <T> Collection<T> getObservation(Class<T> type) {
 		if (type.equals(HumanAgent.class)) {
-			// TODO PARAMETERS
 			Collection<HumanAgent> movementModelsInNeighborhood = Utilities.getMapComponentsInNeighborhood(
 					movementModel.getPosition(), 1, map.getMapComponents(HumanAgent.class));
 			return (Collection<T>) movementModelsInNeighborhood;

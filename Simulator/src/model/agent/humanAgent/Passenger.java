@@ -15,6 +15,7 @@ import model.environment.objects.area.Facility;
 import model.environment.objects.flight.Flight;
 import model.environment.objects.physicalObject.Chair;
 import model.environment.objects.physicalObject.luggage.Luggage;
+import model.environment.objects.physicalObject.luggage.LuggageType;
 import model.environment.position.Position;
 
 /**
@@ -69,9 +70,9 @@ public class Passenger extends HumanAgent {
 	public Passenger(Map map, Flight flight, boolean checkedIn, Class<? extends Facility> facility, Position position,
 			double radius, double mass, Luggage luggage, Color color) {
 		this(map, flight, checkedIn, facility, position, radius, mass, luggage,
-				new BasicPassengerStrategicModel(facility, flight, checkedIn), new BasicPassengerTacticalModel(map, flight),
-				new BasicPassengerOperationalModel(map, 1), color);
-
+				new BasicPassengerStrategicModel(facility, flight,
+						!luggage.getLuggageType().equals(LuggageType.CHECKED)),
+				new BasicPassengerTacticalModel(map, flight), new BasicPassengerOperationalModel(map, 1), color);
 	}
 
 	/**
@@ -109,13 +110,21 @@ public class Passenger extends HumanAgent {
 		super(position, radius, mass, strategicModel, tacticalModel, operationalModel, color);
 		this.flight = flight;
 		this.checkedIn = checkedIn;
-		if(checkedIn)
+		if (checkedIn)
 			flight.checkIn(this);
 		this.luggage = new ArrayList<>();
 		this.luggage.add(luggage);
 		this.facility = facility;
 		for (Luggage l : this.luggage)
 			l.setOwner(this);
+
+		if (checkedIn) {
+			for (Luggage l : this.luggage) {
+				if (l.getLuggageType().equals(LuggageType.CHECKED))
+					throw new RuntimeException("You cannot be checked in already if you have checked luggage as well.");
+			}
+		}
+
 	}
 
 	/**

@@ -113,22 +113,22 @@ public class BasicGateActivity extends GateActivity {
 			if (timer > 600) {
 				setChair();
 				timer = 0;
-				if(chair == null) {
+				if (chair == null) {
 					movement.setStopOrder(-1);
 				}
 			}
-//			// stop after 2 minutes of moving
-//			if (timer < 0) {
-//				timer += timeStep / 1000.0;
-//				if (timer < 120) {
-//					setChair();
-//					if (chair == null)
-//						movement.setStopOrder(-1);
-//					else
-//						movement.setStopOrder(0);
-//					timer = -1;
-//				}
-//			}
+			// // stop after 2 minutes of moving
+			// if (timer < 0) {
+			// timer += timeStep / 1000.0;
+			// if (timer < 120) {
+			// setChair();
+			// if (chair == null)
+			// movement.setStopOrder(-1);
+			// else
+			// movement.setStopOrder(0);
+			// timer = -1;
+			// }
+			// }
 		}
 		// we found a chair.
 		else {

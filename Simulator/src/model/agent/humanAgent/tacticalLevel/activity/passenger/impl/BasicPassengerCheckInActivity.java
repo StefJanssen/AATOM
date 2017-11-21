@@ -27,10 +27,6 @@ public class BasicPassengerCheckInActivity extends PassengerCheckInActivity {
 	 * The serving desk.
 	 */
 	private Desk servingDesk;
-	/**
-	 * Agent waited.
-	 */
-	private double waitingTimeLeft = 8;
 
 	/**
 	 * Creates a check-in activity.
@@ -49,19 +45,8 @@ public class BasicPassengerCheckInActivity extends PassengerCheckInActivity {
 
 		// we are at the right position
 		if (flight.getCheckInQueue().getLeavingPosition().distanceTo(movement.getPosition()) < 0.6) {
-
-			// We should wait for agents to reach their desks of they are on
-			// their way
-			if (waitingTimeLeft == 8) {
-				activityModule.setQueuing(8);
-				activityModule.setInFrontOfQueue();
-			}
-
-			// If we're waiting, we cannot start yet.
-			if (waitingTimeLeft > 0) {
-				waitingTimeLeft -= timeStep / 1000.0;
-				return false;
-			}
+			// set front of queue
+			activityModule.setInFrontOfQueue();
 
 			// Determine if the desks are occupied
 			List<Desk> desks = getClosestDesks();
@@ -117,6 +102,21 @@ public class BasicPassengerCheckInActivity extends PassengerCheckInActivity {
 		return closestDesks.subList(0, Math.min(closestDesks.size(), flight.getCheckInDesks().size()));
 	}
 
+	/**
+	 * Gets a temporary position to prevent getting stuck behind other
+	 * passengers.
+	 * 
+	 * @return The temporary position.
+	 */
+	private Position getTemporaryPosition() {
+		// vector from queue to serving postion
+		Vector v = Utilities.getVector(servingDesk.getServingPosition(), flight.getCheckInQueue());
+		// other way around and scaled
+		v = v.scalarMultiply(-0.8);
+		// new position
+		return new Position(servingDesk.getServingPosition().x + v.x, servingDesk.getServingPosition().y + v.y);
+	}
+
 	@Override
 	public void goToActivity() {
 		if (isFinished())
@@ -138,21 +138,6 @@ public class BasicPassengerCheckInActivity extends PassengerCheckInActivity {
 		navigationModule.setGoal(servingDesk.getServingPosition());
 		navigationModule.setShortTermGoal(getTemporaryPosition());
 		servingDesk.setAgentAtDesk((Passenger) agent);
-	}
-
-	/**
-	 * Gets a temporary position to prevent getting stuck behind other
-	 * passengers.
-	 * 
-	 * @return The temporary position.
-	 */
-	private Position getTemporaryPosition() {
-		// vector from queue to serving postion
-		Vector v = Utilities.getVector(servingDesk.getServingPosition(), flight.getCheckInQueue());
-		// other way around and scaled
-		v = v.scalarMultiply(-0.8);
-		// new position
-		return new Position(servingDesk.getServingPosition().x + v.x, servingDesk.getServingPosition().y + v.y);
 	}
 
 	@Override

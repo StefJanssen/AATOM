@@ -400,7 +400,11 @@ public class Simulator extends Thread {
 		if (gui != null)
 			gui.setSizeAndRatio();
 
-		add(agentGenerator.generateAgent(numberOfSteps, timeStep, true));
+		List<? extends Agent> agents = agentGenerator.generateAgent(numberOfSteps, timeStep, true);
+		if (agents != null) {
+			for (Agent a : agents)
+				add(a);
+		}
 
 		// main loop
 		if (gui != null)
@@ -463,7 +467,11 @@ public class Simulator extends Thread {
 	public long step() {
 		// keep track of the time the step takes
 		long startTime = System.currentTimeMillis();
-		add(agentGenerator.generateAgent(numberOfSteps, timeStep, false));
+
+		// add agents
+		List<? extends Agent> agents = agentGenerator.generateAgent(numberOfSteps, timeStep, false);
+		for (Agent a : agents)
+			add(a);
 
 		// update all directly updatable items
 		for (DirectlyUpdatable d : map.getMapComponents(DirectlyUpdatable.class))

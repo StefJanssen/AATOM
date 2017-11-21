@@ -66,7 +66,7 @@ public class WalkThroughMetalDetector extends Sensor implements PolygonShape {
 	 */
 	public boolean canGo() {
 		boolean lastPassengerGone = true;
-		if (lastObservedPassenger != null) {
+		if (getLastObservedPassenger() != null) {
 			if (shape.contains(lastObservedPassenger.getPosition().x, lastObservedPassenger.getPosition().y))
 				lastPassengerGone = false;
 		}
@@ -98,6 +98,18 @@ public class WalkThroughMetalDetector extends Sensor implements PolygonShape {
 	 * @return The last observed passenger.
 	 */
 	public Passenger getLastObservedPassenger() {
+		if (lastObservedPassenger != null) {
+			if (lastObservedPassenger.isDestroyed())
+				lastObservedPassenger = null;
+		}
+
+		List<Passenger> toRemove = new ArrayList<>();
+		for (Passenger p : personsInCosideration) {
+			if (p.isDestroyed())
+				toRemove.add(p);
+		}
+		personsInCosideration.removeAll(toRemove);
+
 		return lastObservedPassenger;
 	}
 

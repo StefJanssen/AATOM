@@ -37,7 +37,7 @@ public class BaseLogger extends Logger {
 	public BaseLogger(String folderName) {
 		String logLocation = initLog(folderName);
 		loggerList = new ArrayList<>();
-//		loggerList.add(new SimulationLogger(logLocation));
+		// loggerList.add(new SimulationLogger(logLocation));
 		loggerList.add(new AnalyticsLogger(logLocation));
 		loggerList.add(new AgentLogger(logLocation));
 	}

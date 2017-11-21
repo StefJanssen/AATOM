@@ -33,10 +33,6 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 	 */
 	private Position activityPosition;
 	/**
-	 * Waiting time left.
-	 */
-	private double waitingTimeLeft = 12;
-	/**
 	 * The phase.
 	 */
 	private int phase;
@@ -59,19 +55,10 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 
 	@Override
 	public boolean canStart(int timeStep) {
+		// we are at the right position
 		if (movement.getPosition().distanceTo(activityPosition) < 0.5) {
-			// We should wait for agents to reach their x-ray machine if they
-			// are on their way
-			if (waitingTimeLeft == 12) {
-				activityModule.setQueuing(12);
-				activityModule.setInFrontOfQueue();
-			}
-
-			// If we're waiting, we cannot start yet.
-			if (waitingTimeLeft > 0) {
-				waitingTimeLeft -= timeStep / 1000.0;
-				return false;
-			}
+			// set front of queue
+			activityModule.setInFrontOfQueue();
 
 			// Get the closest desks
 			List<XRaySystem> systems = getClosestSystems();
@@ -84,8 +71,7 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 				}
 			}
 			// all systems occupied
-			activityModule.setQueuing(10);
-
+			// activityModule.setQueuing(10);
 		}
 		return false;
 	}
@@ -235,6 +221,7 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 			for (Luggage l : ((Passenger) agent).getLuggage()) {
 				xRaySystem.removeBaggage(l);
 			}
+
 			endActivity();
 		}
 	}

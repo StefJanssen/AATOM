@@ -1,7 +1,5 @@
 package simulation.main;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +12,13 @@ import java.util.concurrent.Future;
  * 
  * @author S.A.M. Janssen
  */
-public class Experimenter {
+public class Experimenter extends Thread {
 	/**
 	 * A process task forms a simulation task for the experimenter.
 	 * 
 	 * @author S.A.M. Janssen
 	 */
-	private static class ProcessTask extends Thread {
+	private class ProcessTask extends Thread {
 
 		/**
 		 * The commands.
@@ -57,27 +55,43 @@ public class Experimenter {
 	/**
 	 * The different processes.
 	 */
-	private static List<Future<?>> futures;
+	private List<Future<?>> futures;
+
 	/**
 	 * The inputs.
 	 */
-	private static List<String[]> inputs;
+	private List<String[]> inputs;
 	/**
 	 * The location of the main class.
 	 */
-	private static String[] mainLocation;
+	private String[] mainLocation;
 	/**
 	 * The starting time of the experiment.
 	 */
-	@SuppressWarnings("unused")
-	private static long startTime;
-
+	private long startTime;
 	/**
 	 * Success or not.
 	 */
+	private boolean success = false;
+	/**
+	 * Creates an experimenter.
+	 * 
+	 * @param inputs
+	 *            The inputs.
+	 * @param mainClass
+	 *            The main class.
+	 */
+	public Experimenter(List<String[]> inputs, Class<?> mainClass) {
+		// set the main location.
+		String separator = System.getProperty("file.separator");
+		String classpath = System.getProperty("java.class.path");
+		String path = System.getProperty("java.home") + separator + "bin" + separator + "java";
+		String className = mainClass.getName();
+		mainLocation = new String[] { path, "-cp", classpath, className };
 
-	@SuppressWarnings("unused")
-	private static boolean success = false;
+		// set the inputs.
+		this.inputs = inputs;
+	}
 
 	/**
 	 * Concatenates two arrays.
@@ -90,7 +104,7 @@ public class Experimenter {
 	 *            The type.
 	 * @return The concatenated array.
 	 */
-	private static <T> T[] concatenate(T[] a, T[] b) {
+	private <T> T[] concatenate(T[] a, T[] b) {
 		int aLen = a.length;
 		int bLen = b.length;
 
@@ -103,22 +117,9 @@ public class Experimenter {
 	}
 
 	/**
-	 * Copy a string array.
-	 * 
-	 * @param src
-	 *            The array.
-	 * @return The copy.
-	 */
-	private static String[] copy(String[] src) {
-		String[] dest = new String[src.length];
-		System.arraycopy(src, 0, dest, 0, src.length);
-		return dest;
-	}
-
-	/**
 	 * Execute the experiment.
 	 */
-	private static void executeExperiment() {
+	private void executeExperiment() {
 		int cores = Runtime.getRuntime().availableProcessors();
 		final ExecutorService service = Executors.newFixedThreadPool(cores);
 
@@ -147,56 +148,9 @@ public class Experimenter {
 	}
 
 	/**
-	 * Handles an input file. The first line is always the number of trials,
-	 * while the second line is the arguments for the simulation.
-	 * 
-	 * @param fileName
-	 *            The file name.
-	 * @return The input parameters for the sim.
-	 */
-	private static List<String[]> handleInput(String fileName) {
-		List<String[]> strings = new ArrayList<>();
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new FileReader(fileName));
-			String line = br.readLine();
-
-			while (line != null) {
-				int numberOfTrials = Integer.parseInt(line);
-				String s = br.readLine();
-				if (s != null) {
-					String[] splitted = s.split(" ");
-					int mySeed = Integer.parseInt(splitted[splitted.length - 1]);
-					for (int i = 0; i < numberOfTrials; i++) {
-						splitted[splitted.length - 1] = Integer.toString(mySeed + i);
-						strings.add(copy(splitted));
-					}
-					line = br.readLine();
-				}
-			}
-			br.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return strings;
-	}
-
-	/**
-	 * The main method.
-	 * 
-	 * @param args
-	 *            The input file name.
-	 */
-	public static void main(String[] args) {
-		preProcess(args);
-		executeExperiment();
-		postProcess();
-	}
-
-	/**
 	 * Post processing.
 	 */
-	private static void postProcess() {
+	private void postProcess() {
 		int i = 0;
 		for (Future<?> future : futures) {
 			try {
@@ -215,38 +169,19 @@ public class Experimenter {
 		}
 		if (!cancelled)
 			success = true;
+
+		if (success)
+			System.out.println("Succesfully done in: " + (System.currentTimeMillis() - startTime));
+		else
+			System.out.println("Unsuccesfully done in: " + (System.currentTimeMillis() - startTime));
+
 		System.exit(0);
 	}
 
-	/**
-	 * pre processing for the experiment.
-	 * 
-	 * @param args
-	 *            The input.
-	 */
-	private static void preProcess(String[] args) {
-		// Main Location.
-		String separator = System.getProperty("file.separator");
-		String classpath = System.getProperty("java.class.path");
-		String path = System.getProperty("java.home") + separator + "bin" + separator + "java";
-		String className = Main.class.getName();
-		mainLocation = new String[] { path, "-cp", classpath, className };
-
-		// Handle input.
-		if (args.length > 0)
-			inputs = handleInput(args[0]);
-		else {
-			// Default.
-			inputs = new ArrayList<>();
-			inputs.add(new String[] { "50", "502323" });
-			inputs.add(new String[] { "50", "5023222" });
-			inputs.add(new String[] { "50", "50232343" });
-			inputs.add(new String[] { "50", "502324533" });
-			inputs.add(new String[] { "50", "5023213" });
-			inputs.add(new String[] { "50", "50232223" });
-			inputs.add(new String[] { "50", "5023243" });
-		}
-
+	@Override
+	public void run() {
 		startTime = System.currentTimeMillis();
+		executeExperiment();
+		postProcess();
 	}
 }

@@ -67,7 +67,7 @@ public class ActivityModule implements Updatable {
 	 * @return The next activity position.
 	 */
 	public Position getNextActivityPosition() {
-		if(planner.getNextActivity() == null)
+		if (planner.getNextActivity() == null)
 			return Position.NO_POSITION;
 		return planner.getNextActivity().getActivityPosition();
 	}

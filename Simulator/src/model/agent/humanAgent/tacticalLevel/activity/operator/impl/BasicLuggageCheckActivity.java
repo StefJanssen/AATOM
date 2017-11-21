@@ -83,6 +83,7 @@ public class BasicLuggageCheckActivity extends LuggageCheckActivity {
 			}
 		}
 
+		// TODO fix
 		system.getCollectPassenger().communicate(CommunicationType.WAIT,
 				Utilities.RANDOM_GENERATOR.nextNormal(myServiceRate, myServiceRate / 10));
 		super.startActivity();
@@ -90,8 +91,10 @@ public class BasicLuggageCheckActivity extends LuggageCheckActivity {
 
 	@Override
 	public void update(int timeStep) {
-		if (system.getCollectPassenger().getStopOrder())
-			return;
+		if (system.getCollectPassenger() != null) {
+			if (system.getCollectPassenger().getStopOrder())
+				return;
+		}
 
 		endActivity();
 	}

@@ -57,7 +57,8 @@ public class BaseAgentGenerator extends AgentGenerator {
 	}
 
 	@Override
-	public HumanAgent generateAgent(long numberOfSteps, int timeStep, boolean forced) {
+	public List<HumanAgent> generateAgent(long numberOfSteps, int timeStep, boolean forced) {
+		List<HumanAgent> agents = new ArrayList<>();
 		// if we allow agent generation OR if agent generation is forced
 		if (forced || canGenerate(timeStep)) {
 			Luggage luggage = new Luggage(LuggageType.CARRY_ON, Utilities.RANDOM_GENERATOR.nextDouble(),
@@ -68,8 +69,8 @@ public class BaseAgentGenerator extends AgentGenerator {
 			Position start = Utilities.generatePosition(area.getShape());
 			Flight flight = getEligibleFlight();
 			if (flight != null) {
-				return new Passenger(simulator.getMap(), flight, Utilities.RANDOM_GENERATOR.nextBoolean(), getFacility(), start, 0.2, 80, luggage,
-						Color.RED);
+				agents.add(new Passenger(simulator.getMap(), flight, Utilities.RANDOM_GENERATOR.nextBoolean(),
+						getFacility(), start, 0.2, 80, luggage, Color.RED));
 			}
 		}
 		return null;

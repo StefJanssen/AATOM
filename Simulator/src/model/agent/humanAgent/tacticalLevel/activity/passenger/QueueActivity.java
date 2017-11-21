@@ -28,8 +28,9 @@ public class QueueActivity extends Activity {
 	@Override
 	public boolean canStart(int timeStep) {
 		// if we're the first one in queue, we can certainly start.
-		if (inFrontOfQueue)
+		if (inFrontOfQueue) {
 			return true;
+		}
 
 		// We determine if there is an agent in front of us that we don't want
 		// to push.

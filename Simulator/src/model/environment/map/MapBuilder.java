@@ -5,10 +5,10 @@ import java.util.Collections;
 import java.util.List;
 
 import model.agent.humanAgent.OperatorAgent;
-import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicOperatorCheckInActivity;
 import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicETDCheckActivity;
 import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicLuggageCheckActivity;
 import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicLuggageDropActivity;
+import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicOperatorCheckInActivity;
 import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicPhysicalCheckActivity;
 import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicTravelDocumentCheckActivity;
 import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicXRayActivity;
@@ -81,7 +81,8 @@ public final class MapBuilder {
 					degreeRotation);
 			Desk desk = createDesk(new Position(start.x + i * 2, start.y), 1, 0.2, start, degreeRotation, deskPosition);
 			components.add(desk);
-			OperatorAgent agent = new OperatorAgent(map, agentPosition, 0.25, 80, new BasicOperatorCheckInActivity(desk, 60));
+			OperatorAgent agent = new OperatorAgent(map, agentPosition, 0.25, 80,
+					new BasicOperatorCheckInActivity(desk, 60));
 			components.add(agent);
 		}
 
@@ -170,7 +171,8 @@ public final class MapBuilder {
 						new Position(start.x - 0.3 + xOffsetXray, start.y + yOffsetXray + systemHeight - 0.5), start,
 						degreeRotation);
 
-			OperatorAgent luggageDrop = new OperatorAgent(map, agentPosition3, 0.25, 80, new BasicLuggageDropActivity(xray));
+			OperatorAgent luggageDrop = new OperatorAgent(map, agentPosition3, 0.25, 80,
+					new BasicLuggageDropActivity(xray));
 			components.add(luggageDrop);
 
 			// x-ray
@@ -217,7 +219,8 @@ public final class MapBuilder {
 				Position directionsPosition2 = Utilities.transform(
 						new Position(start.x + xOffsetWTMD + 3 * wtmdWidth / 4, start.y + yOffsetWTMD - 2), start,
 						degreeRotation);
-				OperatorAgent etd = new OperatorAgent(map, directionsPosition2, 0.25, 80, new BasicETDCheckActivity(wtmd));
+				OperatorAgent etd = new OperatorAgent(map, directionsPosition2, 0.25, 80,
+						new BasicETDCheckActivity(wtmd));
 				components.add(etd);
 			}
 		}

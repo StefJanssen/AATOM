@@ -29,7 +29,8 @@ public class BasicPassengerStrategicModel extends StrategicModel {
 	 *            Checked in or not.
 	 */
 	public BasicPassengerStrategicModel(Class<? extends Facility> facility, Flight flight, boolean checkedIn) {
-		super(new BasicPassengerPlanner(flight,checkedIn), new BasicPassengerGoalModule(facility, flight), new BeliefModule());
+		super(new BasicPassengerPlanner(flight, checkedIn), new BasicPassengerGoalModule(facility, checkedIn, flight),
+				new BeliefModule());
 		this.flight = flight;
 	}
 

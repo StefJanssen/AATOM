@@ -1,5 +1,7 @@
 package simulation.simulation.agentGenerator;
 
+import java.util.List;
+
 import model.agent.Agent;
 import simulation.simulation.Simulator;
 
@@ -31,7 +33,7 @@ public abstract class AgentGenerator {
 	 * 
 	 * @return The generated {@link Agent}.
 	 */
-	public abstract Agent generateAgent(long numberOfSteps, int timeStep, boolean forced);
+	public abstract List<? extends Agent> generateAgent(long numberOfSteps, int timeStep, boolean forced);
 
 	/**
 	 * Sets the simulator.

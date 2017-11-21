@@ -30,7 +30,7 @@ public class AreaView extends MapComponentView {
 	 */
 	public AreaView(Area area) {
 		this.area = area;
-		areaColor = Color.YELLOW;
+		areaColor = Color.WHITE;
 	}
 
 	@Override

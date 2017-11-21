@@ -13,7 +13,7 @@ public interface Openable {
 	 * @return True if open, false if closed.
 	 */
 	public boolean isOpen();
-	
+
 	/**
 	 * Sets open.
 	 * 

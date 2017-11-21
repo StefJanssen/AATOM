@@ -1,5 +1,7 @@
 package simulation.simulation.agentGenerator;
 
+import java.util.List;
+
 import model.agent.humanAgent.HumanAgent;
 
 /**
@@ -10,7 +12,7 @@ import model.agent.humanAgent.HumanAgent;
 public class EmptyAgentGenerator extends AgentGenerator {
 
 	@Override
-	public HumanAgent generateAgent(long numberOfSteps, int timeStep, boolean forced) {
+	public List<HumanAgent> generateAgent(long numberOfSteps, int timeStep, boolean forced) {
 		return null;
 	}
 

@@ -26,7 +26,7 @@ import util.math.RandomPlus;
 public class Utilities {
 
 	/**
-	 * A random generator. TODO make it thread local.
+	 * A random generator.
 	 */
 	public static RandomPlus RANDOM_GENERATOR = new RandomPlus(0);
 
@@ -68,13 +68,26 @@ public class Utilities {
 	 * @return The position.
 	 */
 	public static Position generatePosition(Path2D shape) {
+		return generatePosition(shape, RANDOM_GENERATOR);
+	}
+
+	/**
+	 * Generates a position inside a shape.
+	 * 
+	 * @param shape
+	 *            The shape.
+	 * @param randomGenerator
+	 *            The random generator.
+	 * @return The position.
+	 */
+	public static Position generatePosition(Path2D shape, RandomPlus randomGenerator) {
 		Rectangle r = shape.getBounds();
 		float x = -1, y = -1;
 
 		int count = 0;
 		while (!shape.contains(x, y)) {
-			x = (float) (r.getX() + 1 + (r.getWidth() - 2) * RANDOM_GENERATOR.nextFloat());
-			y = (float) (r.getY() + 1 + (r.getHeight() - 2) * RANDOM_GENERATOR.nextFloat());
+			x = (float) (r.getX() + 1 + (r.getWidth() - 2) * randomGenerator.nextFloat());
+			y = (float) (r.getY() + 1 + (r.getHeight() - 2) * randomGenerator.nextFloat());
 			// preventing infinite loops from happening.
 			count++;
 			if (count == 100)
@@ -93,9 +106,24 @@ public class Utilities {
 	 * @return The positions.
 	 */
 	public static List<Position> generatePositions(int numberOfPositions, Path2D shape) {
+		return generatePositions(numberOfPositions, shape, RANDOM_GENERATOR);
+	}
+
+	/**
+	 * Generates a set of positions inside a shape.
+	 * 
+	 * @param numberOfPositions
+	 *            The number of positions we want to generate.
+	 * @param shape
+	 *            The shape.
+	 * @param randomGenerator
+	 *            The random generator.
+	 * @return The positions.
+	 */
+	public static List<Position> generatePositions(int numberOfPositions, Path2D shape, RandomPlus randomGenerator) {
 		List<Position> list = new ArrayList<>();
 		for (int i = 0; i < numberOfPositions; i++) {
-			list.add(generatePosition(shape));
+			list.add(generatePosition(shape, randomGenerator));
 		}
 		return list;
 	}
