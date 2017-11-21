@@ -1,4 +1,4 @@
-function [processedGraphs] = processGraphs( graphData, vis )
+function [processedGraphs] = processGraphs( graphData )
 graphs = strfind(graphData(:,1), '_graph_');
 graphs = find(not(cellfun('isempty', graphs)));
 
@@ -21,45 +21,34 @@ for i = 1 : length(graphs)
     indexOfUnderscore = strfind(graphName,'_');
     yLabel = graphName(1:indexOfUnderscore-1);
     graphName = graphName(indexOfUnderscore+1:end);
-    if(nargin == 2)
-        figure('Name',graphName)
-    end;
+    
     myData = [];
     for j = minLineIndex : maxLineIndex-1
         addFactor = 0;
         if(j == maxLineIndex - 1)
             addFactor = 1;
-                    if(i == length(graphs))
-                        addFactor = -1;
-                    end;
-
+            if(i == length(graphs))
+                addFactor = -1;
+            end;
+            
         end;
         
         xData = str2double(graphData(lines(j)+1:lines(j+1)-1-addFactor,1));
         yData = cell2mat(graphData(lines(j)+1:lines(j+1)-1-addFactor,2));
         myData = [myData, xData, yData];
-        if(nargin == 2)
-            plot(xData,yData), hold on;
-        end;
     end;
- 
-   lineNames = graphData(lines(minLineIndex:maxLineIndex-1));
-   for j = 1 : length(lineNames)
-       lineNames{j} = lineNames{j}(7:end);
-   end;
-   
-   graphInformation = cell(3,1);
-   graphInformation{1} = graphName;
-   graphInformation{2} = yLabel;
-   graphInformation{3} = lineNames;
-   processedGraphs{i,1} = myData;
-   processedGraphs{i,2} = graphInformation;
-
-   if(nargin == 2)
-    xlabel('time(s)');
-    ylabel(yLabel);
-    legend(lineNames);
-   end;
+    
+    lineNames = graphData(lines(minLineIndex:maxLineIndex-1));
+    for j = 1 : length(lineNames)
+        lineNames{j} = lineNames{j}(7:end);
+    end;
+    
+    graphInformation = cell(3,1);
+    graphInformation{1} = graphName;
+    graphInformation{2} = yLabel;
+    graphInformation{3} = lineNames;
+    processedGraphs{i,1} = myData;
+    processedGraphs{i,2} = graphInformation;
 end;
 end
 
