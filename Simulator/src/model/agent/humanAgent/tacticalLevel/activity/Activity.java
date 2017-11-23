@@ -33,7 +33,7 @@ public abstract class Activity implements Updatable {
 	 */
 	protected ObservationModule observations;
 	/**
-	 * The agent. TODO remove this if possible.
+	 * The agent. 
 	 */
 	protected HumanAgent agent;
 	/**

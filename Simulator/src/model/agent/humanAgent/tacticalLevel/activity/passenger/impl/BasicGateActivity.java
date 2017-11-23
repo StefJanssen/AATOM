@@ -1,6 +1,5 @@
 package model.agent.humanAgent.tacticalLevel.activity.passenger.impl;
 
-import model.agent.humanAgent.Passenger;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.GateActivity;
 import model.environment.objects.area.GateArea;
 import model.environment.objects.flight.Flight;
@@ -97,7 +96,6 @@ public class BasicGateActivity extends GateActivity {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void update(int timeStep) {
 
@@ -117,18 +115,6 @@ public class BasicGateActivity extends GateActivity {
 					movement.setStopOrder(-1);
 				}
 			}
-			// // stop after 2 minutes of moving
-			// if (timer < 0) {
-			// timer += timeStep / 1000.0;
-			// if (timer < 120) {
-			// setChair();
-			// if (chair == null)
-			// movement.setStopOrder(-1);
-			// else
-			// movement.setStopOrder(0);
-			// timer = -1;
-			// }
-			// }
 		}
 		// we found a chair.
 		else {
@@ -136,7 +122,9 @@ public class BasicGateActivity extends GateActivity {
 				setGoal = false;
 				setChair();
 				timer = 0;
-			} else if (!((Passenger) agent).setSitDown(chair)) {
+				
+
+			} else if (!movement.setSitDown(chair)) {
 				if (!setGoal || navigationModule.getReachedGoal()) {
 					navigationModule.setGoal(chair.getEntryPosition());
 					setGoal = true;

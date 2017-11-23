@@ -324,8 +324,6 @@ public class MapPanel extends JPanel {
 	}
 
 	/**
-	 * TODO this method is not yet perfect.
-	 * 
 	 * Calculates the parameters needed for the user specified zoom. It ensures
 	 * that the users specified ratio is respected, while making sure that the
 	 * maximum dimensions are used.

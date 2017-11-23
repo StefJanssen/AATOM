@@ -69,20 +69,22 @@ public class GUI extends JFrame {
 
 		@Override
 		public void mouseDragged(MouseEvent arg0) {
-			int xEnd = arg0.getX();
-			int yEnd = arg0.getY();
-			int xStart = this.xStart;
-			int yStart = this.yStart;
+			if (SwingUtilities.isLeftMouseButton(arg0)) {
+				int xEnd = arg0.getX();
+				int yEnd = arg0.getY();
+				int xStart = this.xStart;
+				int yStart = this.yStart;
 
-			if (arg0.getX() < xStart) {
-				xEnd = xStart;
-				xStart = arg0.getX();
+				if (arg0.getX() < xStart) {
+					xEnd = xStart;
+					xStart = arg0.getX();
+				}
+				if (arg0.getY() < yStart) {
+					yEnd = yStart;
+					yStart = arg0.getY();
+				}
+				mapPanel.doZoomRectangle(xStart, yStart, xEnd, yEnd);
 			}
-			if (arg0.getY() < yStart) {
-				yEnd = yStart;
-				yStart = arg0.getY();
-			}
-			mapPanel.doZoomRectangle(xStart, yStart, xEnd, yEnd);
 		}
 
 		@Override
@@ -100,13 +102,23 @@ public class GUI extends JFrame {
 		@Override
 		public void mousePressed(MouseEvent arg0) {
 			if (SwingUtilities.isRightMouseButton(arg0)) {
-				xStart = -1;
-				yStart = -1;
+				Rectangle b = tabbedPane.getComponentAt(0).getBounds();
+				double heightWidhtRatio = map.getHeight() / map.getWidth();
+				double newHeight = b.getHeight();
+				double width, height = 0;
+				if (heightWidhtRatio >= (newHeight / b.getWidth())) {
+					height = newHeight;
+					width = newHeight * (1 / heightWidhtRatio);
+				} else {
+					width = b.getWidth();
+					height = b.getWidth() * heightWidhtRatio;
+				}
+				mapPanel.setSize(new Dimension((int) width, (int) height));
+				pixelRatio = height / map.getHeight();
 				mapPanel.setPixelRatio(pixelRatio);
 				mapPanel.zoom(0, 0, mapPanel.getWidth(), mapPanel.getHeight(), map.getWidth());
 				return;
 			}
-
 			xStart = arg0.getX();
 			yStart = arg0.getY();
 		}
@@ -114,24 +126,26 @@ public class GUI extends JFrame {
 		@Override
 		public void mouseReleased(MouseEvent arg0) {
 			mapPanel.doZoomRectangle(-1, -1, -1, -1);
-			if (xStart == -1 || xStart == arg0.getX())
-				return;
 
-			int xEnd = arg0.getX();
-			int yEnd = arg0.getY();
-			int xStart = this.xStart;
-			int yStart = this.yStart;
+			if (!SwingUtilities.isRightMouseButton(arg0)) {
+				if (xStart == -1 || xStart == arg0.getX())
+					return;
 
-			if (arg0.getX() < xStart) {
-				xEnd = xStart;
-				xStart = arg0.getX();
+				int xEnd = arg0.getX();
+				int yEnd = arg0.getY();
+				int xStart = this.xStart;
+				int yStart = this.yStart;
+
+				if (arg0.getX() < xStart) {
+					xEnd = xStart;
+					xStart = arg0.getX();
+				}
+				if (arg0.getY() < yStart) {
+					yEnd = yStart;
+					yStart = arg0.getY();
+				}
+				mapPanel.zoom(xStart, yStart, xEnd, yEnd, map.getWidth());
 			}
-			if (arg0.getY() < yStart) {
-				yEnd = yStart;
-				yStart = arg0.getY();
-			}
-			mapPanel.zoom(xStart, yStart, xEnd, yEnd, map.getWidth());
-
 		}
 	}
 

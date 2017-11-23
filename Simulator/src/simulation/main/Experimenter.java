@@ -48,7 +48,6 @@ public class Experimenter extends Thread {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
 		}
 	}
 

@@ -9,7 +9,6 @@ import model.agent.humanAgent.operationalLevel.action.movement.MovementModel;
 import model.agent.humanAgent.operationalLevel.observation.ObservationModule;
 import model.agent.humanAgent.tacticalLevel.navigation.NavigationModule;
 import model.environment.objects.physicalObject.Chair;
-import model.environment.position.Position;
 import model.environment.position.Vector;
 import simulation.simulation.util.Updatable;
 
@@ -145,20 +144,19 @@ public abstract class OperationalModel implements Updatable {
 	 * @return True if the agent is sitting, false otherwise.
 	 */
 	public boolean isSitting() {
-		return movementModel.isSitting();
+		return movementModel.getChair() != null;
 	}
 
 	/**
-	 * Asks the agent to sit down on a specific {@link Chair}. Returns the
-	 * {@link Position} of the chair if he will sit down, returns
-	 * {@link Position#NO_POSITION} if he will not.
+	 * Asks the agent to sit down on a specific {@link Chair}. Returns true if
+	 * successful, false otherwise.
 	 * 
 	 * @param chair
 	 *            The chair.
-	 * @return The position of the chair if he will sit down, and no position if
-	 *         he will not.
+	 * @return true if successful, false otherwise.
+	 * 
 	 */
-	public Position setSitDown(Chair chair) {
+	public boolean setSitDown(Chair chair) {
 		return movementModel.setSitDown(chair);
 	}
 

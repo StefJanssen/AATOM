@@ -15,7 +15,6 @@ public class Chair extends PhysicalObject {
 	 * The agent on the chair.
 	 */
 	private HumanAgent agent;
-
 	/**
 	 * The position in front of the chair.
 	 */

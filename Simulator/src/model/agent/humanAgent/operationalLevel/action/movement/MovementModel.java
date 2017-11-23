@@ -27,9 +27,9 @@ public abstract class MovementModel implements Updatable {
 	 */
 	protected double desiredSpeed;
 	/**
-	 * Flag to indicate sitting.
+	 * The chair the agent is sitting on. Null if not sitting.
 	 */
-	private boolean isSitting;
+	private Chair chair;
 	/**
 	 * The time that the agent still needs to stop moving. If this is -1, the
 	 * time is infinite.
@@ -112,12 +112,21 @@ public abstract class MovementModel implements Updatable {
 	}
 
 	/**
+	 * Gets the chair the agent is sitting on. Null if not sitting.
+	 * 
+	 * @return The chair the agent is sitting on. Null if not sitting.
+	 */
+	public Chair getChair() {
+		return chair;
+	}
+
+	/**
 	 * Determines if the agent is sitting.
 	 * 
 	 * @return True if the agent is sitting, false otherwise.
 	 */
 	public boolean isSitting() {
-		return isSitting;
+		return chair != null;
 	}
 
 	/**
@@ -130,16 +139,17 @@ public abstract class MovementModel implements Updatable {
 	 * @return The position of the chair if he will sit down, and no position if
 	 *         he will not.
 	 */
-	public Position setSitDown(Chair chair) {
+	public boolean setSitDown(Chair chair) {
 		if (chair.isOccupied())
-			return Position.NO_POSITION;
+			return false;
 
 		if (Utilities.getDistance(agent, chair) < 1) {
-			isSitting = true;
-			return new Position(chair.getPosition().x + 0.5 * chair.getWidth(),
-					chair.getPosition().y + 0.5 * chair.getWidth());
+			this.chair = chair;
+			chair.setOccupied(agent);
+			setStopOrder(-1);
+			return true;
 		}
-		return Position.NO_POSITION;
+		return false;
 	}
 
 	/**

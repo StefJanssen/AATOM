@@ -229,38 +229,23 @@ public class Passenger extends HumanAgent {
 		return operationalModel.isSitting();
 	}
 
-	/**
-	 * TODO this method should be transferred to the operational level.
-	 * 
-	 * Makes the agent sit on a chair. It will only sit down if it is close
-	 * enough.
-	 * 
-	 * @param chair
-	 *            The chair.
-	 * @return True if it was successful, false otherwise.
-	 */
-	@Deprecated
-	public boolean setSitDown(Chair chair) {
-		Position temp = operationalModel.setSitDown(chair);
-		if (!temp.equals(Position.NO_POSITION)) {
-			Position oldPos = position;
-			for (Luggage l : luggage) {
-				if (!l.equals(Luggage.NO_LUGGAGE) && l.getPosition().equals(oldPos))
-					l.setPosition(temp);
-			}
-			position = temp;
-			operationalModel.setStopOrder(-1);
-			chair.setOccupied(this);
-			tacticalModel.setGoal(Position.NO_POSITION);
-			return true;
-		}
-		return false;
-	}
-
 	@Override
 	public void update(int timeStep) {
 		Position prev = position;
 		super.update(timeStep);
+
+		// sitting routine
+		if (!tacticalModel.getGoalPosition().equals(Position.NO_POSITION)) {
+			if (operationalModel.isSitting()) {
+				tacticalModel.setGoal(Position.NO_POSITION);
+				Chair chair = operationalModel.getMovementModel().getChair();
+				position = new Position(chair.getPosition().x + 0.5 * chair.getWidth(),
+						chair.getPosition().y + 0.5 * chair.getWidth());
+
+			}
+		}
+
+		// move luggage with the passenger
 		for (Luggage l : luggage) {
 			if (l.getPosition().equals(prev))
 				l.setPosition(position);
