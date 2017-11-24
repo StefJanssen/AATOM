@@ -1,6 +1,7 @@
 package model.agent.humanAgent.operationalLevel.action.communication;
 
 import model.agent.humanAgent.operationalLevel.action.movement.MovementModel;
+import model.agent.humanAgent.tacticalLevel.activity.ActivityModule;
 import model.agent.humanAgent.tacticalLevel.navigation.NavigationModule;
 
 /**
@@ -14,11 +15,15 @@ public abstract class CommunicationModule {
 	/**
 	 * The movement model.
 	 */
-	protected MovementModel movement;
+	protected MovementModel movementModule;
 	/**
 	 * The navigation module.
 	 */
-	protected NavigationModule navigation;
+	protected NavigationModule navigationModule;
+	/**
+	 * The navigation module.
+	 */
+	protected ActivityModule activityModule;
 
 	/**
 	 * Communicate.
@@ -37,9 +42,12 @@ public abstract class CommunicationModule {
 	 *            The movement model.
 	 * @param navigation
 	 *            The navigation module.
+	 * @param activity
+	 *            The activity module.
 	 */
-	public void init(MovementModel movement, NavigationModule navigation) {
-		this.movement = movement;
-		this.navigation = navigation;
+	public void init(MovementModel movement, NavigationModule navigation, ActivityModule activity) {
+		this.movementModule = movement;
+		this.navigationModule = navigation;
+		this.activityModule = activity;
 	}
 }

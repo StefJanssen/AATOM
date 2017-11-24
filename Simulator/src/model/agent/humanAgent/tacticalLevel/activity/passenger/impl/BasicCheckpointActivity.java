@@ -11,6 +11,7 @@ import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.objects.physicalObject.sensor.WalkThroughMetalDetector;
 import model.environment.objects.physicalObject.sensor.XRaySystem;
 import model.environment.position.Position;
+import util.math.distributions.MathDistribution;
 
 /**
  * The checkpoint activity is the activity executed around the checkpoint of an
@@ -40,6 +41,30 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 	 * The time in a specific checkpoint activity phase.
 	 */
 	private double timeInPhase = 0;
+	/**
+	 * The drop off position.
+	 */
+	private int dropOffPosition = -1;
+	/**
+	 * The collect position.
+	 */
+	private int collectPosition = -1;
+	/**
+	 * Luggage has been dropped or not.
+	 */
+	private boolean dropped;
+	/**
+	 * Luggage has been collected or not.
+	 */
+	private boolean collected;
+	/**
+	 * The luggage drop time distribution.
+	 */
+	private MathDistribution dropDistribution;
+	/**
+	 * The luggage collect time distribution.
+	 */
+	private MathDistribution collectDistribution;
 
 	/**
 	 * Creates a checkpoint activity with a specified high level model of an
@@ -47,10 +72,17 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 	 * 
 	 * @param flight
 	 *            The flight.
+	 * @param dropDistribution
+	 *            The random distribution for drop time.
+	 * @param collectDistribution
+	 *            The random distribution for collect time.
 	 * 
 	 */
-	public BasicCheckpointActivity(Flight flight) {
+	public BasicCheckpointActivity(Flight flight, MathDistribution dropDistribution,
+			MathDistribution collectDistribution) {
 		this.activityPosition = flight.getCheckPointQueue().getLeavingPosition();
+		this.dropDistribution = dropDistribution;
+		this.collectDistribution = collectDistribution;
 	}
 
 	@Override
@@ -63,17 +95,73 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 			// Get the closest desks
 			List<XRaySystem> systems = getClosestSystems();
 			for (XRaySystem system : systems) {
-				if (system.getDropOffPassenger() == null) {
+				dropOffPosition = system.getNextDropOffIndex();
+				if (dropOffPosition != -1) {
 					// not occupied
 					xRaySystem = system;
 					activityModule.setQueuing(0);
 					return true;
 				}
 			}
-			// all systems occupied
-			// activityModule.setQueuing(10);
 		}
 		return false;
+	}
+
+	/**
+	 * Determines if a collect position is available. Assigns the position if it
+	 * is.
+	 * 
+	 * @return True if there is a position, false otherwise.
+	 */
+	private boolean collectPositionAvailable() {
+		collectPosition = xRaySystem.getNextCollectIndex();
+		return collectPosition != -1;
+	}
+
+	/**
+	 * Drop the luggage at the point and go to the wtmd.
+	 */
+	private void dropLuggageAndgoToWTMD() {
+		// when not waiting anymore
+		if (!movement.getStopOrder() && phase == 1
+				&& movement.getPosition().distanceTo(xRaySystem.getDropOffPosition(dropOffPosition)) < 0.3) {
+
+			if (wtmd == null)
+				wtmd = getClosestWTMD();
+
+			if (wtmd != null && navigationModule.getReachedGoal()) {
+				if (wtmd.canGo() && collectPositionAvailable()) {
+					// go to wtmd
+					xRaySystem.setDropOffPassenger(null, dropOffPosition);
+					for (Luggage l : ((Passenger) agent).getLuggage()) {
+						xRaySystem.addBaggage(l);
+					}
+					wtmd.setPersonsInConsideration((Passenger) agent);
+					navigationModule.setGoal(wtmd.getPosition());
+					timeInPhase = 0;
+					phase++;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Finish the collect action.
+	 */
+	private void finishCollect() {
+		if (!movement.getStopOrder() && phase == 3
+				&& movement.getPosition().distanceTo(xRaySystem.getCollectPosition(collectPosition)) < 0.3) {
+			xRaySystem.setCollectPassenger(null, collectPosition);
+			for (Luggage l : ((Passenger) agent).getLuggage()) {
+				xRaySystem.removeBaggage(l);
+			}
+			navigationModule.setGoal(xRaySystem.getLeavePosition());
+			phase++;
+		}
+
+		if (phase == 4 && navigationModule.getReachedGoal()) {
+			endActivity();
+		}
 	}
 
 	/**
@@ -106,7 +194,7 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 				int position = 0;
 				for (int i = 0; i < closestSystems.size(); i++) {
 					XRaySystem curr = closestSystems.get(i);
-					if (system.getDropOffPosition().distanceTo(movement.getPosition()) > curr.getDropOffPosition()
+					if (system.getDropOffPosition(0).distanceTo(movement.getPosition()) > curr.getDropOffPosition(0)
 							.distanceTo(movement.getPosition())) {
 						position = i + 1;
 					} else
@@ -166,12 +254,47 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 		return;
 	}
 
+	/**
+	 * Go to the collect position.
+	 */
+	private void goToCollect() {
+		if ((timeInPhase > 120 || !movement.getStopOrder()) && phase == 2) {
+			// go to luggage collect area
+			if (navigationModule.getReachedGoal() && collectPositionAvailable()) {
+				movement.setStopOrder(0);
+				navigationModule.setGoal(xRaySystem.getCollectPosition(collectPosition));
+				xRaySystem.setCollectPassenger((Passenger) agent, collectPosition);
+				timeInPhase = 0;
+				phase++;
+			}
+		}
+
+		// fail safe
+		if (phase == 3 && movement.getPosition().distanceTo(wtmd.getCheckPosition()) < 0.3
+				&& !((Passenger) agent).getStopOrder()) {
+			navigationModule.setGoal(xRaySystem.getCollectPosition(collectPosition));
+			xRaySystem.setCollectPassenger((Passenger) agent, collectPosition);
+		}
+	}
+
+	/**
+	 * Go to the system and stop there.
+	 */
+	private void goToSystemAndStop() {
+		// when reached drop off position
+		if (phase == 1 && !dropped
+				&& movement.getPosition().distanceTo(xRaySystem.getDropOffPosition(dropOffPosition)) < 0.3) {
+			dropped = true;
+			movement.setStopOrder(dropDistribution.getValue());
+		}
+	}
+
 	@Override
 	public void startActivity() {
 		super.startActivity();
 		activityModule.setQueuing(0);
-		navigationModule.setGoal(xRaySystem.getDropOffPosition());
-		xRaySystem.setDropOffPassenger((Passenger) agent);
+		navigationModule.setGoal(xRaySystem.getDropOffPosition(dropOffPosition));
+		xRaySystem.setDropOffPassenger((Passenger) agent, dropOffPosition);
 		phase++;
 	}
 
@@ -179,50 +302,22 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 	public void update(int timeStep) {
 		timeInPhase += timeStep / 1000.0;
 
-		// waiting
-		if (!movement.getStopOrder() && phase == 1
-				&& movement.getPosition().distanceTo(xRaySystem.getDropOffPosition()) < 0.5) {
+		goToSystemAndStop();
+		dropLuggageAndgoToWTMD();
+		goToCollect();
+		waitAtCollect();
+		finishCollect();
+	}
 
-			if (wtmd == null)
-				wtmd = getClosestWTMD();
-
-			if (wtmd != null && navigationModule.getReachedGoal()) {
-				if (wtmd.canGo()) {
-					// go to wtmd
-					xRaySystem.setDropOffPassenger(null);
-					for (Luggage l : ((Passenger) agent).getLuggage()) {
-						xRaySystem.addBaggage(l);
-					}
-					wtmd.setPersonsInConsideration((Passenger) agent);
-					navigationModule.setGoal(wtmd.getPosition());
-					timeInPhase = 0;
-					phase++;
-				}
-			}
-		}
-		if ((timeInPhase > 120 || !movement.getStopOrder()) && phase == 2) {
-			// go to luggage collect area
-			if (navigationModule.getReachedGoal() && xRaySystem.getCollectPassenger() == null) {
-				movement.setStopOrder(0);
-				navigationModule.setGoal(xRaySystem.getCollectPosition());
-				xRaySystem.setCollectPassenger((Passenger) agent);
-				timeInPhase = 0;
-				phase++;
-			}
-		}
-		if (phase == 3 && movement.getPosition().distanceTo(wtmd.getCheckPosition()) < 0.5
-				&& !((Passenger) agent).getStopOrder()) {
-			navigationModule.setGoal(xRaySystem.getCollectPosition());
-			xRaySystem.setCollectPassenger((Passenger) agent);
-		}
-		if (!movement.getStopOrder() && phase == 3
-				&& movement.getPosition().distanceTo(xRaySystem.getCollectPosition()) < 0.5) {
-			xRaySystem.setCollectPassenger(null);
-			for (Luggage l : ((Passenger) agent).getLuggage()) {
-				xRaySystem.removeBaggage(l);
-			}
-
-			endActivity();
+	/**
+	 * Wait at the collect position.
+	 */
+	private void waitAtCollect() {
+		if (phase == 3 && !collected
+				&& movement.getPosition().distanceTo(xRaySystem.getCollectPosition(collectPosition)) < 0.3) {
+			collected = true;
+			movement.setStopOrder(collectDistribution.getValue());
 		}
 	}
+
 }

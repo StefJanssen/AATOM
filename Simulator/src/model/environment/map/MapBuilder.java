@@ -23,6 +23,7 @@ import model.environment.position.Position;
 import simulation.simulation.Simulator;
 import simulation.simulation.util.SimulationObject;
 import simulation.simulation.util.Utilities;
+import util.math.distributions.NormalDistribution;
 
 /**
  * A class that enables the practical building of a map. It includes functions
@@ -82,7 +83,7 @@ public final class MapBuilder {
 			Desk desk = createDesk(new Position(start.x + i * 2, start.y), 1, 0.2, start, degreeRotation, deskPosition);
 			components.add(desk);
 			OperatorAgent agent = new OperatorAgent(map, agentPosition, 0.25, 80,
-					new BasicOperatorCheckInActivity(desk, 60));
+					new BasicOperatorCheckInActivity(desk, new NormalDistribution(60, 6)));
 			components.add(agent);
 		}
 
@@ -159,7 +160,7 @@ public final class MapBuilder {
 						new Position(start.x - 0.3 + xOffsetXray, start.y + yOffsetXray + 0.5), start, degreeRotation);
 
 			OperatorAgent luggageCheck = new OperatorAgent(map, agentPosition2, 0.25, 80,
-					new BasicLuggageCheckActivity(xray));
+					new BasicLuggageCheckActivity());
 			components.add(luggageCheck);
 
 			// luggage drop
@@ -172,7 +173,7 @@ public final class MapBuilder {
 						degreeRotation);
 
 			OperatorAgent luggageDrop = new OperatorAgent(map, agentPosition3, 0.25, 80,
-					new BasicLuggageDropActivity(xray));
+					new BasicLuggageDropActivity());
 			components.add(luggageDrop);
 
 			// x-ray

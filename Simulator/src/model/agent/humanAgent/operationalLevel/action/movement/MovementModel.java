@@ -60,6 +60,15 @@ public abstract class MovementModel implements Updatable {
 	}
 
 	/**
+	 * Gets the chair the agent is sitting on. Null if not sitting.
+	 * 
+	 * @return The chair the agent is sitting on. Null if not sitting.
+	 */
+	public Chair getChair() {
+		return chair;
+	}
+
+	/**
 	 * Gets the current speed.
 	 * 
 	 * @return The current speed.
@@ -109,15 +118,6 @@ public abstract class MovementModel implements Updatable {
 	public void init(HumanAgent agent) {
 		this.agent = agent;
 		currentVelocity = new Vector(0, 0);
-	}
-
-	/**
-	 * Gets the chair the agent is sitting on. Null if not sitting.
-	 * 
-	 * @return The chair the agent is sitting on. Null if not sitting.
-	 */
-	public Chair getChair() {
-		return chair;
 	}
 
 	/**

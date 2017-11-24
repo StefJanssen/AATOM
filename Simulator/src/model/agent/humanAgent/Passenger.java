@@ -17,6 +17,8 @@ import model.environment.objects.physicalObject.Chair;
 import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.objects.physicalObject.luggage.LuggageType;
 import model.environment.position.Position;
+import util.math.distributions.MathDistribution;
+import util.math.distributions.NormalDistribution;
 
 /**
  * A Passenger is a type of {@link HumanAgent} that is a passenger in the
@@ -56,6 +58,43 @@ public class Passenger extends HumanAgent {
 	 *            Checked in or not.
 	 * @param facility
 	 *            Facility visit or not.
+	 * @param checkPointDropTime
+	 *            The distribution of checkpoint luggage drop times.
+	 * @param checkPointCollectTime
+	 *            The distribution of checkpoint luggage collect times.
+	 * @param position
+	 *            The position on the map.
+	 * @param radius
+	 *            The radius.
+	 * @param mass
+	 *            The mass.
+	 * @param luggage
+	 *            The Baggage.
+	 * @param color
+	 *            The color.
+	 */
+	public Passenger(Map map, Flight flight, boolean checkedIn, Class<? extends Facility> facility,
+			MathDistribution checkPointDropTime, MathDistribution checkPointCollectTime, Position position,
+			double radius, double mass, Luggage luggage, Color color) {
+		this(map, flight, checkedIn, facility, position, radius, mass, luggage,
+				new BasicPassengerStrategicModel(facility, !luggage.getLuggageType().equals(LuggageType.CHECKED),
+						checkPointDropTime, checkPointCollectTime, flight),
+				new BasicPassengerTacticalModel(map, flight), new BasicPassengerOperationalModel(map, 1), color);
+	}
+
+	/**
+	 * Creates a passenger with a specified {@link BasicPassengerStrategicModel}
+	 * , {@link BasicPassengerTacticalModel}, and
+	 * {@link BasicPassengerOperationalModel} and some {@link Luggage}.
+	 * 
+	 * @param map
+	 *            The map it is on.
+	 * @param flight
+	 *            The flight the agent is on.
+	 * @param checkedIn
+	 *            Checked in or not.
+	 * @param facility
+	 *            Facility visit or not.
 	 * @param position
 	 *            The position on the map.
 	 * @param radius
@@ -69,10 +108,8 @@ public class Passenger extends HumanAgent {
 	 */
 	public Passenger(Map map, Flight flight, boolean checkedIn, Class<? extends Facility> facility, Position position,
 			double radius, double mass, Luggage luggage, Color color) {
-		this(map, flight, checkedIn, facility, position, radius, mass, luggage,
-				new BasicPassengerStrategicModel(facility, flight,
-						!luggage.getLuggageType().equals(LuggageType.CHECKED)),
-				new BasicPassengerTacticalModel(map, flight), new BasicPassengerOperationalModel(map, 1), color);
+		this(map, flight, checkedIn, facility, new NormalDistribution(54.6, 36.09), new NormalDistribution(71.5, 54.95),
+				position, radius, mass, luggage, color);
 	}
 
 	/**

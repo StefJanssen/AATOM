@@ -104,7 +104,7 @@ public abstract class HumanAgent extends Agent implements CircularShape {
 		this.radius = radius;
 		this.mass = mass;
 		this.color = color;
-		operationalModel.init(this, tacticalModel.getNavigationModule());
+		operationalModel.init(this, tacticalModel.getNavigationModule(), tacticalModel.getActivityModule());
 		strategicModel.init(operationalModel.getObservationModule());
 		tacticalModel.init(this, operationalModel.getMovementModel(), operationalModel.getObservationModule(),
 				strategicModel.getActivityPlanner(), strategicModel.getGoalModule().getGoalActivities());

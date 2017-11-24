@@ -7,6 +7,7 @@ import model.agent.humanAgent.operationalLevel.action.communication.Communicatio
 import model.agent.humanAgent.operationalLevel.action.communication.CommunicationType;
 import model.agent.humanAgent.operationalLevel.action.movement.MovementModel;
 import model.agent.humanAgent.operationalLevel.observation.ObservationModule;
+import model.agent.humanAgent.tacticalLevel.activity.ActivityModule;
 import model.agent.humanAgent.tacticalLevel.navigation.NavigationModule;
 import model.environment.objects.physicalObject.Chair;
 import model.environment.position.Vector;
@@ -131,11 +132,13 @@ public abstract class OperationalModel implements Updatable {
 	 *            The agent.
 	 * @param navigationModule
 	 *            The navigation module.
+	 * @param activityModule
+	 *            The activity module.
 	 */
-	public void init(HumanAgent agent, NavigationModule navigationModule) {
+	public void init(HumanAgent agent, NavigationModule navigationModule, ActivityModule activityModule) {
 		movementModel.init(agent);
 		observationModule.init(movementModel);
-		communicationModule.init(movementModel, navigationModule);
+		communicationModule.init(movementModel, navigationModule, activityModule);
 	}
 
 	/**

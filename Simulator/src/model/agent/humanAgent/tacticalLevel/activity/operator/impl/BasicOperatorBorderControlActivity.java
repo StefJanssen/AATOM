@@ -9,7 +9,7 @@ import model.agent.humanAgent.tacticalLevel.activity.Activity;
 import model.environment.objects.area.BorderControlGateArea;
 import model.environment.objects.physicalObject.Desk;
 import model.environment.position.Position;
-import simulation.simulation.util.Utilities;
+import util.math.distributions.MathDistribution;
 
 /**
  * The operator border control activity.
@@ -23,13 +23,13 @@ public class BasicOperatorBorderControlActivity extends Activity {
 	 */
 	private Collection<Passenger> alreadyInstructed;
 	/**
-	 * The time mean service rate.
-	 */
-	private double meanServiceRate;
-	/**
 	 * The desk it operates at.
 	 */
 	private Desk desk;
+	/**
+	 * The distribution of waiting times.
+	 */
+	private MathDistribution waitingTime;
 
 	/**
 	 * Creates a border control activity for the border operator.
@@ -37,12 +37,12 @@ public class BasicOperatorBorderControlActivity extends Activity {
 	 * @param desk
 	 *            The desk.
 	 * 
-	 * @param meanServiceRate
-	 *            The mean service rate.
+	 * @param waitingTime
+	 *            The distribution of waiting times.
 	 */
-	public BasicOperatorBorderControlActivity(Desk desk, double meanServiceRate) {
+	public BasicOperatorBorderControlActivity(Desk desk, MathDistribution waitingTime) {
 		this.desk = desk;
-		this.meanServiceRate = meanServiceRate;
+		this.waitingTime = waitingTime;
 		alreadyInstructed = new ArrayList<Passenger>();
 	}
 
@@ -66,8 +66,7 @@ public class BasicOperatorBorderControlActivity extends Activity {
 	@Override
 	public void startActivity() {
 		super.startActivity();
-		desk.getAgentAtDesk().communicate(CommunicationType.WAIT,
-				Utilities.RANDOM_GENERATOR.nextNormal(meanServiceRate, meanServiceRate / 10));
+		desk.getAgentAtDesk().communicate(CommunicationType.WAIT, waitingTime.getValue());
 	}
 
 	@Override

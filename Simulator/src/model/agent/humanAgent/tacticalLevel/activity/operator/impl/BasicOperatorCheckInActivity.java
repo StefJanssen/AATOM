@@ -8,7 +8,7 @@ import model.agent.humanAgent.operationalLevel.action.communication.Communicatio
 import model.agent.humanAgent.tacticalLevel.activity.operator.OperatorCheckInActivity;
 import model.environment.objects.physicalObject.Desk;
 import model.environment.position.Position;
-import simulation.simulation.util.Utilities;
+import util.math.distributions.MathDistribution;
 
 /**
  * @author S.A.M. Janssen
@@ -20,9 +20,10 @@ public class BasicOperatorCheckInActivity extends OperatorCheckInActivity {
 	 */
 	private Collection<Passenger> alreadyInstructed;
 	/**
-	 * The time mean service rate.
+	 * The distribution of waiting times.
+	 * 
 	 */
-	private double meanServiceRate;
+	private MathDistribution waitingTime;
 	/**
 	 * The desk it operates at.
 	 */
@@ -34,12 +35,12 @@ public class BasicOperatorCheckInActivity extends OperatorCheckInActivity {
 	 * @param desk
 	 *            The desk.
 	 * 
-	 * @param meanServiceRate
-	 *            The mean service rate.
+	 * @param waitingTime
+	 *            The distribution of waiting times.
 	 */
-	public BasicOperatorCheckInActivity(Desk desk, double meanServiceRate) {
+	public BasicOperatorCheckInActivity(Desk desk, MathDistribution waitingTime) {
 		this.desk = desk;
-		this.meanServiceRate = meanServiceRate;
+		this.waitingTime = waitingTime;
 		alreadyInstructed = new ArrayList<Passenger>();
 	}
 
@@ -63,8 +64,7 @@ public class BasicOperatorCheckInActivity extends OperatorCheckInActivity {
 	@Override
 	public void startActivity() {
 		super.startActivity();
-		desk.getAgentAtDesk().communicate(CommunicationType.WAIT,
-				Utilities.RANDOM_GENERATOR.nextNormal(meanServiceRate, meanServiceRate / 10));
+		desk.getAgentAtDesk().communicate(CommunicationType.WAIT, waitingTime.getValue());
 	}
 
 	@Override

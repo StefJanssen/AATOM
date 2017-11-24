@@ -35,6 +35,7 @@ import util.analytics.TimeInQueueAnalyzer;
 import util.analytics.TimeToGateAnalyzer;
 import util.analytics.TimeToGatePerFlightAnalyzer;
 import util.io.logger.BaseLogger;
+import util.math.distributions.NormalDistribution;
 
 /**
  * Prebuilt scenarios.
@@ -938,7 +939,7 @@ public final class SimulationBuilder {
 
 		for (Desk d : map.getMapComponents(Desk.class)) {
 			sim.add(new OperatorAgent(map, new Position(d.getServingPosition().x, d.getServingPosition().y - 1), 0.25,
-					80, new BasicOperatorCheckInActivity(d, 30)));
+					80, new BasicOperatorCheckInActivity(d, new NormalDistribution(30, 3))));
 		}
 
 		sim.add(new QueueAnalyzer());

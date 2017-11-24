@@ -122,7 +122,6 @@ public class BasicGateActivity extends GateActivity {
 				setGoal = false;
 				setChair();
 				timer = 0;
-				
 
 			} else if (!movement.setSitDown(chair)) {
 				if (!setGoal || navigationModule.getReachedGoal()) {

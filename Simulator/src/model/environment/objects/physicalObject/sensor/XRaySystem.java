@@ -31,12 +31,12 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Ope
 	/**
 	 * The collect position for bags.
 	 */
-	private Position luggageCollectPosition;
+	private Position[] luggageCollectPositions;
 
 	/**
 	 * The drop off position for bags.
 	 */
-	private Position luggageDropOffPosition;
+	private Position[] luggageDropOffPositions;
 
 	/**
 	 * The ending position of the luggage.
@@ -62,11 +62,11 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Ope
 	/**
 	 * The drop off passenger.
 	 */
-	private Passenger dropOffPassenger;
+	private Passenger[] dropOffPassengers;
 	/**
 	 * The collect passenger.
 	 */
-	private Passenger collectPassenger;
+	private Passenger[] collectPassengers;
 	/**
 	 * The system is paused.
 	 */
@@ -75,6 +75,10 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Ope
 	 * The system is open or closed.
 	 */
 	private boolean isOpen;
+	/**
+	 * The leave position.
+	 */
+	private Position leavePosition;
 
 	/**
 	 * Creates an x-ray system from a set of corner points.
@@ -120,27 +124,69 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Ope
 		luggageStartPosition = luggageStart;
 		luggageEndPosition = luggageEnd;
 
+		int numberOfDropOffPositions = 3;
+		luggageDropOffPositions = new Position[numberOfDropOffPositions];
+		luggageCollectPositions = new Position[numberOfDropOffPositions];
+		dropOffPassengers = new Passenger[numberOfDropOffPositions];
+		collectPassengers = new Passenger[numberOfDropOffPositions];
+
 		Vector start = new Vector(luggageStart.x, luggageStart.y);
 		Vector end = new Vector(luggageEnd.x, luggageEnd.y);
 
+		moveLuggageVector = end.subtractVector(start);
+		moveLuggageVector = moveLuggageVector.normalize().scalarMultiply(0.5);
+
+		Position luggageStart0 = new Position(luggageStart.x + 1.2 * moveLuggageVector.x,
+				luggageStart.y + 1.2 * moveLuggageVector.y);
+		Position luggageStart2 = new Position(luggageStart.x + 2.4 * moveLuggageVector.x,
+				luggageStart.y + 2.4 * moveLuggageVector.y);
+
 		Vector v = end.subtractVector(start);
 		v = v.normalize();
-		luggageDropOffPosition = Utilities.transform(new Position(luggageStart.x + v.x, luggageStart.y + v.y),
-				luggageStart, 90);
-		if (otherWayAround)
-			luggageDropOffPosition = Utilities.transform(new Position(luggageStart.x + v.x, luggageStart.y + v.y),
-					luggageStart, 270);
+
+		luggageDropOffPositions[1] = Utilities
+				.transform(new Position(luggageStart0.x + 0.6 * v.x, luggageStart0.y + 0.6 * v.y), luggageStart0, 90);
+		luggageDropOffPositions[2] = Utilities
+				.transform(new Position(luggageStart.x + 0.6 * v.x, luggageStart.y + 0.6 * v.y), luggageStart, 90);
+		luggageDropOffPositions[0] = Utilities
+				.transform(new Position(luggageStart2.x + 0.6 * v.x, luggageStart2.y + 0.6 * v.y), luggageStart2, 90);
+
+		if (otherWayAround) {
+			luggageDropOffPositions[1] = Utilities.transform(
+					new Position(luggageStart0.x + 0.6 * v.x, luggageStart0.y + 0.6 * v.y), luggageStart0, 270);
+			luggageDropOffPositions[2] = Utilities
+					.transform(new Position(luggageStart.x + 0.6 * v.x, luggageStart.y + 0.6 * v.y), luggageStart, 270);
+			luggageDropOffPositions[0] = Utilities.transform(
+					new Position(luggageStart2.x + 0.6 * v.x, luggageStart2.y + 0.6 * v.y), luggageStart2, 270);
+		}
 
 		v = start.subtractVector(end);
 		v = v.normalize();
-		luggageCollectPosition = Utilities.transform(new Position(luggageEnd.x + v.x, luggageEnd.y + v.y), luggageEnd,
-				270);
-		if (otherWayAround)
-			luggageCollectPosition = Utilities.transform(new Position(luggageEnd.x + v.x, luggageEnd.y + v.y),
-					luggageEnd, 90);
 
-		moveLuggageVector = end.subtractVector(start);
-		moveLuggageVector = moveLuggageVector.normalize().scalarMultiply(0.5);
+		Position luggageEnd0 = new Position(luggageEnd.x - 3 * moveLuggageVector.x,
+				luggageEnd.y - 3 * moveLuggageVector.y);
+		Position luggageEnd2 = new Position(luggageEnd.x - 4.5 * moveLuggageVector.x,
+				luggageEnd.y - 4.5 * moveLuggageVector.y);
+
+		luggageCollectPositions[1] = Utilities
+				.transform(new Position(luggageEnd0.x + 0.6 * v.x, luggageEnd0.y + 0.6 * v.y), luggageEnd0, 270);
+		luggageCollectPositions[0] = Utilities
+				.transform(new Position(luggageEnd.x + 0.6 * v.x, luggageEnd.y + 0.6 * v.y), luggageEnd, 270);
+		luggageCollectPositions[2] = Utilities
+				.transform(new Position(luggageEnd2.x + 0.6 * v.x, luggageEnd2.y + 0.6 * v.y), luggageEnd2, 270);
+
+		if (otherWayAround) {
+			luggageCollectPositions[1] = Utilities
+					.transform(new Position(luggageEnd0.x + 0.6 * v.x, luggageEnd0.y + 0.6 * v.y), luggageEnd0, 90);
+			luggageCollectPositions[0] = Utilities
+					.transform(new Position(luggageEnd.x + 0.6 * v.x, luggageEnd.y + 0.6 * v.y), luggageEnd, 90);
+			luggageCollectPositions[2] = Utilities
+					.transform(new Position(luggageEnd2.x + 0.6 * v.x, luggageEnd2.y + 0.6 * v.y), luggageEnd2, 90);
+		}
+
+		Position tmpLeave = new Position(luggageEnd.x + 2 * moveLuggageVector.x,
+				luggageEnd.y + 2 * moveLuggageVector.y);
+		leavePosition = Utilities.transform(new Position(tmpLeave.x + 0.6 * v.x, tmpLeave.y + 0.6 * v.y), tmpLeave, 90);
 
 		isOpen = true;
 	}
@@ -184,45 +230,120 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Ope
 	/**
 	 * Gets the collect passenger.
 	 * 
+	 * @param position
+	 *            The position.
+	 * 
 	 * @return The passenger.
 	 */
-	public Passenger getCollectPassenger() {
-		if (collectPassenger != null) {
-			if (collectPassenger.isDestroyed())
-				collectPassenger = null;
+	public Passenger getCollectPassenger(int position) {
+		for (Passenger collectpassenger : collectPassengers) {
+			if (collectpassenger != null) {
+				if (collectpassenger.isDestroyed())
+					collectpassenger = null;
+			}
 		}
-		return collectPassenger;
+		return collectPassengers[position];
 	}
 
 	/**
 	 * Gets the luggage collect position.
 	 * 
+	 * @param position
+	 *            The index.
+	 * 
 	 * @return The position
 	 */
-	public Position getCollectPosition() {
-		return luggageCollectPosition;
+	public Position getCollectPosition(int position) {
+		if (position >= getNumberOfCollectIndices() || position < 0)
+			return null;
+		return luggageCollectPositions[position];
 	}
 
 	/**
 	 * Gets the drop off passenger.
 	 * 
+	 * @param index
+	 *            The index.
+	 * 
 	 * @return The passenger.
 	 */
-	public Passenger getDropOffPassenger() {
-		if (dropOffPassenger != null) {
-			if (dropOffPassenger.isDestroyed())
-				dropOffPassenger = null;
+	public Passenger getDropOffPassenger(int index) {
+		for (Passenger dropOffPassenger : dropOffPassengers) {
+			if (dropOffPassenger != null) {
+				if (dropOffPassenger.isDestroyed())
+					dropOffPassenger = null;
+			}
 		}
-		return dropOffPassenger;
+		return dropOffPassengers[index];
 	}
 
 	/**
 	 * Gets the luggage drop off position.
 	 * 
+	 * @param index
+	 *            The index.
+	 * 
 	 * @return The position
 	 */
-	public Position getDropOffPosition() {
-		return luggageDropOffPosition;
+	public Position getDropOffPosition(int index) {
+		if (index >= getNumberOfDropoffIndices() || index < 0)
+			return null;
+		return luggageDropOffPositions[index];
+	}
+
+	/**
+	 * Gets the leave position for passengers of the system.
+	 * 
+	 * @return The leave position.
+	 */
+	public Position getLeavePosition() {
+		return leavePosition;
+	}
+
+	/**
+	 * Gets the next collect index. If -1 is returned, no position is available.
+	 * 
+	 * @return The next index.
+	 */
+	public int getNextCollectIndex() {
+		for (int i = 0; i < getNumberOfCollectIndices(); i++) {
+			if (collectPassengers[i] == null)
+				return i;
+		}
+		return -1;
+	}
+
+	/**
+	 * Gets the next drop off index. If -1 is returned, no position is
+	 * available.
+	 * 
+	 * @return The next index.
+	 */
+	public int getNextDropOffIndex() {
+		for (int i = 0; i < getNumberOfDropoffIndices(); i++) {
+			if (dropOffPassengers[i] == null)
+				return i;
+		}
+		return -1;
+
+	}
+
+	/**
+	 * Gets the number of collect places for passengers.
+	 * 
+	 * @return The number of collect places.
+	 */
+	public int getNumberOfCollectIndices() {
+		return luggageCollectPositions.length;
+	}
+
+	/**
+	 * Gets the number of drop off places for passengers.
+	 * 
+	 * @return The number of drop off places.
+	 */
+	public int getNumberOfDropoffIndices() {
+		return luggageDropOffPositions.length;
 	}
 
 	/**
@@ -267,9 +388,13 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Ope
 	 * 
 	 * @param collectPassenger
 	 *            The passenger.
+	 * @param index
+	 *            The index.
 	 */
-	public void setCollectPassenger(Passenger collectPassenger) {
-		this.collectPassenger = collectPassenger;
+	public void setCollectPassenger(Passenger collectPassenger, int index) {
+		if (index >= getNumberOfCollectIndices() || index < 0)
+			return;
+		this.collectPassengers[index] = collectPassenger;
 	}
 
 	/**
@@ -277,9 +402,13 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Ope
 	 * 
 	 * @param dropOffPassenger
 	 *            The passenger.
+	 * @param index
+	 *            The index.
 	 */
-	public void setDropOffPassenger(Passenger dropOffPassenger) {
-		this.dropOffPassenger = dropOffPassenger;
+	public void setDropOffPassenger(Passenger dropOffPassenger, int index) {
+		if (index >= getNumberOfDropoffIndices() || index < 0)
+			return;
+		this.dropOffPassengers[index] = dropOffPassenger;
 	}
 
 	@Override

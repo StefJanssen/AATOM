@@ -31,6 +31,11 @@ public class XRaySystemView extends MapComponentView {
 	public void paintComponent() {
 		ShapeDrawer.drawPolygon(Color.ORANGE, xray.getCorners());
 		ShapeDrawer.drawPolygon(Color.DARK_GRAY, xray.getXRaySensor().getCorners());
+
+		for (int i = 0; i < xray.getNumberOfCollectIndices(); i++) {
+			ShapeDrawer.drawCircle(Color.BLACK, xray.getCollectPosition(i), 0.1);
+			ShapeDrawer.drawCircle(Color.BLACK, xray.getDropOffPosition(i), 0.1);
+		}
 	}
 
 }

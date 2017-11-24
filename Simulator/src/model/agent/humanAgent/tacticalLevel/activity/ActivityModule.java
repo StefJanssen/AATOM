@@ -8,6 +8,7 @@ import model.agent.humanAgent.Passenger;
 import model.agent.humanAgent.operationalLevel.action.movement.MovementModel;
 import model.agent.humanAgent.operationalLevel.observation.ObservationModule;
 import model.agent.humanAgent.strategicLevel.reasoning.planning.ActivityPlanner;
+import model.agent.humanAgent.tacticalLevel.activity.passenger.CheckpointActivity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.QueueActivity;
 import model.agent.humanAgent.tacticalLevel.navigation.NavigationModule;
 import model.environment.position.Position;
@@ -132,6 +133,21 @@ public class ActivityModule implements Updatable {
 		if (queueActivity == null)
 			return;
 		queueActivity.startActivity(time);
+	}
+
+	/**
+	 * Specifies that the agent needs to be searched. Only needed in the
+	 * passenger checkpoint activity.
+	 * 
+	 * @param searchTime
+	 *            The time to search.
+	 */
+	public void setSearch(double searchTime) {
+		for (Activity a : activities) {
+			if (a instanceof CheckpointActivity) {
+				((CheckpointActivity) a).setSearch(searchTime);
+			}
+		}
 	}
 
 	@Override

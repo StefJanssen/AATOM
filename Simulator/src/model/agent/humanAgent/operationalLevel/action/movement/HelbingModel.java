@@ -63,8 +63,9 @@ public class HelbingModel extends MovementModel {
 		Vector agentInteractionForce = new Vector(0, 0);
 		Collection<HumanAgent> humanAgents = agent.getObservation(HumanAgent.class);
 
+		// we only care about passengers
 		for (HumanAgent other : humanAgents) {
-			if (!other.equals(agent))
+			if (!other.equals(agent) && other instanceof Passenger)
 				agentInteractionForce = agentInteractionForce.addVector(getSingleAgentInteractionForce(other));
 		}
 		return agentInteractionForce;

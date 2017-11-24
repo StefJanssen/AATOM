@@ -16,6 +16,7 @@ import model.environment.objects.area.BorderControlGateArea;
 import model.environment.objects.area.Facility;
 import model.environment.objects.flight.Flight;
 import model.environment.objects.flight.FlightType;
+import util.math.distributions.MathDistribution;
 
 /**
  * The goal module for passengers.
@@ -31,12 +32,16 @@ public class BasicPassengerGoalModule extends GoalModule {
 	 *            Visits facility or not.
 	 * @param checkedIn
 	 *            Checked-in or not.
+	 * @param checkPointDropTime
+	 *            The distribution of checkpoint luggage drop times.
+	 * @param checkPointCollectTime
+	 *            The distribution of checkpoint luggage collect times.
 	 * @param flight
 	 *            The flight.
 	 * @return The goals.
 	 */
 	private static Collection<Goal> getPassengerGoals(Class<? extends Facility> facility, boolean checkedIn,
-			Flight flight) {
+			MathDistribution checkPointDropTime, MathDistribution checkPointCollectTime, Flight flight) {
 		Collection<Goal> goals = new ArrayList<>();
 		if (flight.equals(Flight.NO_FLIGHT))
 			return goals;
@@ -48,7 +53,8 @@ public class BasicPassengerGoalModule extends GoalModule {
 				goals.add(new Goal(new BasicFacilityActivity(facility), exit));
 		} else {
 			GateActivity gate = new BasicGateActivity(flight);
-			CheckpointActivity checkpoint = new BasicCheckpointActivity(flight);
+			CheckpointActivity checkpoint = new BasicCheckpointActivity(flight, checkPointDropTime,
+					checkPointCollectTime);
 			if (!checkedIn)
 				goals.add(new Goal(new BasicPassengerCheckInActivity(flight), checkpoint));
 			goals.add(new Goal(checkpoint, gate));
@@ -69,10 +75,15 @@ public class BasicPassengerGoalModule extends GoalModule {
 	 *            The facility visit.
 	 * @param checkedIn
 	 *            Checked-in or not.
+	 * @param checkPointDropTime
+	 *            The distribution of checkpoint luggage drop times.
+	 * @param checkPointCollectTime
+	 *            The distribution of checkpoint luggage collect times.
 	 * @param flight
 	 *            The flight.
 	 */
-	public BasicPassengerGoalModule(Class<? extends Facility> facility, boolean checkedIn, Flight flight) {
-		super(getPassengerGoals(facility, checkedIn, flight));
+	public BasicPassengerGoalModule(Class<? extends Facility> facility, boolean checkedIn,
+			MathDistribution checkPointDropTime, MathDistribution checkPointCollectTime, Flight flight) {
+		super(getPassengerGoals(facility, checkedIn, checkPointDropTime, checkPointCollectTime, flight));
 	}
 }

@@ -72,6 +72,7 @@ public class Experimenter extends Thread {
 	 * Success or not.
 	 */
 	private boolean success = false;
+
 	/**
 	 * Creates an experimenter.
 	 * 
