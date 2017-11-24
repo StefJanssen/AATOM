@@ -6,6 +6,8 @@ import model.agent.humanAgent.tacticalLevel.activity.operator.ETDCheckActivity;
 import model.environment.objects.physicalObject.sensor.Observation;
 import model.environment.objects.physicalObject.sensor.WalkThroughMetalDetector;
 import model.environment.position.Position;
+import util.math.distributions.MathDistribution;
+import util.math.distributions.NormalDistribution;
 
 /**
  * The ETD check activity.
@@ -37,7 +39,7 @@ public class BasicETDCheckActivity extends ETDCheckActivity {
 	/**
 	 * The passenger waiting time.
 	 */
-	private double passengerWaitingTime;
+	private MathDistribution waitingDistribution;
 
 	/**
 	 * Creates an ETD check activity.
@@ -46,7 +48,7 @@ public class BasicETDCheckActivity extends ETDCheckActivity {
 	 *            The WTMD.
 	 */
 	public BasicETDCheckActivity(WalkThroughMetalDetector wtmd) {
-		this(wtmd, 10);
+		this(wtmd, new NormalDistribution(34.8, 15.17));
 	}
 
 	/**
@@ -54,12 +56,12 @@ public class BasicETDCheckActivity extends ETDCheckActivity {
 	 * 
 	 * @param wtmd
 	 *            The WTMD.
-	 * @param passengerWaitingTime
-	 *            The passenger waiting time.
+	 * @param waitingDistribution
+	 *            The distribution of waiting times.
 	 */
-	public BasicETDCheckActivity(WalkThroughMetalDetector wtmd, double passengerWaitingTime) {
+	public BasicETDCheckActivity(WalkThroughMetalDetector wtmd, MathDistribution waitingDistribution) {
 		this.wtmd = wtmd;
-		this.passengerWaitingTime = passengerWaitingTime;
+		this.waitingDistribution = waitingDistribution;
 	}
 
 	@Override
@@ -98,14 +100,14 @@ public class BasicETDCheckActivity extends ETDCheckActivity {
 		if (nextPassenger == null) {
 			nextPassenger = checkObservation();
 			if (nextPassenger != null)
-				nextPassenger.communicate(CommunicationType.WAIT, 2 * passengerWaitingTime);
+				nextPassenger.communicate(CommunicationType.WAIT, 30);
 		}
 
 		// passenger is at checking position
 		if (passengerToCheck.getPosition().distanceTo(wtmd.getCheckPosition()) < 0.5) {
 			// set waiting order
 			if (!waited) {
-				passengerToCheck.communicate(CommunicationType.WAIT, passengerWaitingTime);
+				passengerToCheck.communicate(CommunicationType.WAIT, waitingDistribution.getValue());
 				waited = true;
 			}
 			// check when done
