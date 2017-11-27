@@ -4,6 +4,8 @@ import model.agent.humanAgent.operationalLevel.action.communication.Communicatio
 import model.agent.humanAgent.tacticalLevel.activity.operator.LuggageCheckActivity;
 import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.position.Position;
+import util.math.distributions.MathDistribution;
+import util.math.distributions.NormalDistribution;
 
 /**
  * The luggage check activity.
@@ -13,26 +15,26 @@ import model.environment.position.Position;
 public class BasicLuggageCheckActivity extends LuggageCheckActivity {
 
 	/**
-	 * The mean service rate.
+	 * The time distribution.
 	 */
-	private double meanServiceRate;
+	private MathDistribution timeDistribution;
 
 	/**
 	 * Creates a luggage check activity.
 	 * 
 	 */
 	public BasicLuggageCheckActivity() {
-		this(25);
+		this(new NormalDistribution(60, 6));
 	}
 
 	/**
 	 * Creates a luggage check activity.
 	 * 
-	 * @param meanServiceRate
-	 *            The mean service rate.
+	 * @param timeDistribution
+	 *            The distribution of search times.
 	 */
-	public BasicLuggageCheckActivity(double meanServiceRate) {
-		this.meanServiceRate = meanServiceRate;
+	public BasicLuggageCheckActivity(MathDistribution timeDistribution) {
+		this.timeDistribution = timeDistribution;
 	}
 
 	@Override
@@ -54,7 +56,7 @@ public class BasicLuggageCheckActivity extends LuggageCheckActivity {
 	@Override
 	public void setSearch(Luggage luggage) {
 		super.setSearch(luggage);
-		luggage.getOwner().communicate(CommunicationType.SEARCH, meanServiceRate);
+		luggage.getOwner().communicate(CommunicationType.SEARCH, timeDistribution.getValue());
 	}
 
 	@Override

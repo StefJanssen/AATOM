@@ -94,15 +94,27 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 
 			// Get the closest desks
 			List<XRaySystem> systems = getClosestSystems();
-			for (XRaySystem system : systems) {
-				dropOffPosition = system.getNextDropOffIndex();
-				if (dropOffPosition != -1) {
-					// not occupied
-					xRaySystem = system;
+
+			// get the position numbers that are available for each system
+			List<Integer> indices = new ArrayList<>();
+			for (int i = 0; i < systems.size(); i++) {
+				int pos = systems.get(i).getNextDropOffIndex();
+				if (pos == -1)
+					pos = 10;
+				indices.add(pos);
+			}
+
+			// find next system
+			for (int i = 0; i < systems.get(0).getNumberOfDropoffIndices(); i++) {
+				int number = indices.indexOf(i);
+				if (number != -1) {
+					xRaySystem = systems.get(number);
+					dropOffPosition = xRaySystem.getNextDropOffIndex();
 					activityModule.setQueuing(0);
 					return true;
 				}
 			}
+
 		}
 		return false;
 	}
@@ -316,7 +328,7 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 		if (phase == 3 && !collected
 				&& movement.getPosition().distanceTo(xRaySystem.getCollectPosition(collectPosition)) < 0.3) {
 			collected = true;
-			movement.setStopOrder(collectDistribution.getValue());
+			movement.setStopOrder(collectDistribution.getValue() + searchTime);
 		}
 	}
 
