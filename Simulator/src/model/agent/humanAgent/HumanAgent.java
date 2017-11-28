@@ -53,6 +53,10 @@ public abstract class HumanAgent extends Agent implements CircularShape {
 	 * The {@link OperationalModel}.
 	 */
 	protected OperationalModel operationalModel;
+	/**
+	 * The time.
+	 */
+	protected double time;
 
 	/**
 	 * Creates a human agent with a specified {@link StrategicModel} and
@@ -234,5 +238,6 @@ public abstract class HumanAgent extends Agent implements CircularShape {
 		operationalModel.update(timeStep);
 		Vector move = operationalModel.getMove(timeStep);
 		position = new Position(position.x + move.x, position.y + move.y);
+		time += timeStep / 1000.0;
 	}
 }

@@ -1,13 +1,10 @@
 package model.environment.objects.physicalObject.sensor;
 
 import java.awt.geom.Path2D;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import model.environment.map.Map;
 import model.environment.objects.physicalObject.luggage.Luggage;
-import model.environment.objects.physicalObject.luggage.LuggageType;
 import model.environment.position.Position;
 import model.environment.shapes.PolygonShape;
 import simulation.simulation.util.Utilities;
@@ -18,24 +15,20 @@ import simulation.simulation.util.Utilities;
  * 
  * @author S.A.M. Janssen
  */
-public class XRaySensor extends Sensor implements PolygonShape {
+public abstract class XRaySensor extends Sensor implements PolygonShape {
 
-	/**
-	 * The bags that are checked already.
-	 */
-	private Collection<Luggage> checkedLuggage;
 	/**
 	 * The corner points of the X-Ray sensor.
 	 */
-	private List<Position> corners;
+	protected List<Position> corners;
 	/**
 	 * The shape.
 	 */
-	private Path2D shape;
+	protected Path2D shape;
 	/**
 	 * The last observed luggage.
 	 */
-	private Luggage lastObservedLuggage;
+	protected Luggage lastObservedLuggage;
 
 	/**
 	 * Creates an X-Ray sensor from its corner {@link Position}s.
@@ -49,7 +42,6 @@ public class XRaySensor extends Sensor implements PolygonShape {
 		super(Utilities.getAveragePosition(corners), map);
 		this.corners = corners;
 		shape = Utilities.getShape(corners);
-		checkedLuggage = new ArrayList<>();
 		lastObservedLuggage = Luggage.NO_LUGGAGE;
 	}
 
@@ -70,22 +62,6 @@ public class XRaySensor extends Sensor implements PolygonShape {
 	 */
 	public Luggage getLastObservedLuggage() {
 		return lastObservedLuggage;
-	}
-
-	@Override
-	public Observation<?> getObservation() {
-		for (Luggage luggage : map.getMapComponents(Luggage.class)) {
-			if (luggage.getLuggageType().equals(LuggageType.CARRY_ON)) {
-				if (!checkedLuggage.contains(luggage)) {
-					if (shape.contains(luggage.getPosition().x, luggage.getPosition().y)) {
-						lastObservedLuggage = luggage;
-						checkedLuggage.add(luggage);
-						return new Observation<Double>(luggage.getThreatLevel());
-					}
-				}
-			}
-		}
-		return Observation.NO_OBSERVATION;
 	}
 
 	@Override

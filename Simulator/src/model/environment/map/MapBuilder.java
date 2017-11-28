@@ -19,6 +19,9 @@ import model.environment.objects.physicalObject.QueueSeparator;
 import model.environment.objects.physicalObject.Wall;
 import model.environment.objects.physicalObject.sensor.WalkThroughMetalDetector;
 import model.environment.objects.physicalObject.sensor.XRaySystem;
+import model.environment.objects.physicalObject.sensor.impl.BasicWalkThroughMetalDetector;
+import model.environment.objects.physicalObject.sensor.impl.BasicXRaySensor;
+import model.environment.objects.physicalObject.sensor.impl.BasicXRaySystem;
 import model.environment.position.Position;
 import simulation.simulation.Simulator;
 import simulation.simulation.util.SimulationObject;
@@ -148,8 +151,8 @@ public final class MapBuilder {
 					degreeRotation);
 
 			boolean otherWayAround = i % 2 == 0;
-			XRaySystem xray = new XRaySystem(cornerPoints, machineCornerPoints, baggageStart, baggageEnd, map,
-					otherWayAround);
+			XRaySystem xray = new BasicXRaySystem(cornerPoints, new BasicXRaySensor(machineCornerPoints, map),
+					baggageStart, baggageEnd, map, otherWayAround);
 			components.add(xray);
 
 			// luggage check
@@ -196,10 +199,10 @@ public final class MapBuilder {
 				Position checkPosition = Utilities.transform(
 						new Position(start.x + xOffsetWTMD, start.y + yOffsetWTMD - 1.25), start, degreeRotation);
 
-				WalkThroughMetalDetector wtmd = new WalkThroughMetalDetector(
+				WalkThroughMetalDetector wtmd = new BasicWalkThroughMetalDetector(
 						getCornerPoints(new Position(start.x + xOffsetWTMD, start.y + yOffsetWTMD), wtmdWidth,
 								wtmdHeight, start, degreeRotation),
-						checkPosition, map);
+						checkPosition, map, 0.1, 0.1);
 				components.add(wtmd);
 
 				QueueSeparator queue = createQueueSeparator(

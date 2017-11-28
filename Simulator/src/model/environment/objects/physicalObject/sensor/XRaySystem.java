@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import model.agent.Agent;
 import model.agent.humanAgent.HumanAgent;
 import model.agent.humanAgent.Passenger;
 import model.environment.map.Map;
@@ -18,15 +17,12 @@ import simulation.simulation.util.Utilities;
 
 /**
  * An X-Ray system is a system used at a checkpoint of an airport. It consists
- * out of an {@link XRaySensor} and some physical objects (i.e. conveyer belts)
+ * of an {@link XRaySensor} and some physical objects (i.e. conveyer belts)
  * around it.
- * 
- * It is seen as an {@link Agent}, as it is able to perform actions in its
- * environment (i.e. it moves luggage that is in the system).
  * 
  * @author S.A.M. Janssen
  */
-public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Openable {
+public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Openable {
 
 	/**
 	 * The collect position for bags.
@@ -85,8 +81,8 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Ope
 	 * 
 	 * @param systemCornerPoints
 	 *            The corner points of the system.
-	 * @param machineCornerPoints
-	 *            The corner points of the machine.
+	 * @param sensor
+	 *            The sensor.
 	 * @param luggageStart
 	 *            The starting position of the luggage.
 	 * @param luggageEnd
@@ -94,9 +90,9 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Ope
 	 * @param map
 	 *            The map.
 	 */
-	public XRaySystem(List<Position> systemCornerPoints, List<Position> machineCornerPoints, Position luggageStart,
-			Position luggageEnd, Map map) {
-		this(systemCornerPoints, machineCornerPoints, luggageStart, luggageEnd, map, false);
+	public XRaySystem(List<Position> systemCornerPoints, XRaySensor sensor, Position luggageStart, Position luggageEnd,
+			Map map) {
+		this(systemCornerPoints, sensor, luggageStart, luggageEnd, map, false);
 	}
 
 	/**
@@ -104,8 +100,8 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Ope
 	 * 
 	 * @param systemCornerPoints
 	 *            The corner points of the system.
-	 * @param machineCornerPoints
-	 *            The corner points of the machine.
+	 * @param sensor
+	 *            The sensor.
 	 * @param luggageStart
 	 *            The starting position of the luggage.
 	 * @param luggageEnd
@@ -115,10 +111,10 @@ public class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Ope
 	 * @param otherWayAround
 	 *            An mirrored x-ray or not.
 	 */
-	public XRaySystem(List<Position> systemCornerPoints, List<Position> machineCornerPoints, Position luggageStart,
-			Position luggageEnd, Map map, boolean otherWayAround) {
+	public XRaySystem(List<Position> systemCornerPoints, XRaySensor sensor, Position luggageStart, Position luggageEnd,
+			Map map, boolean otherWayAround) {
 		super(systemCornerPoints);
-		xray = new XRaySensor(machineCornerPoints, map);
+		xray = sensor;
 
 		luggageInSystem = new ArrayList<>();
 		luggageStartPosition = luggageStart;

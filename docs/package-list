@@ -30,6 +30,7 @@ model.environment.objects.flight
 model.environment.objects.physicalObject
 model.environment.objects.physicalObject.luggage
 model.environment.objects.physicalObject.sensor
+model.environment.objects.physicalObject.sensor.impl
 model.environment.position
 model.environment.shapes
 simulation
