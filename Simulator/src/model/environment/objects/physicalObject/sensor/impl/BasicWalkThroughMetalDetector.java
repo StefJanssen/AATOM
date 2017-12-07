@@ -2,7 +2,6 @@ package model.environment.objects.physicalObject.sensor.impl;
 
 import java.util.List;
 
-import model.agent.humanAgent.Passenger;
 import model.environment.map.Map;
 import model.environment.objects.physicalObject.sensor.Observation;
 import model.environment.objects.physicalObject.sensor.WalkThroughMetalDetector;
@@ -57,15 +56,16 @@ public class BasicWalkThroughMetalDetector extends WalkThroughMetalDetector {
 			if (shape.contains(getLastObservedPassenger().getPosition().x, getLastObservedPassenger().getPosition().y))
 				lastPassengerGone = false;
 		}
-		return personsInCosideration.size() <= 0 && lastPassengerGone;
+		return personsInCosideration == null && lastPassengerGone;
 	}
 
 	@Override
 	public Observation<?> getObservation() {
-		for (Passenger p : personsInCosideration) {
-			if (shape.contains(p.getPosition().x, p.getPosition().y)) {
-				personsInCosideration.remove(p);
-				lastObservedPassenger = p;
+		if (personsInCosideration != null) {
+			if (shape.contains(personsInCosideration.getPosition().x, personsInCosideration.getPosition().y)) {
+				lastObservedPassenger = personsInCosideration;
+				personsInCosideration = null;
+
 				// etd check.
 				if (Utilities.RANDOM_GENERATOR.nextDouble() < etdThreshold) {
 					return new Observation<Integer>(1);

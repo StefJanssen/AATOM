@@ -1,7 +1,6 @@
 package model.environment.objects.physicalObject.sensor;
 
 import java.awt.geom.Path2D;
-import java.util.ArrayList;
 import java.util.List;
 
 import model.agent.humanAgent.Passenger;
@@ -33,7 +32,7 @@ public abstract class WalkThroughMetalDetector extends Sensor implements Polygon
 	/**
 	 * The passengers in consideration.
 	 */
-	protected List<Passenger> personsInCosideration;
+	protected Passenger personsInCosideration;
 	/**
 	 * The last observed passenger.
 	 */
@@ -53,7 +52,6 @@ public abstract class WalkThroughMetalDetector extends Sensor implements Polygon
 		super(Utilities.getAveragePosition(corners), map);
 		this.corners = corners;
 		this.checkPosition = checkPosition;
-		personsInCosideration = new ArrayList<>();
 		shape = Utilities.getShape(corners);
 	}
 
@@ -100,7 +98,7 @@ public abstract class WalkThroughMetalDetector extends Sensor implements Polygon
 	 *            The passenger.
 	 */
 	public void setPersonsInConsideration(Passenger passenger) {
-		personsInCosideration.add(passenger);
+		personsInCosideration = passenger;
 	}
 
 	/**
@@ -114,12 +112,8 @@ public abstract class WalkThroughMetalDetector extends Sensor implements Polygon
 				lastObservedPassenger = null;
 		}
 
-		List<Passenger> toRemove = new ArrayList<>();
-		for (Passenger p : personsInCosideration) {
-			if (p.isDestroyed())
-				toRemove.add(p);
-		}
-		personsInCosideration.removeAll(toRemove);
+		if (personsInCosideration != null && personsInCosideration.isDestroyed())
+			personsInCosideration = null;
 
 		return lastObservedPassenger;
 	}

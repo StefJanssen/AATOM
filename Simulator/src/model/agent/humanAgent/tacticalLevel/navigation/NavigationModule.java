@@ -154,11 +154,12 @@ public class NavigationModule implements Updatable {
 		if (stuckDetector.isStuck(20)) {
 			if (getGoalPosition().equals(Position.NO_POSITION) && activityModule.getActiveActivities().size() == 0) {
 				setGoal(activityModule.getNextActivityPosition());
-			} else {
-				setGoal(getGoalPosition());
+			} else if (getGoalPositions().size() > 0) {
+				setGoal(getGoalPositions().get(getGoalPositions().size() - 1));
 			}
 			stuckDetector.reset();
 		}
+
 	}
 
 	/**

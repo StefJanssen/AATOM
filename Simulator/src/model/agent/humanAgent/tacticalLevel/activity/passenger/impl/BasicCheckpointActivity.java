@@ -137,7 +137,6 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 		// when not waiting anymore
 		if (!movement.getStopOrder() && phase == 1
 				&& movement.getPosition().distanceTo(xRaySystem.getDropOffPosition(dropOffPosition)) < 0.3) {
-
 			if (wtmd == null)
 				wtmd = getClosestWTMD();
 
@@ -306,6 +305,7 @@ public class BasicCheckpointActivity extends CheckpointActivity {
 		super.startActivity();
 		activityModule.setQueuing(0);
 		navigationModule.setGoal(xRaySystem.getDropOffPosition(dropOffPosition));
+		navigationModule.setShortTermGoal(xRaySystem.getEnterPosition());
 		xRaySystem.setDropOffPassenger((Passenger) agent, dropOffPosition);
 		phase++;
 	}

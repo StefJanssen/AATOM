@@ -75,6 +75,11 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	 * The leave position.
 	 */
 	private Position leavePosition;
+	/**
+	 * The enter position.
+	 */
+	private Position enterPosition;
+
 
 	/**
 	 * Creates an x-ray system from a set of corner points.
@@ -182,7 +187,22 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 
 		Position tmpLeave = new Position(luggageEnd.x + 2 * moveLuggageVector.x,
 				luggageEnd.y + 2 * moveLuggageVector.y);
-		leavePosition = Utilities.transform(new Position(tmpLeave.x + 0.6 * v.x, tmpLeave.y + 0.6 * v.y), tmpLeave, 90);
+		leavePosition = Utilities.transform(new Position(tmpLeave.x + 0.6 * v.x, tmpLeave.y + 0.6 * v.y), tmpLeave, 270);
+		
+		if (otherWayAround) {
+			leavePosition = Utilities.transform(new Position(tmpLeave.x + 0.6 * v.x, tmpLeave.y + 0.6 * v.y), tmpLeave,
+					90);
+		}
+		
+		Position tmpStart = new Position(luggageStart.x + 2 * moveLuggageVector.x,
+				luggageStart.y );
+		enterPosition = Utilities.transform(new Position(tmpStart.x + 1.6 * v.x, tmpStart.y + 1.6 * v.y), tmpStart, 270);
+		
+		if (otherWayAround) {
+			enterPosition = Utilities.transform(new Position(tmpStart.x + 1.6 * v.x, tmpStart.y + 1.6 * v.y), tmpStart,
+					90);
+		}
+
 
 		isOpen = true;
 	}
@@ -287,6 +307,15 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 		return luggageDropOffPositions[index];
 	}
 
+	/**
+	 * Gets the enter position for passengers of the system.
+	 * 
+	 * @return The leave position.
+	 */
+	public Position getEnterPosition() {
+		return enterPosition;
+	}
+	
 	/**
 	 * Gets the leave position for passengers of the system.
 	 * 
