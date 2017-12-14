@@ -251,10 +251,10 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	 * @return The passenger.
 	 */
 	public Passenger getCollectPassenger(int position) {
-		for (Passenger collectpassenger : collectPassengers) {
-			if (collectpassenger != null) {
-				if (collectpassenger.isDestroyed())
-					collectPassengers[position] = null;
+		for (int i = 0; i < collectPassengers.length; i++) {
+			if (collectPassengers[i] != null) {
+				if (collectPassengers[i].isDestroyed())
+					collectPassengers[i] = null;
 			}
 		}
 		return collectPassengers[position];
@@ -283,10 +283,10 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	 * @return The passenger.
 	 */
 	public Passenger getDropOffPassenger(int index) {
-		for (Passenger dropOffPassenger : dropOffPassengers) {
-			if (dropOffPassenger != null) {
-				if (dropOffPassenger.isDestroyed())
-					dropOffPassengers[index] = null;
+		for (int i = 0; i < dropOffPassengers.length; i++) {
+			if (dropOffPassengers[i] != null) {
+				if (dropOffPassengers[i].isDestroyed())
+					dropOffPassengers[i] = null;
 			}
 		}
 		return dropOffPassengers[index];
