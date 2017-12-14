@@ -80,7 +80,6 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	 */
 	private Position enterPosition;
 
-
 	/**
 	 * Creates an x-ray system from a set of corner points.
 	 * 
@@ -187,22 +186,22 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 
 		Position tmpLeave = new Position(luggageEnd.x + 2 * moveLuggageVector.x,
 				luggageEnd.y + 2 * moveLuggageVector.y);
-		leavePosition = Utilities.transform(new Position(tmpLeave.x + 0.6 * v.x, tmpLeave.y + 0.6 * v.y), tmpLeave, 270);
-		
+		leavePosition = Utilities.transform(new Position(tmpLeave.x + 0.6 * v.x, tmpLeave.y + 0.6 * v.y), tmpLeave,
+				270);
+
 		if (otherWayAround) {
 			leavePosition = Utilities.transform(new Position(tmpLeave.x + 0.6 * v.x, tmpLeave.y + 0.6 * v.y), tmpLeave,
 					90);
 		}
-		
-		Position tmpStart = new Position(luggageStart.x + 2 * moveLuggageVector.x,
-				luggageStart.y );
-		enterPosition = Utilities.transform(new Position(tmpStart.x + 1.6 * v.x, tmpStart.y + 1.6 * v.y), tmpStart, 270);
-		
+
+		Position tmpStart = new Position(luggageStart.x + 2 * moveLuggageVector.x, luggageStart.y);
+		enterPosition = Utilities.transform(new Position(tmpStart.x + 1.6 * v.x, tmpStart.y + 1.6 * v.y), tmpStart,
+				270);
+
 		if (otherWayAround) {
 			enterPosition = Utilities.transform(new Position(tmpStart.x + 1.6 * v.x, tmpStart.y + 1.6 * v.y), tmpStart,
 					90);
 		}
-
 
 		isOpen = true;
 	}
@@ -255,7 +254,7 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 		for (Passenger collectpassenger : collectPassengers) {
 			if (collectpassenger != null) {
 				if (collectpassenger.isDestroyed())
-					collectpassenger = null;
+					collectPassengers[position] = null;
 			}
 		}
 		return collectPassengers[position];
@@ -287,7 +286,7 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 		for (Passenger dropOffPassenger : dropOffPassengers) {
 			if (dropOffPassenger != null) {
 				if (dropOffPassenger.isDestroyed())
-					dropOffPassenger = null;
+					dropOffPassengers[index] = null;
 			}
 		}
 		return dropOffPassengers[index];
@@ -315,7 +314,7 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	public Position getEnterPosition() {
 		return enterPosition;
 	}
-	
+
 	/**
 	 * Gets the leave position for passengers of the system.
 	 * 
@@ -332,8 +331,10 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	 */
 	public int getNextCollectIndex() {
 		for (int i = 0; i < getNumberOfCollectIndices(); i++) {
-			if (collectPassengers[i] == null)
+			if (getCollectPassenger(i) == null)
 				return i;
+			else {
+			}
 		}
 		return -1;
 	}
