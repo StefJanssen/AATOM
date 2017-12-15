@@ -195,11 +195,11 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 		}
 
 		Position tmpStart = new Position(luggageStart.x + 2 * moveLuggageVector.x, luggageStart.y);
-		enterPosition = Utilities.transform(new Position(tmpStart.x + 1.6 * v.x, tmpStart.y + 1.6 * v.y), tmpStart,
+		enterPosition = Utilities.transform(new Position(tmpStart.x + 2 * v.x, tmpStart.y + 2 * v.y), tmpStart,
 				270);
 
 		if (otherWayAround) {
-			enterPosition = Utilities.transform(new Position(tmpStart.x + 1.6 * v.x, tmpStart.y + 1.6 * v.y), tmpStart,
+			enterPosition = Utilities.transform(new Position(tmpStart.x + 2 * v.x, tmpStart.y + 2 * v.y), tmpStart,
 					90);
 		}
 
