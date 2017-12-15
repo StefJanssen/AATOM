@@ -157,10 +157,15 @@ public class NavigationModule implements Updatable {
 				stuckDetector.reset();
 			} else if (getGoalPositions().size() > 0) {
 				setGoal(getGoalPositions().get(getGoalPositions().size() - 1));
+				if (!inQueuingArea()) {
+					setShortTermGoal(
+							new Position(movementModel.getPosition().x + Utilities.RANDOM_GENERATOR.nextDouble() - 0.5,
+									movementModel.getPosition().y + Utilities.RANDOM_GENERATOR.nextDouble() - 0.5));
+				}
 				stuckDetector.reset();
+
 			}
 		}
-
 	}
 
 	/**
@@ -215,6 +220,19 @@ public class NavigationModule implements Updatable {
 			if (a instanceof QueueActivity) {
 				return true;
 			}
+		}
+		return false;
+	}
+
+	/**
+	 * Determines if the agent is in a queuing area.
+	 * 
+	 * @return True if it is, false otherwise.
+	 */
+	private boolean inQueuingArea() {
+		for (Area a : observationModule.getObservation(Area.class)) {
+			if (a instanceof QueuingArea)
+				return true;
 		}
 		return false;
 	}
@@ -289,12 +307,14 @@ public class NavigationModule implements Updatable {
 	 *            The positions.
 	 */
 	public void setShortTermGoals(List<Position> positions) {
-		while (!goalPositions.isEmpty()) {
-			if (goalPositions.get(0).distanceTo(movementModel.getPosition()) < 0.5)
-				goalPositions.remove(0);
-			else
-				break;
-		}
+		// while (!goalPositions.isEmpty()) {
+		// if (goalPositions.get(0).distanceTo(movementModel.getPosition()) <
+		// 0.5)
+		// goalPositions.remove(0);
+		// else
+		// break;
+		// }
+
 		List<Position> path = pathFinder.getPath(movementModel.getPosition(), positions.get(0));
 		path.addAll(positions);
 		if (goalPositions.size() > 0)
