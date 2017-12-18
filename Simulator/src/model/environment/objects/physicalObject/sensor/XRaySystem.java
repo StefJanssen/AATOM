@@ -195,12 +195,10 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 		}
 
 		Position tmpStart = new Position(luggageStart.x + 2 * moveLuggageVector.x, luggageStart.y);
-		enterPosition = Utilities.transform(new Position(tmpStart.x + 2 * v.x, tmpStart.y + 2 * v.y), tmpStart,
-				270);
+		enterPosition = Utilities.transform(new Position(tmpStart.x + 2 * v.x, tmpStart.y + 2 * v.y), tmpStart, 270);
 
 		if (otherWayAround) {
-			enterPosition = Utilities.transform(new Position(tmpStart.x + 2 * v.x, tmpStart.y + 2 * v.y), tmpStart,
-					90);
+			enterPosition = Utilities.transform(new Position(tmpStart.x + 2 * v.x, tmpStart.y + 2 * v.y), tmpStart, 90);
 		}
 
 		isOpen = true;
@@ -333,8 +331,6 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 		for (int i = 0; i < getNumberOfCollectIndices(); i++) {
 			if (getCollectPassenger(i) == null)
 				return i;
-			else {
-			}
 		}
 		return -1;
 	}
@@ -347,7 +343,7 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	 */
 	public int getNextDropOffIndex() {
 		for (int i = 0; i < getNumberOfDropoffIndices(); i++) {
-			if (dropOffPassengers[i] == null)
+			if (getDropOffPassenger(i) == null)
 				return i;
 		}
 		return -1;
