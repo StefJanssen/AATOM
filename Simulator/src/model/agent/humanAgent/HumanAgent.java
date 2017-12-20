@@ -182,6 +182,15 @@ public abstract class HumanAgent extends Agent implements CircularShape {
 	}
 
 	/**
+	 * Gets the current time for the agent.
+	 * 
+	 * @return The time.
+	 */
+	public double getTime() {
+		return time;
+	}
+
+	/**
 	 * Gets an observation of a specific type. An observation always returns a
 	 * collection of map components.
 	 * 
