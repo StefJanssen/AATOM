@@ -1,5 +1,7 @@
 package util.math.distributions;
 
+import util.math.RandomPlus;
+
 /**
  * The normal distribution.
  * 
@@ -19,6 +21,19 @@ public class ExponentialDistribution extends MathDistribution {
 	 *            The lambda parameter.
 	 */
 	public ExponentialDistribution(double lambda) {
+		this.lambda = lambda;
+	}
+
+	/**
+	 * Creates an exponential distribution with a specified lambda.
+	 * 
+	 * @param lambda
+	 *            The lambda parameter.
+	 * @param random
+	 *            The random generator.
+	 */
+	public ExponentialDistribution(double lambda, RandomPlus random) {
+		super(random);
 		this.lambda = lambda;
 	}
 

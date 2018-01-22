@@ -1,5 +1,7 @@
 package util.math.distributions;
 
+import util.math.RandomPlus;
+
 /**
  * The Weibull distribution.
  * 
@@ -25,6 +27,22 @@ public class WeibullDistribution extends MathDistribution {
 	 *            B parameter.
 	 */
 	public WeibullDistribution(double a, double b) {
+		this.a = a;
+		this.b = b;
+	}
+
+	/**
+	 * Generates a weibull random variable.
+	 * 
+	 * @param a
+	 *            A parameter.
+	 * @param b
+	 *            B parameter.
+	 * @param random
+	 *            The random generator.
+	 */
+	public WeibullDistribution(double a, double b, RandomPlus random) {
+		super(random);
 		this.a = a;
 		this.b = b;
 	}

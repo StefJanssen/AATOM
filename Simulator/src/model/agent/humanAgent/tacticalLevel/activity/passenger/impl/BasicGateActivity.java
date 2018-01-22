@@ -63,7 +63,7 @@ public class BasicGateActivity extends GateActivity {
 
 		if (isFinished())
 			return;
-
+		
 		navigationModule.setGoal(gateArea.getCorners().get(0));
 		super.goToActivity();
 	}
@@ -104,7 +104,7 @@ public class BasicGateActivity extends GateActivity {
 
 		// all chairs are full.
 		if (chair == null) {
-
+			
 			// find a random position and move there
 			if (timer >= 0)
 				timer += timeStep / 1000.0;

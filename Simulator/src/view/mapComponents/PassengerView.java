@@ -94,6 +94,5 @@ public class PassengerView extends MapComponentView {
 		setBounds(ShapeDrawer.getRectangle(
 				new Position(agent.getPosition().x - agent.getRadius(), agent.getPosition().y - agent.getRadius()),
 				2 * agent.getRadius(), 2 * agent.getRadius()));
-
 	}
 }

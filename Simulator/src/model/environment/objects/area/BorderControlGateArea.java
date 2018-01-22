@@ -1,5 +1,6 @@
 package model.environment.objects.area;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,6 +51,7 @@ public class BorderControlGateArea extends GateArea {
 		super(topX, topY, width, height);
 		this.borderControlDesks = borderControlDesks;
 		this.borderControlQueue = borderControlQueue;
+		passedBorderControl = new ArrayList<>();
 	}
 
 	/**
@@ -77,6 +79,7 @@ public class BorderControlGateArea extends GateArea {
 		super(gateNumber, topX, topY, width, height);
 		this.borderControlDesks = borderControlDesks;
 		this.borderControlQueue = borderControlQueue;
+		passedBorderControl = new ArrayList<>();
 	}
 
 	/**
@@ -99,6 +102,7 @@ public class BorderControlGateArea extends GateArea {
 		super(gateNumber, corners);
 		this.borderControlDesks = borderControlDesks;
 		this.borderControlQueue = borderControlQueue;
+		passedBorderControl = new ArrayList<>();
 	}
 
 	/**
@@ -118,6 +122,7 @@ public class BorderControlGateArea extends GateArea {
 		super(corners);
 		this.borderControlDesks = borderControlDesks;
 		this.borderControlQueue = borderControlQueue;
+		passedBorderControl = new ArrayList<>();
 	}
 
 	/**

@@ -13,7 +13,25 @@ public abstract class MathDistribution {
 	/**
 	 * The random generator.
 	 */
-	protected RandomPlus random = Utilities.RANDOM_GENERATOR;
+	protected RandomPlus random;
+
+	/**
+	 * Creates a math distribution.
+	 * 
+	 */
+	public MathDistribution() {
+		random = Utilities.RANDOM_GENERATOR;
+	}
+
+	/**
+	 * Creates a math distribution based on a separate random generator.
+	 * 
+	 * @param random
+	 *            The random generator.
+	 */
+	public MathDistribution(RandomPlus random) {
+		this.random = random;
+	}
 
 	/**
 	 * Draws a number from the random distribution.
