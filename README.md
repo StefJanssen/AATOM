@@ -1,10 +1,10 @@
 # AATOM - An Agent-based Airport Terminal Operations Model
 
-For model description, see: TODO.
+For model description, see: https://github.com/StefJanssen/AATOM/raw/master/AATOM.pdf
 
 For documentation, see: https://stefjanssen.github.io/AATOM/
 
-For tutorials, see: TODO.
+For tutorials, see: https://github.com/StefJanssen/AATOM/raw/master/tutorial.pdf
 
 ## Licenses
 AATOM depends on a set of other projects that each have their own libraries, outlined below.
