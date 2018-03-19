@@ -230,9 +230,12 @@ public class NavigationModule implements Updatable {
 	 * @return True if it is, false otherwise.
 	 */
 	private boolean inQueuingArea() {
-		for (Area a : observationModule.getObservation(Area.class)) {
-			if (a instanceof QueuingArea)
-				return true;
+		Collection<Area> areas = observationModule.getObservation(Area.class);
+		if (areas != null) {
+			for (Area a : areas) {
+				if (a instanceof QueuingArea)
+					return true;
+			}
 		}
 		return false;
 	}

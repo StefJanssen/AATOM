@@ -29,15 +29,38 @@ public class BaseLogger extends Logger {
 	}
 
 	/**
+	 * Creates a base logger with or without a trace.
+	 * 
+	 * @param trace
+	 *            Includes the trace of the agents or not.
+	 */
+	public BaseLogger(boolean trace) {
+		this(System.getProperty("user.dir") + File.separator + "logfiles" + File.separator, false);
+	}
+
+	/**
 	 * Creates a base logger that logs to a specified directory.
 	 * 
 	 * @param folderName
 	 *            The name of the folder.
 	 */
 	public BaseLogger(String folderName) {
+		this(folderName, false);
+	}
+
+	/**
+	 * Creates a base logger that logs to a specified directory.
+	 * 
+	 * @param folderName
+	 *            The name of the folder.
+	 * @param trace
+	 *            Includes the trace of the agents or not.
+	 */
+	public BaseLogger(String folderName, boolean trace) {
 		String logLocation = initLog(folderName);
 		loggerList = new ArrayList<>();
-		// loggerList.add(new SimulationLogger(logLocation));
+		if (trace)
+			loggerList.add(new SimulationLogger(logLocation));
 		loggerList.add(new AnalyticsLogger(logLocation));
 		loggerList.add(new AgentLogger(logLocation));
 	}

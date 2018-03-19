@@ -470,8 +470,10 @@ public class Simulator extends Thread {
 
 		// add agents
 		List<? extends Agent> agents = agentGenerator.generateAgent(numberOfSteps, timeStep, false);
-		for (Agent a : agents)
-			add(a);
+		if (agents != null) {
+			for (Agent a : agents)
+				add(a);
+		}
 
 		// update all directly updatable items
 		for (DirectlyUpdatable d : map.getMapComponents(DirectlyUpdatable.class))

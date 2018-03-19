@@ -8,9 +8,7 @@ import model.agent.humanAgent.HumanAgent;
 import model.agent.humanAgent.Passenger;
 import model.environment.objects.area.EntranceArea;
 import model.environment.objects.area.Facility;
-import model.environment.objects.area.Restaurant;
 import model.environment.objects.area.Shop;
-import model.environment.objects.area.Toilet;
 import model.environment.objects.flight.Flight;
 import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.objects.physicalObject.luggage.LuggageType;
@@ -73,7 +71,7 @@ public class BaseAgentGenerator extends AgentGenerator {
 						getFacility(), start, 0.2, 80, luggage, Color.RED));
 			}
 		}
-		return null;
+		return agents;
 	}
 
 	/**
@@ -99,14 +97,10 @@ public class BaseAgentGenerator extends AgentGenerator {
 	 * @return The facility.
 	 */
 	private Class<? extends Facility> getFacility() {
-		int rand = Utilities.RANDOM_GENERATOR.nextInt(4);
+		int rand = Utilities.RANDOM_GENERATOR.nextInt(2);
 		if (rand == 0)
 			return null;
-		if (rand == 1)
-			return Shop.class;
-		if (rand == 2)
-			return Toilet.class;
-		return Restaurant.class;
+		return Shop.class;
 	}
 
 	/**

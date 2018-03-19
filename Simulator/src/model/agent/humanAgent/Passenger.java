@@ -77,8 +77,8 @@ public class Passenger extends HumanAgent {
 			MathDistribution checkPointDropTime, MathDistribution checkPointCollectTime, Position position,
 			double radius, double mass, Luggage luggage, Color color) {
 		this(map, flight, checkedIn, facility, position, radius, mass, luggage,
-				new BasicPassengerStrategicModel(facility, !luggage.getLuggageType().equals(LuggageType.CHECKED),
-						checkPointDropTime, checkPointCollectTime, flight),
+				new BasicPassengerStrategicModel(facility, checkedIn, checkPointDropTime, checkPointCollectTime,
+						flight),
 				new BasicPassengerTacticalModel(map, flight), new BasicPassengerOperationalModel(map, 1), color);
 	}
 
