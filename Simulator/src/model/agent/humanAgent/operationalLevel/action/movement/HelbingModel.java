@@ -4,6 +4,8 @@ import java.util.Collection;
 
 import model.agent.humanAgent.HumanAgent;
 import model.agent.humanAgent.Passenger;
+import model.environment.objects.area.Area;
+import model.environment.objects.area.QueuingArea;
 import model.environment.objects.physicalObject.PhysicalObject;
 import model.environment.position.Position;
 import model.environment.position.Vector;
@@ -79,7 +81,11 @@ public class HelbingModel extends MovementModel {
 	private Vector getInternalAccelerationForce() {
 		Position goalPosition = agent.getGoalPosition();
 		Vector e0 = new Vector(goalPosition.x - getPosition().x, goalPosition.y - getPosition().y).normalize();
-		Vector numerator = e0.scalarMultiply(desiredSpeed).subtractVector(currentVelocity);
+		Vector numerator = null;
+		if (isInQueue()) {
+			numerator = e0.scalarMultiply(1).subtractVector(currentVelocity);
+		} else
+			numerator = e0.scalarMultiply(desiredSpeed).subtractVector(currentVelocity);
 		return numerator.scalarMultiply(15 / accelerationTime);
 	}
 
@@ -233,6 +239,22 @@ public class HelbingModel extends MovementModel {
 		// agent.getGoalPosition().y - getPosition().y).normalize();
 		// currentVelocity = currentVelocity.scalarMultiply(desiredSpeed);
 		currentVelocity = new Vector(1, 1).scalarMultiply(desiredSpeed);
+	}
+
+	/**
+	 * Determines if the agent is queuing.
+	 * 
+	 * @return True if it is, false otherwise.
+	 */
+	private boolean isInQueue() {
+		Collection<Area> areas = agent.getObservation(Area.class);
+		if (areas != null) {
+			for (Area a : areas) {
+				if (a instanceof QueuingArea)
+					return true;
+			}
+		}
+		return false;
 	}
 
 }

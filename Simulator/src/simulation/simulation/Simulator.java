@@ -346,6 +346,15 @@ public class Simulator extends Thread {
 	}
 
 	/**
+	 * Gets the simulation name.
+	 * 
+	 * @return The name.
+	 */
+	public String getSimulationName() {
+		return simulationName;
+	}
+
+	/**
 	 * Gets the time step.
 	 * 
 	 * @return The time step.

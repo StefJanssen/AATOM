@@ -63,6 +63,7 @@ public class BaseLogger extends Logger {
 			loggerList.add(new SimulationLogger(logLocation));
 		loggerList.add(new AnalyticsLogger(logLocation));
 		loggerList.add(new AgentLogger(logLocation));
+		loggerList.add(new ReturnValueLogger(logLocation));
 	}
 
 	@Override

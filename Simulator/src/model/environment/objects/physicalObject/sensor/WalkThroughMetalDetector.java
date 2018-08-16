@@ -82,6 +82,23 @@ public abstract class WalkThroughMetalDetector extends Sensor implements Polygon
 	}
 
 	/**
+	 * Gets the last observed passenger.
+	 * 
+	 * @return The last observed passenger.
+	 */
+	public Passenger getLastObservedPassenger() {
+		if (lastObservedPassenger != null) {
+			if (lastObservedPassenger.isDestroyed())
+				lastObservedPassenger = null;
+		}
+
+		if (personsInCosideration != null && personsInCosideration.isDestroyed())
+			personsInCosideration = null;
+
+		return lastObservedPassenger;
+	}
+
+	/**
 	 * Gets the {@link Path2D} shape of the shop.
 	 * 
 	 * @return The shape.
@@ -99,22 +116,5 @@ public abstract class WalkThroughMetalDetector extends Sensor implements Polygon
 	 */
 	public void setPersonsInConsideration(Passenger passenger) {
 		personsInCosideration = passenger;
-	}
-
-	/**
-	 * Gets the last observed passenger.
-	 * 
-	 * @return The last observed passenger.
-	 */
-	public Passenger getLastObservedPassenger() {
-		if (lastObservedPassenger != null) {
-			if (lastObservedPassenger.isDestroyed())
-				lastObservedPassenger = null;
-		}
-
-		if (personsInCosideration != null && personsInCosideration.isDestroyed())
-			personsInCosideration = null;
-
-		return lastObservedPassenger;
 	}
 }

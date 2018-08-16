@@ -78,6 +78,7 @@ public class PassengerNavigationModule extends NavigationModule {
 			positions = pathFinder.getPath(position, flight.getCheckInQueue().getLeavingPosition());
 
 		return positions;
+
 	}
 
 	@Override
@@ -114,6 +115,15 @@ public class PassengerNavigationModule extends NavigationModule {
 
 	@Override
 	public void setGoal(Position position) {
+		if (flight == null)
+			System.out.println("flight is null");
+		if (flight.getCheckInQueue() == null)
+			System.out.println("flight checkin is null");
+		if (flight.getCheckInQueue().getLeavingPosition() == null)
+			System.out.println("flight checkin queu is null");
+		if (position == null)
+			System.out.println(" position is null");
+
 		if (!flight.equals(Flight.NO_FLIGHT)
 				&& position.distanceTo(flight.getCheckInQueue().getLeavingPosition()) < 0.5)
 			goalPositions = getCheckInGoal(movementModel.getPosition());

@@ -29,8 +29,8 @@ public class SimulationLogger extends Logger {
 	 */
 	public SimulationLogger(String fileName) {
 		super(fileName + File.separator + "agentTrace.txt");
-		skipFactor = 20;
-		skips = 20;
+		skipFactor = 10;
+		skips = 10;
 	}
 
 	/**

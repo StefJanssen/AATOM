@@ -97,7 +97,7 @@ public class BasicETDCheckActivity extends ETDCheckActivity {
 
 	@Override
 	public void update(int timeStep) {
-		
+
 		if (nextPassenger == null) {
 			nextPassenger = checkObservation();
 			if (nextPassenger != null)

@@ -50,6 +50,7 @@ public class BasicWalkThroughMetalDetector extends WalkThroughMetalDetector {
 	 * 
 	 * @return True if it can, false otherwise.
 	 */
+	@Override
 	public boolean canGo() {
 		boolean lastPassengerGone = true;
 		if (getLastObservedPassenger() != null) {

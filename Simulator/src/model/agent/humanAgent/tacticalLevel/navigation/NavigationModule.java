@@ -144,7 +144,7 @@ public class NavigationModule implements Updatable {
 
 		// if queuing, go to front of queue
 		if (isQueuing()) {
-			if (stuckDetector.isStuck(false, 60)) {
+			if (stuckDetector.isStuck(false, 120)) {
 				setGoal(getQueueGoal());
 				stuckDetector.reset();
 			}
@@ -191,6 +191,22 @@ public class NavigationModule implements Updatable {
 	}
 
 	/**
+	 * Determines if the agent is in a queuing area.
+	 * 
+	 * @return True if it is, false otherwise.
+	 */
+	private boolean inQueuingArea() {
+		Collection<Area> areas = observationModule.getObservation(Area.class);
+		if (areas != null) {
+			for (Area a : areas) {
+				if (a instanceof QueuingArea)
+					return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Check if there is a collision with {@link PhysicalObject}s or
 	 * {@link WalkThroughMetalDetector}s.
 	 * 
@@ -219,22 +235,6 @@ public class NavigationModule implements Updatable {
 		for (Activity a : activityModule.getActiveActivities()) {
 			if (a instanceof QueueActivity) {
 				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Determines if the agent is in a queuing area.
-	 * 
-	 * @return True if it is, false otherwise.
-	 */
-	private boolean inQueuingArea() {
-		Collection<Area> areas = observationModule.getObservation(Area.class);
-		if (areas != null) {
-			for (Area a : areas) {
-				if (a instanceof QueuingArea)
-					return true;
 			}
 		}
 		return false;
@@ -357,7 +357,7 @@ public class NavigationModule implements Updatable {
 		}
 
 		// check if we are already on our way to the next goals
-		else if (activityModule.getActiveActivities().size() == 0) {
+		else if (activityModule.getActiveActivities().size() == 0 && !inQueuingArea()) {
 			if (goalRefreshTime > 5) {
 				goalRefreshTime = 0;
 				if (!isCollision(3))

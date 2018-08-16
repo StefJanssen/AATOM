@@ -36,8 +36,6 @@ public class BasicXRaySensor extends XRaySensor {
 		checkedLuggage = new ArrayList<>();
 	}
 
-
-
 	@Override
 	public Observation<?> getObservation() {
 		for (Luggage luggage : map.getMapComponents(Luggage.class)) {

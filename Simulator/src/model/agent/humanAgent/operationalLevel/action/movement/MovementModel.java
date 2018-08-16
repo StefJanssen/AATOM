@@ -164,6 +164,7 @@ public abstract class MovementModel implements Updatable {
 
 	@Override
 	public void update(int timeStep) {
+
 		if (stopMovingTime > 0)
 			stopMovingTime -= timeStep / 1000.0;
 		else if (stopMovingTime != -1)
