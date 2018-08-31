@@ -6,7 +6,6 @@ import model.agent.humanAgent.operationalLevel.BasicOperatorOperationalModel;
 import model.agent.humanAgent.strategicLevel.BasicOperatorStrategicModel;
 import model.agent.humanAgent.tacticalLevel.BasicOperatorTacticalModel;
 import model.agent.humanAgent.tacticalLevel.activity.Activity;
-import model.environment.map.Map;
 import model.environment.position.Position;
 
 /**
@@ -15,7 +14,7 @@ import model.environment.position.Position;
  * @author S.A.M. Janssen
  *
  */
-public class OperatorAgent extends HumanAgent {
+public class OperatorAgent extends AatomHumanAgent {
 
 	/**
 	 * The assignment.
@@ -25,8 +24,6 @@ public class OperatorAgent extends HumanAgent {
 	/**
 	 * Creates an operator agent.
 	 * 
-	 * @param map
-	 *            The map.
 	 * @param position
 	 *            The position.
 	 * @param radius
@@ -36,15 +33,13 @@ public class OperatorAgent extends HumanAgent {
 	 * @param assignment
 	 *            The assignment.
 	 */
-	public OperatorAgent(Map map, Position position, double radius, double mass, Activity assignment) {
-		this(map, position, radius, mass, assignment, Color.RED);
+	public OperatorAgent(Position position, double radius, double mass, Activity assignment) {
+		this(position, radius, mass, assignment, Color.RED);
 	}
 
 	/**
 	 * Creates an operator agent.
 	 * 
-	 * @param map
-	 *            The map.
 	 * @param position
 	 *            The position.
 	 * @param radius
@@ -56,9 +51,9 @@ public class OperatorAgent extends HumanAgent {
 	 * @param color
 	 *            The color.
 	 */
-	public OperatorAgent(Map map, Position position, double radius, double mass, Activity assignment, Color color) {
-		super(position, radius, mass, new BasicOperatorStrategicModel(assignment), new BasicOperatorTacticalModel(map),
-				new BasicOperatorOperationalModel(map, assignment), color);
+	public OperatorAgent(Position position, double radius, double mass, Activity assignment, Color color) {
+		super(position, radius, mass, new BasicOperatorStrategicModel(assignment), new BasicOperatorTacticalModel(),
+				new BasicOperatorOperationalModel(assignment), color);
 		this.assignment = assignment;
 	}
 

@@ -5,7 +5,6 @@ import model.environment.objects.area.GateArea;
 import model.environment.objects.flight.Flight;
 import model.environment.objects.physicalObject.Chair;
 import model.environment.position.Position;
-import simulation.simulation.util.Utilities;
 
 /**
  * The sit activity is responsible for the sitting behavior of an agent.
@@ -43,7 +42,7 @@ public class BasicGateActivity extends GateActivity {
 
 	@Override
 	public boolean canStart(int timeStep) {
-		if (Utilities.getDistance(movement.getPosition(), gateArea) < 0.5)
+		if (gateArea.getDistance(movement.getPosition()) < 0.5)
 			return true;
 		return false;
 	}
@@ -74,7 +73,7 @@ public class BasicGateActivity extends GateActivity {
 	 */
 	private void setChair() {
 		for (Chair chair : observations.getObservation(Chair.class)) {
-			if (Utilities.getDistance(chair.getPosition(), gateArea) < 1) {
+			if (gateArea.getDistance(chair.getPosition()) < 1) {
 				if (!chair.isOccupied()) {
 					movement.setStopOrder(0);
 					this.chair = chair;

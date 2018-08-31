@@ -74,9 +74,4 @@ public class Wall extends PhysicalObject {
 	public Wall(List<Position> corners) {
 		super(corners);
 	}
-
-	@Override
-	public String toString() {
-		return corners.toString();
-	}
 }

@@ -7,21 +7,13 @@ package util.math;
  */
 public final class FastMath {
 
-	@SuppressWarnings("javadoc")
 	private static final int ATAN2_BITS = 7;
-	@SuppressWarnings("javadoc")
 	private static final int ATAN2_BITS2 = ATAN2_BITS << 1;
-	@SuppressWarnings("javadoc")
 	private static final int ATAN2_MASK = ~(-1 << ATAN2_BITS2);
-	@SuppressWarnings("javadoc")
 	private static final int ATAN2_COUNT = ATAN2_MASK + 1;
-	@SuppressWarnings("javadoc")
 	private static final float[] atan2 = new float[ATAN2_COUNT];
-	@SuppressWarnings("javadoc")
 	private static final int ATAN2_DIM = (int) Math.sqrt(ATAN2_COUNT);
-	@SuppressWarnings("javadoc")
 	private static final float DEG = 180.0f / (float) Math.PI;
-	@SuppressWarnings("javadoc")
 	private static final float INV_ATAN2_DIM_MINUS_1 = 1.0f / (ATAN2_DIM - 1);
 
 	static {

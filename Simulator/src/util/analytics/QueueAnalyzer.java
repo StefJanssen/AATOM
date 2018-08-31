@@ -5,7 +5,7 @@ import java.util.List;
 
 import model.agent.humanAgent.Passenger;
 import model.environment.objects.area.QueuingArea;
-import simulation.simulation.Simulator;
+import model.map.Map;
 
 /**
  * A queue parameter tracker updates value for a queue line graph.
@@ -37,8 +37,8 @@ public class QueueAnalyzer extends Analyzer {
 	 */
 	private int getNumberOfPassengersInQueue(QueuingArea queue) {
 		int number = 0;
-		for (Passenger a : getSimulator().getMap().getMapComponents(Passenger.class)) {
-			if (queue.getShape().contains(a.getPosition().x, a.getPosition().y)) {
+		for (Passenger a : map.getMapComponents(Passenger.class)) {
+			if (queue.contains(a.getPosition())) {
 				number++;
 			}
 		}
@@ -65,10 +65,10 @@ public class QueueAnalyzer extends Analyzer {
 	}
 
 	@Override
-	public void setSimulator(Simulator simulator) {
-		super.setSimulator(simulator);
+	public void setMap(Map map) {
+		super.setMap(map);
 		queues = new ArrayList<>();
-		for (QueuingArea queue : getSimulator().getMap().getMapComponents(QueuingArea.class))
+		for (QueuingArea queue : map.getMapComponents(QueuingArea.class))
 			queues.add(queue);
 	}
 

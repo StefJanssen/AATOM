@@ -1,16 +1,17 @@
 package model.agent;
 
-import model.environment.map.MapComponent;
 import model.environment.position.Position;
+import model.map.shapes.CircularMapComponent;
 import simulation.simulation.util.DirectlyUpdatable;
 
 /**
  * An agent is an entity that is able to act. Its method {@link #update(int)}
- * will be called at every iteration in the simulation.
+ * will be called at every iteration in the simulation. It is assumed to be
+ * circular, but can have a radius of 0 (which is the default).
  * 
  * @author S.A.M. Janssen
  */
-public abstract class Agent extends MapComponent implements DirectlyUpdatable {
+public abstract class Agent extends CircularMapComponent implements DirectlyUpdatable {
 
 	/**
 	 * The log value.
@@ -18,13 +19,25 @@ public abstract class Agent extends MapComponent implements DirectlyUpdatable {
 	private String[] log;
 
 	/**
-	 * Creates an agent at a specific {@link Position}.
+	 * Creates an agent at a specific {@link Position} with a 0 radius.
 	 * 
 	 * @param position
 	 *            The position.
 	 */
 	public Agent(Position position) {
-		super(position);
+		this(position, 0);
+	}
+
+	/**
+	 * Creates an agent at a specific {@link Position}.
+	 * 
+	 * @param position
+	 *            The position.
+	 * @param radius
+	 *            The radius of the agent.
+	 */
+	public Agent(Position position, double radius) {
+		super(position, radius);
 	}
 
 	/**
@@ -33,6 +46,13 @@ public abstract class Agent extends MapComponent implements DirectlyUpdatable {
 	 * @return True if it does, false otherwise.
 	 */
 	public abstract boolean getWantsToBeRemoved();
+
+	/**
+	 * This method is used to initialize the agent.
+	 */
+	public void init() {
+
+	}
 
 	/**
 	 * Sets the log value.

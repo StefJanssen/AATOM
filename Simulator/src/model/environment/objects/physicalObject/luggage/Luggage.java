@@ -1,38 +1,37 @@
 package model.environment.objects.physicalObject.luggage;
 
-import model.agent.humanAgent.HumanAgent;
 import model.agent.humanAgent.Passenger;
-import model.environment.map.MapComponent;
 import model.environment.position.Position;
+import model.map.shapes.CircularMapComponent;
 
 /**
- * Luggage is something that is carried and owned by a {@link HumanAgent}.
+ * Luggage is something that is carried and owned by a {@link Passenger}.
  * Luggage has a complexity and threat level.
  * 
  * @author S.A.M. Janssen
  */
-public class Luggage extends MapComponent {
+public class Luggage extends CircularMapComponent {
 
 	/**
-	 * Holder to indicate no baggage.
+	 * Holder to indicate no luggage.
 	 */
 	public static final Luggage NO_LUGGAGE = new Luggage(LuggageType.CARRY_ON, -1, -1);
 	/**
-	 * The threat level of the baggage.
+	 * The threat level of the luggage.
 	 */
-	private double threatLevel;
+	private final float threatLevel;
 	/**
-	 * The owner of the baggage.
+	 * The owner of the luggage.
 	 */
 	private Passenger owner;
 	/**
 	 * The type of luggage.
 	 */
-	private LuggageType type;
+	private final LuggageType type;
 	/**
 	 * The complexity of the bag.
 	 */
-	private double complexity;
+	private final float complexity;
 
 	/**
 	 * Creates the luggage.
@@ -46,10 +45,10 @@ public class Luggage extends MapComponent {
 	 *            The luggage complexity.
 	 */
 	public Luggage(LuggageType type, double threatLevel, double complexity) {
-		super(Position.NO_POSITION);
+		super(Position.NO_POSITION, 0.1);
 		this.type = type;
-		this.threatLevel = threatLevel;
-		this.complexity = complexity;
+		this.threatLevel = (float) threatLevel;
+		this.complexity = (float) complexity;
 	}
 
 	/**
@@ -57,7 +56,7 @@ public class Luggage extends MapComponent {
 	 * 
 	 * @return The complexity.
 	 */
-	public double getComplexity() {
+	public float getComplexity() {
 		return complexity;
 	}
 
@@ -71,7 +70,7 @@ public class Luggage extends MapComponent {
 	}
 
 	/**
-	 * Gets the owner of the baggage.
+	 * Gets the owner of the luggage.
 	 * 
 	 * @return The owner.
 	 */
@@ -84,12 +83,12 @@ public class Luggage extends MapComponent {
 	 * 
 	 * @return The threat level.
 	 */
-	public double getThreatLevel() {
+	public float getThreatLevel() {
 		return threatLevel;
 	}
 
 	/**
-	 * Sets the owner of the baggage.
+	 * Sets the owner of the luggage.
 	 * 
 	 * @param owner
 	 *            The owner.
@@ -102,7 +101,7 @@ public class Luggage extends MapComponent {
 	}
 
 	/**
-	 * Sets the position of the baggage.
+	 * Sets the position of the luggage.
 	 * 
 	 * @param position
 	 *            The position.

@@ -3,7 +3,7 @@ package model.agent.humanAgent.operationalLevel.observation;
 import java.util.Collection;
 
 import model.agent.humanAgent.operationalLevel.action.movement.MovementModel;
-import model.environment.map.Map;
+import model.map.Map;
 
 /**
  * An observation model is used to model observations made by a human agent.
@@ -22,16 +22,6 @@ public abstract class ObservationModule {
 	protected Map map;
 
 	/**
-	 * Creates an observation model.
-	 * 
-	 * @param map
-	 *            The map.
-	 */
-	public ObservationModule(Map map) {
-		this.map = map;
-	}
-
-	/**
 	 * Gets an observation of a specific type. An observation always returns a
 	 * collection of map components.
 	 * 
@@ -46,10 +36,13 @@ public abstract class ObservationModule {
 	/**
 	 * Initializes the {@link MovementModel}.
 	 * 
+	 * @param map
+	 *            The map.
 	 * @param movementModel
 	 *            The movement model.
 	 */
-	public void init(MovementModel movementModel) {
+	public void init(Map map, MovementModel movementModel) {
+		this.map = map;
 		this.movementModel = movementModel;
 	}
 

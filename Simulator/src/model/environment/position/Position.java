@@ -70,8 +70,8 @@ public class Position implements Cloneable {
 	 *            The other position.
 	 * @return The distance.
 	 */
-	public double distanceTo(Position other) {
-		return Math.sqrt((x - other.x) * (x - other.x) + (y - other.y) * (y - other.y));
+	public float distanceTo(Position other) {
+		return (float) Math.sqrt((x - other.x) * (x - other.x) + (y - other.y) * (y - other.y));
 	}
 
 	/**
@@ -106,9 +106,9 @@ public class Position implements Cloneable {
 	 *            The precision.
 	 * @return The rounded value.
 	 */
-	private double round(double value, int precision) {
+	private float round(double value, int precision) {
 		int scale = (int) Math.pow(10, precision);
-		return (double) Math.round(value * scale) / scale;
+		return (float) Math.round(value * scale) / scale;
 	}
 
 	@Override

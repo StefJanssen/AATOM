@@ -36,6 +36,11 @@ public class Chair extends PhysicalObject {
 	 */
 	public Chair(Position position, Position entryPosition, double width) {
 		super(position.x, position.y, width, width);
+		if (contains(entryPosition))
+			throw new IllegalArgumentException("Entry position should be outside of the area of the chair.");
+		if (getDistance(entryPosition) > 1)
+			throw new IllegalArgumentException("Entry position should be within a distance of 1 of the chair.");
+
 		this.width = width;
 		this.entryPosition = entryPosition;
 	}
@@ -80,6 +85,9 @@ public class Chair extends PhysicalObject {
 	 *            The agent.
 	 */
 	public void setOccupied(HumanAgent agent) {
-		this.agent = agent;
+		if (agent.getDistance(entryPosition) > 2)
+			throw new IllegalArgumentException("The agent is over 2 meters away from the chair. It cannot access it.");
+		if (!isOccupied())
+			this.agent = agent;
 	}
 }

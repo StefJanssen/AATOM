@@ -7,8 +7,7 @@ import java.util.List;
 
 import model.agent.humanAgent.Passenger;
 import model.environment.objects.flight.Flight;
-import simulation.simulation.Simulator;
-import simulation.simulation.util.Utilities;
+import model.map.Map;
 
 /**
  * A parameter tracker for missed flights.
@@ -62,15 +61,15 @@ public class MissedFlightsAnalyzer extends Analyzer {
 	 * @return True if it reached the gate, false otherwise.
 	 */
 	private boolean reachedGate(Passenger passenger) {
-		return Utilities.getDistance(passenger, passenger.getFlight().getGateArea()) < 10;
+		return passenger.getFlight().getGateArea().getDistance(passenger.getPosition()) < 10;
 	}
 
 	@Override
-	public void setSimulator(Simulator simulator) {
-		super.setSimulator(simulator);
+	public void setMap(Map map) {
+		super.setMap(map);
 		flightSchedule = new ArrayList<>();
 		missedFlights = new HashMap<>();
-		for (Flight f : getSimulator().getMap().getMapComponents(Flight.class))
+		for (Flight f : map.getMapComponents(Flight.class))
 			flightSchedule.add(f);
 	}
 
@@ -78,7 +77,7 @@ public class MissedFlightsAnalyzer extends Analyzer {
 	public void update(int timeStep) {
 		for (Flight f : flightSchedule) {
 			if (f.hasLeft() && !missedFlights.containsKey(f)) {
-				Collection<Passenger> passengers = getSimulator().getMap().getMapComponents(Passenger.class);
+				Collection<Passenger> passengers = map.getMapComponents(Passenger.class);
 				int misses = 0;
 				for (Passenger passenger : passengers) {
 					if (passenger.getFlight().equals(f)) {

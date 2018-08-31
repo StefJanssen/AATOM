@@ -24,16 +24,18 @@ public class ReturnValueLogger extends Logger {
 		if (ended) {
 			StringBuilder s = new StringBuilder();
 			Object[] returnValues = simulator.getReturnValues();
-			for (int i = 0; i < returnValues.length; i++) {
-				if (returnValues[i] != null) {
-					s.append(returnValues[i].toString());
-					if (i != returnValues.length - 1)
-						s.append(",");
-				} else {
-					s.append("NaN,");
+			if (returnValues != null) {
+				for (int i = 0; i < returnValues.length; i++) {
+					if (returnValues[i] != null) {
+						s.append(returnValues[i].toString());
+						if (i != returnValues.length - 1)
+							s.append(",");
+					} else {
+						s.append("NaN,");
+					}
 				}
+				printLine(s.toString());
 			}
-			printLine(s.toString());
 		}
 	}
 }

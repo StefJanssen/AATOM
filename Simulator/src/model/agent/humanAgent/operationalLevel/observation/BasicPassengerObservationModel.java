@@ -4,8 +4,6 @@ import java.util.Collection;
 
 import model.agent.humanAgent.HumanAgent;
 import model.agent.humanAgent.Passenger;
-import model.agent.humanAgent.operationalLevel.action.movement.MovementModel;
-import model.environment.map.Map;
 import model.environment.objects.area.Area;
 import model.environment.objects.area.Restaurant;
 import model.environment.objects.area.Shop;
@@ -23,16 +21,6 @@ import simulation.simulation.util.Utilities;
  * @author S.A.M. Janssen
  */
 public class BasicPassengerObservationModel extends ObservationModule {
-
-	/**
-	 * Creates an observation model.
-	 * 
-	 * @param map
-	 *            The map.
-	 */
-	public BasicPassengerObservationModel(Map map) {
-		super(map);
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -83,10 +71,5 @@ public class BasicPassengerObservationModel extends ObservationModule {
 			return (Collection<T>) chairs;
 		}
 		throw new RuntimeException("The observation of type " + type + " cannot be made by the agent.");
-	}
-
-	@Override
-	public void init(MovementModel movementModel) {
-		this.movementModel = movementModel;
 	}
 }

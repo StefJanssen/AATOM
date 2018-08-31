@@ -7,8 +7,6 @@ import java.util.List;
 
 import model.agent.humanAgent.Passenger;
 import model.agent.humanAgent.tacticalLevel.activity.Activity;
-import model.environment.map.Map;
-import simulation.simulation.Simulator;
 
 /**
  * A parameter tracker for the distribution of activities of passengers.
@@ -21,10 +19,13 @@ public class ActivityDistributionAnalyzer extends Analyzer {
 	 * The relevant activities.
 	 */
 	private List<String> activities;
+
 	/**
-	 * The map.
+	 * Creates the analyzer.
 	 */
-	private Map map;
+	public ActivityDistributionAnalyzer() {
+		activities = new ArrayList<>(Arrays.asList("Checkpoint", "Gate", "CheckIn"));
+	}
 
 	@Override
 	public String[] getLineNames() {
@@ -60,13 +61,6 @@ public class ActivityDistributionAnalyzer extends Analyzer {
 	@Override
 	public String getYAxis() {
 		return "# of passengers";
-	}
-
-	@Override
-	public void setSimulator(Simulator simulator) {
-		super.setSimulator(simulator);
-		map = getSimulator().getMap();
-		activities = new ArrayList<>(Arrays.asList("Checkpoint", "Gate", "CheckIn"));
 	}
 
 }

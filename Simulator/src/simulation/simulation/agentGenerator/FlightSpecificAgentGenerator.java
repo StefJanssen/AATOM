@@ -1,6 +1,5 @@
 package simulation.simulation.agentGenerator;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -139,9 +138,11 @@ public class FlightSpecificAgentGenerator extends AgentGenerator {
 				if (areas.isEmpty())
 					return null;
 				EntranceArea area = areas.get(Utilities.RANDOM_GENERATOR.nextInt(areas.size()));
-				Position start = Utilities.generatePosition(area.getShape());
-				list.add(new Passenger(simulator.getMap(), f, Utilities.RANDOM_GENERATOR.nextBoolean(), getFacility(),
-						start, 0.2, 80, luggage, Color.RED));
+				Position start = area.generatePosition();
+				Passenger p = new Passenger.Builder<>().setFlight(f)
+						.setCheckedIn(Utilities.RANDOM_GENERATOR.nextBoolean()).setFacility(getFacility())
+						.setPosition(start).setLuggage(luggage).build();
+				list.add(p);
 			}
 		}
 		return list;

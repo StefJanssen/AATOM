@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import model.environment.map.Map;
 import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.objects.physicalObject.luggage.LuggageType;
 import model.environment.objects.physicalObject.sensor.Observation;
@@ -28,11 +27,9 @@ public class BasicXRaySensor extends XRaySensor {
 	 * 
 	 * @param corners
 	 *            The corner points.
-	 * @param map
-	 *            The map.
 	 */
-	public BasicXRaySensor(List<Position> corners, Map map) {
-		super(corners, map);
+	public BasicXRaySensor(List<Position> corners) {
+		super(corners);
 		checkedLuggage = new ArrayList<>();
 	}
 
@@ -44,7 +41,7 @@ public class BasicXRaySensor extends XRaySensor {
 					if (shape.contains(luggage.getPosition().x, luggage.getPosition().y)) {
 						lastObservedLuggage = luggage;
 						checkedLuggage.add(luggage);
-						return new Observation<Double>(luggage.getThreatLevel());
+						return new Observation<Float>(luggage.getThreatLevel());
 					}
 				}
 			}

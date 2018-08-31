@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import simulation.simulation.Simulator;
-import simulation.simulation.util.SimulationConstants;
 
 /**
  * The base logger is a collection of loggers that are used to log the
@@ -90,7 +89,7 @@ public class BaseLogger extends Logger {
 		if (index > 0)
 			jvmName = jvmName.substring(0, index);
 		logLocation = new File(System.getProperty("user.dir") + File.separator + "logfiles" + File.separator
-				+ System.currentTimeMillis() + "_" + jvmName + "_" + SimulationConstants.randomSeed + File.separator);
+				+ System.currentTimeMillis() + "_" + jvmName + File.separator);
 		if (!logLocation.exists()) {
 			if (!logLocation.mkdir())
 				throw new RuntimeException("Log location creation failed");

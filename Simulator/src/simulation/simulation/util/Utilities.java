@@ -1,18 +1,14 @@
 package simulation.simulation.util;
 
-import java.awt.Rectangle;
-import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import model.agent.humanAgent.HumanAgent;
-import model.environment.map.MapComponent;
 import model.environment.objects.area.QueuingArea;
 import model.environment.position.Position;
 import model.environment.position.Vector;
-import model.environment.shapes.CircularShape;
-import model.environment.shapes.PolygonShape;
+import model.map.MapComponent;
+import model.map.PhysicalMapComponent;
 import util.math.RandomPlus;
 
 /**
@@ -29,104 +25,6 @@ public class Utilities {
 	 * A random generator.
 	 */
 	public static RandomPlus RANDOM_GENERATOR = new RandomPlus(0);
-
-	/**
-	 * Determines if a point out of a set of points is contained in a shape.
-	 * 
-	 * @param shape
-	 *            The shape.
-	 * @param positions
-	 *            The points.
-	 * @return True if a point is in the shape, false otherwise.
-	 */
-	private static boolean contains(Path2D shape, List<Position> positions) {
-		for (Position position : positions) {
-			if (contains(shape, position))
-				return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Determines if a position is contained in a shape.
-	 * 
-	 * @param shape
-	 *            The shape.
-	 * @param position
-	 *            The position.
-	 * @return True if the position is contained in the shape, false otherwise.
-	 */
-	private static boolean contains(Path2D shape, Position position) {
-		return shape.contains(position.x, position.y);
-	}
-
-	/**
-	 * Generates a position inside a shape.
-	 * 
-	 * @param shape
-	 *            The shape.
-	 * @return The position.
-	 */
-	public static Position generatePosition(Path2D shape) {
-		return generatePosition(shape, RANDOM_GENERATOR);
-	}
-
-	/**
-	 * Generates a position inside a shape.
-	 * 
-	 * @param shape
-	 *            The shape.
-	 * @param randomGenerator
-	 *            The random generator.
-	 * @return The position.
-	 */
-	public static Position generatePosition(Path2D shape, RandomPlus randomGenerator) {
-		Rectangle r = shape.getBounds();
-		float x = -1, y = -1;
-
-		int count = 0;
-		while (!shape.contains(x, y)) {
-			x = (float) (r.getX() + 1 + (r.getWidth() - 2) * randomGenerator.nextFloat());
-			y = (float) (r.getY() + 1 + (r.getHeight() - 2) * randomGenerator.nextFloat());
-			// preventing infinite loops from happening.
-			count++;
-			if (count == 100)
-				break;
-		}
-		return new Position(x, y);
-	}
-
-	/**
-	 * Generates a set of positions inside a shape.
-	 * 
-	 * @param numberOfPositions
-	 *            The number of positions we want to generate.
-	 * @param shape
-	 *            The shape.
-	 * @return The positions.
-	 */
-	public static List<Position> generatePositions(int numberOfPositions, Path2D shape) {
-		return generatePositions(numberOfPositions, shape, RANDOM_GENERATOR);
-	}
-
-	/**
-	 * Generates a set of positions inside a shape.
-	 * 
-	 * @param numberOfPositions
-	 *            The number of positions we want to generate.
-	 * @param shape
-	 *            The shape.
-	 * @param randomGenerator
-	 *            The random generator.
-	 * @return The positions.
-	 */
-	public static List<Position> generatePositions(int numberOfPositions, Path2D shape, RandomPlus randomGenerator) {
-		List<Position> list = new ArrayList<>();
-		for (int i = 0; i < numberOfPositions; i++) {
-			list.add(generatePosition(shape, randomGenerator));
-		}
-		return list;
-	}
 
 	/**
 	 * Gets the central position of a set of points.
@@ -154,14 +52,14 @@ public class Utilities {
 	 *            The queues.
 	 * @return The closest queuing area.
 	 */
-	public static QueuingArea getClosestQueuingArea(Collection<? extends MapComponent> mapComponents,
+	public static QueuingArea getClosestQueuingArea(Collection<? extends PhysicalMapComponent> mapComponents,
 			Collection<QueuingArea> queues) {
 		QueuingArea closest = null;
 		double distance = Double.MAX_VALUE;
 
-		for (MapComponent mapComponent : mapComponents) {
+		for (PhysicalMapComponent mapComponent : mapComponents) {
 			for (QueuingArea area : queues) {
-				double dis = getDistance(mapComponent.getPosition(), area);
+				double dis = area.getDistance(mapComponent.getPosition());
 				if (dis < distance) {
 					distance = dis;
 					closest = area;
@@ -170,32 +68,6 @@ public class Utilities {
 			return closest;
 		}
 		return closest;
-	}
-
-	/**
-	 * Gets the distance between a {@link HumanAgent} and {@link MapComponent}.
-	 * 
-	 * @param agent
-	 *            The agent.
-	 * @param component
-	 *            The component.
-	 * @return The distance.
-	 */
-	public static double getDistance(HumanAgent agent, MapComponent component) {
-		return getDistance(agent.getPosition(), component);
-	}
-
-	/**
-	 * Gets the distance between a {@link Position} and a {@link MapComponent}.
-	 * 
-	 * @param position
-	 *            The position.
-	 * @param component
-	 *            The component.
-	 * @return The distance.
-	 */
-	public static double getDistance(Position position, MapComponent component) {
-		return getVector(position, component).length();
 	}
 
 	/**
@@ -212,12 +84,12 @@ public class Utilities {
 	 *            The specified subclass of {@link MapComponent}.
 	 * @return The components within the radius.
 	 */
-	public static <T extends MapComponent> Collection<T> getMapComponentsInNeighborhood(Position position,
+	public static <T extends PhysicalMapComponent> Collection<T> getMapComponentsInNeighborhood(Position position,
 			double radius, Collection<T> mapComponents) {
 		Collection<T> closeObjects = new ArrayList<>();
 
 		for (T component : mapComponents) {
-			if (getDistance(position, component) < radius)
+			if (component.getDistance(position) < radius)
 				closeObjects.add(component);
 		}
 		return closeObjects;
@@ -234,7 +106,7 @@ public class Utilities {
 	 *            The ending position of a line.
 	 * @return The vector.
 	 */
-	private static Vector getPositionToLineVector(Position position, Position lineStart, Position lineEnd) {
+	public static Vector getPositionToLineVector(Position position, Position lineStart, Position lineEnd) {
 		// adapted method from:
 		// http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
 
@@ -269,112 +141,52 @@ public class Utilities {
 		return new Vector(dx, dy);
 	}
 
-	/**
-	 * Gets a {@link Path2D} shape from a list of corners.
-	 * 
-	 * @param corners
-	 *            The corners.
-	 * @return The shape.
-	 */
-	public static Path2D getShape(List<Position> corners) {
-		Path2D path = new Path2D.Double();
-		path.moveTo(corners.get(0).x, corners.get(0).y);
-		for (int i = 1; i < corners.size(); ++i) {
-			path.lineTo(corners.get(i).x, corners.get(i).y);
-		}
-		path.closePath();
-		return path;
-	}
+	// /**
+	// * Gets a {@link Vector} pointing from a {@link HumanAgent} to the a
+	// * {@link Position}.
+	// *
+	// * @param agent
+	// * The agent.
+	// * @param component
+	// * The component.
+	// * @return The vector.
+	// */
+	// public static Vector getVector(HumanAgent agent, MapComponent component)
+	// {
+	// return getVector(agent.getPosition(), component);
+	// }
 
-	/**
-	 * Gets a {@link Vector} pointing from a {@link HumanAgent} to the a
-	 * {@link Position}.
-	 * 
-	 * @param agent
-	 *            The agent.
-	 * @param component
-	 *            The component.
-	 * @return The vector.
-	 */
-	public static Vector getVector(HumanAgent agent, MapComponent component) {
-		return getVector(agent.getPosition(), component);
-	}
-
-	/**
-	 * Gets a {@link Vector} pointing from a {@link MapComponent} to the a
-	 * {@link Position}.
-	 * 
-	 * @param position
-	 *            The first position.
-	 * @param component
-	 *            The second position.
-	 * @return The vector.
-	 */
-	public static Vector getVector(Position position, MapComponent component) {
-		if (component instanceof CircularShape)
-			return new Vector(position.x - component.getPosition().x, position.y - component.getPosition().y);
-		if (component instanceof PolygonShape) {
-			return getVector(position, (PolygonShape) component);
-		}
-		throw new RuntimeException("Failed to find a vector between: " + position + " and " + component);
-	}
-
-	/**
-	 * Gets a {@link Vector} pointing from a {@link PolygonShape} to a
-	 * {@link Position} .
-	 * 
-	 * @param position
-	 *            The position.
-	 * @param polygonShape
-	 *            The polygonShape.
-	 * @return The vector.
-	 */
-	private static Vector getVector(Position position, PolygonShape polygonShape) {
-		Path2D shape = polygonShape.getShape();
-
-		// if is contained
-		if (shape.contains(position.x, position.y))
-			return new Vector(0, 0);
-
-		List<Position> corners = polygonShape.getCorners();
-		double minDistance = Double.MAX_VALUE;
-		Vector shortest = null;
-
-		for (int i = 0; i < corners.size(); i++) {
-			Vector v = getPositionToLineVector(position, corners.get(i), corners.get((i + 1) % corners.size()));
-			double currentDistance = v.length();
-			if (currentDistance < minDistance) {
-				minDistance = currentDistance;
-				shortest = v;
-			}
-		}
-		return shortest;
-	}
-
-	/**
-	 * Determines if two {@link PolygonShape}s intersect.
-	 * 
-	 * @param first
-	 *            The first shape.
-	 * @param second
-	 *            The second shape.
-	 * @return True if they intersect, false otherwise.
-	 */
-	public static boolean isCollision(PolygonShape first, PolygonShape second) {
-		List<Position> firstCorners = first.getCorners();
-		List<Position> secondCorners = second.getCorners();
-
-		// check for containment in each other.
-		if (contains(first.getShape(), secondCorners) || contains(second.getShape(), firstCorners))
-			return true;
-
-		// check for line intersections
-		for (int i = 0; i < firstCorners.size(); i++) {
-			if (isLineCollision(firstCorners.get(i), firstCorners.get((i + 1) % firstCorners.size()), second))
-				return true;
-		}
-		return false;
-	}
+	// /**
+	// * Gets a {@link Vector} pointing from a {@link PolygonMapComponent} to a
+	// * {@link Position} .
+	// *
+	// * @param position
+	// * The position.
+	// * @param polygonShape
+	// * The polygonShape.
+	// * @return The vector.
+	// */
+	// private static Vector getVector(Position position, PolygonMapComponent
+	// polygonShape) {
+	// // if is contained
+	// if (polygonShape.contains(position))
+	// return new Vector(0, 0);
+	//
+	// List<Position> corners = polygonShape.getCorners();
+	// double minDistance = Double.MAX_VALUE;
+	// Vector shortest = null;
+	//
+	// for (int i = 0; i < corners.size(); i++) {
+	// Vector v = getPositionToLineVector(position, corners.get(i),
+	// corners.get((i + 1) % corners.size()));
+	// double currentDistance = v.length();
+	// if (currentDistance < minDistance) {
+	// minDistance = currentDistance;
+	// shortest = v;
+	// }
+	// }
+	// return shortest;
+	// }
 
 	/**
 	 * Determines if a line intersects with a set of components.
@@ -390,17 +202,17 @@ public class Utilities {
 	 * 
 	 * @return True if they do, false otherwise.
 	 */
-	public static <T extends MapComponent> boolean isLineCollision(Position start, Position end,
+	public static <T extends PhysicalMapComponent> boolean isLineCollision(Position start, Position end,
 			Collection<T> components) {
 		for (T component : components) {
-			if (isLineCollision(start, end, component))
+			if (component.isLineCollision(start, end))
 				return true;
 		}
 		return false;
 	}
 
 	/**
-	 * Determines if a line intersects with a {@link PolygonShape}.
+	 * Determines if a line intersects with a {@link PolygonMapComponent}.
 	 * 
 	 * @param start
 	 *            The start position of the line.
@@ -410,14 +222,16 @@ public class Utilities {
 	 *            The shape.
 	 * @return True if they intersect, false otherwise.
 	 */
-	private static boolean isLineCollision(Position start, Position end, PolygonShape shape) {
-		List<Position> corners = shape.getCorners();
-		for (int i = 0; i < corners.size(); i++) {
-			if (isLineCollision(start, end, corners.get(i), corners.get((i + 1) % corners.size())))
-				return true;
-		}
-		return false;
-	}
+	// public static boolean isLineCollision(Position start, Position end,
+	// PathShape shape) {
+	// List<Position> corners = shape.getCorners();
+	// for (int i = 0; i < corners.size(); i++) {
+	// if (isLineCollision(start, end, corners.get(i), corners.get((i + 1) %
+	// corners.size())))
+	// return true;
+	// }
+	// return false;
+	// }
 
 	/**
 	 * Checks if two lines intersect.
@@ -432,7 +246,7 @@ public class Utilities {
 	 *            The ending position of the second line.
 	 * @return True if they intersect, false otherwise.
 	 */
-	private static boolean isLineCollision(Position firstLineStart, Position firstLineEnd, Position secondLineStart,
+	public static boolean isLineCollision(Position firstLineStart, Position firstLineEnd, Position secondLineStart,
 			Position secondLineEnd) {
 		// Code adapted from: http://www.java-gaming.org/index.php?topic=22590.0
 
@@ -518,14 +332,16 @@ public class Utilities {
 	 * 
 	 * @return True if they do, false otherwise.
 	 */
-	public static <T extends MapComponent> boolean isLineCollision(Position start, Position end, T component) {
-		if (component instanceof PolygonShape)
-			return isLineCollision(start, end, (PolygonShape) component);
-		if (component instanceof CircularShape)
-			return getPositionToLineVector(((MapComponent) component).getPosition(), start, end)
-					.length() < ((CircularShape) component).getRadius();
-		return true;
-	}
+	// public static <T extends MapComponent> boolean isLineCollision(Position
+	// start, Position end, T component) {
+	// if (component instanceof PolygonMapComponent)
+	// return isLineCollision(start, end, (PolygonMapComponent) component);
+	// if (component instanceof CircularMapComponent)
+	// return getPositionToLineVector(((MapComponent) component).getPosition(),
+	// start, end)
+	// .length() < ((CircularMapComponent) component).getRadius();
+	// return true;
+	// }
 
 	/**
 	 * Rounds a value to a certain precision.

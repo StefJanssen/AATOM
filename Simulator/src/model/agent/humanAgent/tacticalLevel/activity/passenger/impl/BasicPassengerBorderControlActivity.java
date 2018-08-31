@@ -11,7 +11,6 @@ import model.environment.objects.flight.Flight;
 import model.environment.objects.physicalObject.Desk;
 import model.environment.position.Position;
 import model.environment.position.Vector;
-import simulation.simulation.util.Utilities;
 
 /**
  * The border control activity.
@@ -126,7 +125,7 @@ public class BasicPassengerBorderControlActivity extends Activity {
 	 */
 	private Position getTemporaryPosition() {
 		// vector from queue to serving postion
-		Vector v = Utilities.getVector(servingDesk.getServingPosition(), gate.getBorderControlQueue());
+		Vector v = gate.getBorderControlQueue().getVector(servingDesk.getServingPosition());
 		// other way around and scaled
 		v = v.scalarMultiply(-0.8);
 		// new position
@@ -153,7 +152,7 @@ public class BasicPassengerBorderControlActivity extends Activity {
 		activityModule.setQueuing(0);
 		navigationModule.setGoal(servingDesk.getServingPosition());
 		navigationModule.setShortTermGoal(getTemporaryPosition());
-		servingDesk.setAgentAtDesk((Passenger) agent);
+		servingDesk.reserveDeskPosition(agent);
 	}
 
 	@Override

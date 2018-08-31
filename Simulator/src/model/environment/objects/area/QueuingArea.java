@@ -13,11 +13,11 @@ public class QueuingArea extends Area {
 	/**
 	 * Entrance position.
 	 */
-	private Position entrancePosition;
+	private final Position entrancePosition;
 	/**
 	 * The leaving position.
 	 */
-	private Position leavingPosition;
+	private final Position leavingPosition;
 
 	/**
 	 * Creates a queuing area.
@@ -38,6 +38,13 @@ public class QueuingArea extends Area {
 	public QueuingArea(double topX, double topY, double width, double height, Position entrancePosition,
 			Position leavingPosition) {
 		super(topX, topY, width, height);
+		if (!contains(new Position(entrancePosition.x - 0.01, entrancePosition.y - 0.01))
+				&& !contains(new Position(entrancePosition.x + 0.01, entrancePosition.y + 0.01)))
+			throw new IllegalArgumentException("The entrance position and the leaving position should be in the area.");
+		if (!contains(new Position(leavingPosition.x - 0.01, leavingPosition.y - 0.01))
+				&& !contains(new Position(leavingPosition.x + 0.01, leavingPosition.y + 0.01)))
+			throw new IllegalArgumentException("The entrance position and the leaving position should be in the area.");
+
 		this.entrancePosition = entrancePosition;
 		this.leavingPosition = leavingPosition;
 	}
@@ -55,10 +62,14 @@ public class QueuingArea extends Area {
 	 */
 	public QueuingArea(List<Position> corners, Position entrancePosition, Position leavingPosition) {
 		super(corners);
-
+		if (!contains(new Position(entrancePosition.x - 0.01, entrancePosition.y - 0.01))
+				&& !contains(new Position(entrancePosition.x + 0.01, entrancePosition.y + 0.01)))
+			throw new IllegalArgumentException("The entrance position and the leaving position should be in the area.");
+		if (!contains(new Position(leavingPosition.x - 0.01, leavingPosition.y - 0.01))
+				&& !contains(new Position(leavingPosition.x + 0.01, leavingPosition.y + 0.01)))
+			throw new IllegalArgumentException("The entrance position and the leaving position should be in the area.");
 		this.entrancePosition = entrancePosition;
 		this.leavingPosition = leavingPosition;
-
 	}
 
 	/**

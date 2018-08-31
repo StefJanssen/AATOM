@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import model.agent.humanAgent.Passenger;
-import simulation.simulation.Simulator;
 import simulation.simulation.util.DirectlyUpdatable;
 
 /**
@@ -12,25 +11,18 @@ import simulation.simulation.util.DirectlyUpdatable;
  * 
  * @author S.A.M. Janssen
  */
-public class Analytics implements DirectlyUpdatable {
+public class AnalyzerCollection implements DirectlyUpdatable {
 
 	/**
 	 * The set of analyzers.
 	 */
 	private Collection<Analyzer> analyzers;
-	/**
-	 * The simulator.
-	 */
-	private Simulator simulator;
 
 	/**
 	 * Creates an analytics module.
 	 * 
-	 * @param simulator
-	 *            The simulator.
 	 */
-	public Analytics(Simulator simulator) {
-		this.simulator = simulator;
+	public AnalyzerCollection() {
 		analyzers = new ArrayList<>();
 	}
 
@@ -43,7 +35,6 @@ public class Analytics implements DirectlyUpdatable {
 	public void addAnalyzer(Analyzer analyzer) {
 		if (analyzer != null) {
 			analyzers.add(analyzer);
-			analyzer.setSimulator(simulator);
 		}
 	}
 

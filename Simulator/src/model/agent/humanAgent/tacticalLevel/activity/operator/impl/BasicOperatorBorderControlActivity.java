@@ -52,7 +52,7 @@ public class BasicOperatorBorderControlActivity extends Activity {
 			if (desk.getAgentAtDesk().getPosition().distanceTo(desk.getServingPosition()) < 0.6)
 				return true;
 			else if (desk.getAgentAtDesk().getPosition().distanceTo(desk.getServingPosition()) < 1
-					&& desk.getAgentAtDesk().getReachedGoal())
+					&& ((Passenger) desk.getAgentAtDesk()).getReachedGoal())
 				return true;
 		}
 		return false;
@@ -72,11 +72,11 @@ public class BasicOperatorBorderControlActivity extends Activity {
 	@Override
 	public void update(int timeStep) {
 		if (!alreadyInstructed.contains(desk.getAgentAtDesk())) {
-			alreadyInstructed.add(desk.getAgentAtDesk());
-			BorderControlGateArea gateArea = (BorderControlGateArea) desk.getAgentAtDesk().getFlight().getGateArea();
-			gateArea.borderControl(desk.getAgentAtDesk());
+			alreadyInstructed.add((Passenger) desk.getAgentAtDesk());
+			BorderControlGateArea gateArea = (BorderControlGateArea) ((Passenger) desk.getAgentAtDesk()).getFlight().getGateArea();
+			gateArea.borderControl((Passenger) desk.getAgentAtDesk());
 		} else if (desk.getAgentAtDesk().getPosition().distanceTo(desk.getServingPosition()) > 1.5) {
-			desk.setAgentAtDesk(null);
+			desk.reserveDeskPosition(null);
 			endActivity();
 		}
 	}

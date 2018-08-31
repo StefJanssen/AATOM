@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import model.agent.humanAgent.HumanAgent;
 import model.agent.humanAgent.Passenger;
-import model.environment.map.Map;
 import model.environment.objects.area.Area;
 import model.environment.objects.physicalObject.PhysicalObject;
 import simulation.simulation.util.Utilities;
@@ -15,16 +14,6 @@ import simulation.simulation.util.Utilities;
  * @author S.A.M. Janssen
  */
 public class BasicOperatorObservationModel extends ObservationModule {
-
-	/**
-	 * Creates an observation model.
-	 * 
-	 * @param map
-	 *            The map.
-	 */
-	public BasicOperatorObservationModel(Map map) {
-		super(map);
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override

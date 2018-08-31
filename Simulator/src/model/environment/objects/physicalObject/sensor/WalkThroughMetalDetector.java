@@ -1,12 +1,9 @@
 package model.environment.objects.physicalObject.sensor;
 
-import java.awt.geom.Path2D;
 import java.util.List;
 
 import model.agent.humanAgent.Passenger;
-import model.environment.map.Map;
 import model.environment.position.Position;
-import model.environment.shapes.PolygonShape;
 import simulation.simulation.util.Utilities;
 
 /**
@@ -15,16 +12,8 @@ import simulation.simulation.util.Utilities;
  * 
  * @author S.A.M. Janssen
  */
-public abstract class WalkThroughMetalDetector extends Sensor implements PolygonShape {
+public abstract class WalkThroughMetalDetector extends Sensor {
 
-	/**
-	 * The corner points of the WTMD.
-	 */
-	protected List<Position> corners;
-	/**
-	 * The {@link Path2D} shape of the WTMD.
-	 */
-	protected Path2D shape;
 	/**
 	 * The check position.
 	 */
@@ -45,14 +34,11 @@ public abstract class WalkThroughMetalDetector extends Sensor implements Polygon
 	 *            The corners.
 	 * @param checkPosition
 	 *            The check position.
-	 * @param map
-	 *            The map.
 	 */
-	public WalkThroughMetalDetector(List<Position> corners, Position checkPosition, Map map) {
-		super(Utilities.getAveragePosition(corners), map);
-		this.corners = corners;
+	public WalkThroughMetalDetector(List<Position> corners, Position checkPosition) {
+		super(corners);
+		position = Utilities.getAveragePosition(corners);
 		this.checkPosition = checkPosition;
-		shape = Utilities.getShape(corners);
 	}
 
 	/**
@@ -72,16 +58,6 @@ public abstract class WalkThroughMetalDetector extends Sensor implements Polygon
 	}
 
 	/**
-	 * Gets the corner points of the WTMD.
-	 * 
-	 * @return The corner points.
-	 */
-	@Override
-	public List<Position> getCorners() {
-		return corners;
-	}
-
-	/**
 	 * Gets the last observed passenger.
 	 * 
 	 * @return The last observed passenger.
@@ -96,16 +72,6 @@ public abstract class WalkThroughMetalDetector extends Sensor implements Polygon
 			personsInCosideration = null;
 
 		return lastObservedPassenger;
-	}
-
-	/**
-	 * Gets the {@link Path2D} shape of the shop.
-	 * 
-	 * @return The shape.
-	 */
-	@Override
-	public Path2D getShape() {
-		return shape;
 	}
 
 	/**

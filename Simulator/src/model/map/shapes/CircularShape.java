@@ -1,6 +1,6 @@
-package model.environment.shapes;
+package model.map.shapes;
 
-import model.environment.map.MapComponent;
+import model.map.MapComponent;
 
 /**
  * All {@link MapComponent}s with a circular shape implement this interface.
@@ -14,5 +14,5 @@ public interface CircularShape {
 	 * 
 	 * @return The radius.
 	 */
-	public double getRadius();
+	public float getRadius();
 }

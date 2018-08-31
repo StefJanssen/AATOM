@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import model.agent.humanAgent.Passenger;
-import simulation.simulation.Simulator;
+import model.map.Map;
 
 /**
  * Determines the average time to gate for all passengers.
@@ -22,16 +22,16 @@ public class TimeToGateAnalyzer extends Analyzer implements PassengerAnalyzer {
 	/**
 	 * The time to gate hashmap.
 	 */
-	private HashMap<Passenger, Float> timeToGate;
+	private HashMap<Passenger, Double> timeToGate;
 	/**
 	 * The arrival times.
 	 */
-	private HashMap<Passenger, Float> arrivalTimes;
+	private HashMap<Passenger, Double> arrivalTimes;
 
 	@Override
 	public void addPassenger(Passenger passenger) {
 		passengers.add(passenger);
-		arrivalTimes.put(passenger, time);
+		arrivalTimes.put(passenger, map.getTime());
 	}
 
 	@Override
@@ -50,13 +50,13 @@ public class TimeToGateAnalyzer extends Analyzer implements PassengerAnalyzer {
 		for (Passenger p : passengers) {
 			if (reachedGate(p)) {
 				if (!timeToGate.containsKey(p)) {
-					timeToGate.put(p, time - arrivalTimes.get(p));
+					timeToGate.put(p, map.getTime() - arrivalTimes.get(p));
 				}
 			}
 		}
 
 		double time = 0;
-		for (Entry<Passenger, Float> p : timeToGate.entrySet())
+		for (Entry<Passenger, Double> p : timeToGate.entrySet())
 			time += p.getValue();
 		times[0] = time / timeToGate.keySet().size();
 		return times;
@@ -75,19 +75,18 @@ public class TimeToGateAnalyzer extends Analyzer implements PassengerAnalyzer {
 	 * @return True if it reached the gate, false otherwise.
 	 */
 	private boolean reachedGate(Passenger passenger) {
-		return passenger.getFlight().getGateArea().getShape().contains(passenger.getPosition().x,
-				passenger.getPosition().y);
+		return passenger.getFlight().getGateArea().contains(passenger.getPosition());
 	}
 
 	@Override
-	public void setSimulator(Simulator simulator) {
-		super.setSimulator(simulator);
+	public void setMap(Map map) {
+		super.setMap(map);
 		timeToGate = new HashMap<>();
 		passengers = new ArrayList<>();
 		arrivalTimes = new HashMap<>();
-		for (Passenger p : getSimulator().getMap().getMapComponents(Passenger.class)) {
+		for (Passenger p : map.getMapComponents(Passenger.class)) {
 			passengers.add(p);
-			arrivalTimes.put(p, 0.0f);
+			arrivalTimes.put(p, 0.0);
 		}
 	}
 

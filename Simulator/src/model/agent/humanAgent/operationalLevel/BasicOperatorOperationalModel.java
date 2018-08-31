@@ -4,7 +4,6 @@ import model.agent.humanAgent.operationalLevel.action.communication.BasicOperato
 import model.agent.humanAgent.operationalLevel.action.movement.StaticModel;
 import model.agent.humanAgent.operationalLevel.observation.BasicOperatorObservationModel;
 import model.agent.humanAgent.tacticalLevel.activity.Activity;
-import model.environment.map.Map;
 
 /**
  * The basic operator operational model contains an observation model,
@@ -17,13 +16,10 @@ public class BasicOperatorOperationalModel extends OperationalModel {
 	/**
 	 * Creates a basic operator low level model.
 	 * 
-	 * @param map
-	 *            The map.
 	 * @param assignment
 	 *            The assignment.
 	 */
-	public BasicOperatorOperationalModel(Map map, Activity assignment) {
-		super(new StaticModel(), new BasicOperatorObservationModel(map),
-				new BasicOperatorCommunicationModule(assignment));
+	public BasicOperatorOperationalModel(Activity assignment) {
+		super(new StaticModel(), new BasicOperatorObservationModel(), new BasicOperatorCommunicationModule(assignment));
 	}
 }

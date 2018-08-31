@@ -9,7 +9,7 @@ import model.agent.humanAgent.Passenger;
 import model.agent.humanAgent.tacticalLevel.activity.Activity;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.GateActivity;
 import model.environment.position.Position;
-import simulation.simulation.Simulator;
+import model.map.Map;
 
 /**
  * Tracks the average distance covered by passengers.
@@ -77,12 +77,12 @@ public class DistanceAnalyzer extends Analyzer implements PassengerAnalyzer {
 	}
 
 	@Override
-	public void setSimulator(Simulator simulator) {
-		super.setSimulator(simulator);
+	public void setMap(Map map) {
+		super.setMap(map);
 		passengers = new ArrayList<>();
 		distanceCovered = new HashMap<>();
 		currentPosition = new HashMap<>();
-		for (Passenger p : getSimulator().getMap().getMapComponents(Passenger.class)) {
+		for (Passenger p : map.getMapComponents(Passenger.class)) {
 			passengers.add(p);
 			distanceCovered.put(p, 0.0);
 			currentPosition.put(p, p.getPosition());

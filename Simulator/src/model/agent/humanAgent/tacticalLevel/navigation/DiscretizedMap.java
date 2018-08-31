@@ -1,14 +1,9 @@
 package model.agent.humanAgent.tacticalLevel.navigation;
 
-import java.awt.geom.Path2D;
-import java.util.ArrayList;
-import java.util.List;
-
-import model.environment.map.Map;
 import model.environment.objects.physicalObject.PhysicalObject;
 import model.environment.position.Position;
-import model.environment.shapes.PolygonShape;
-import simulation.simulation.util.Utilities;
+import model.map.Map;
+import model.map.shapes.PolygonMapComponent;
 
 /**
  * The discretized version of the map used for navigation. It follows the
@@ -90,8 +85,8 @@ public final class DiscretizedMap {
 
 		for (int i = 0; i < xSize; i++) {
 			for (int j = 0; j < ySize; j++) {
-				for (PolygonShape shape : map.getMapComponents(PhysicalObject.class)) {
-					if (Utilities.isCollision(getShape(new Position(i * precision, j * precision), precision), shape)) {
+				for (PolygonMapComponent shape : map.getMapComponents(PhysicalObject.class)) {
+					if (getShape(new Position(i * precision, j * precision), precision).isCollision(shape)) {
 						discreteMap[j][i] = true;
 					}
 				}
@@ -118,37 +113,8 @@ public final class DiscretizedMap {
 	 *            The radius.
 	 * @return The shape.
 	 */
-	private PolygonShape getShape(final Position position, final double radius) {
-		return new PolygonShape() {
-
-			List<Position> corners;
-			Path2D shape;
-
-			@Override
-			public List<Position> getCorners() {
-				if (corners == null) {
-					corners = new ArrayList<>();
-					corners.add(position);
-					corners.add(new Position(position.x, position.y + radius));
-					corners.add(new Position(position.x + radius, position.y + radius));
-					corners.add(new Position(position.x + radius, position.y));
-
-				}
-				return corners;
-			}
-
-			@Override
-			public Path2D getShape() {
-				if (shape == null) {
-					Path2D path = new Path2D.Double();
-					path.moveTo(corners.get(0).x, corners.get(0).y);
-					for (int i = 1; i < corners.size(); ++i) {
-						path.lineTo(corners.get(i).x, corners.get(i).y);
-					}
-					shape = path;
-				}
-				return shape;
-			}
+	private PolygonMapComponent getShape(final Position position, final double radius) {
+		return new PolygonMapComponent(position.x, position.y, radius, radius) {
 		};
 	}
 

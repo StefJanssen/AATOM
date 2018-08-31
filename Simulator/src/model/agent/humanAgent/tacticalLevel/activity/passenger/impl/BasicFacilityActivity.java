@@ -8,7 +8,6 @@ import model.environment.objects.area.Restaurant;
 import model.environment.objects.area.Shop;
 import model.environment.objects.area.Toilet;
 import model.environment.position.Position;
-import simulation.simulation.util.Utilities;
 
 /**
  * The shop activity handles all shop related activity for an agent.
@@ -73,7 +72,7 @@ public class BasicFacilityActivity extends FacilityActivity {
 		if (isInProgress())
 			return false;
 
-		if (Utilities.getDistance(movement.getPosition(), currentFacility) < 5)
+		if (currentFacility.getDistance(movement.getPosition()) < 5)
 			return true;
 
 		return false;
@@ -96,7 +95,7 @@ public class BasicFacilityActivity extends FacilityActivity {
 			return false;
 
 		for (Position p : navigationModule.getGoalPositions()) {
-			if (currentFacility.getShape().contains(p.x, p.y)) {
+			if (currentFacility.contains(p)) {
 				return true;
 			}
 		}
@@ -130,7 +129,7 @@ public class BasicFacilityActivity extends FacilityActivity {
 
 		double distance = Float.MAX_VALUE;
 		for (Facility f : observations.getObservation(facilityType)) {
-			double tempDistance = Utilities.getDistance(movement.getPosition(), f);
+			double tempDistance = f.getDistance(movement.getPosition());
 			if (tempDistance < distance) {
 				currentFacility = f;
 				distance = tempDistance;
@@ -143,11 +142,11 @@ public class BasicFacilityActivity extends FacilityActivity {
 		super.startActivity();
 
 		if (currentFacility instanceof Shop) {
-			List<Position> inAreaPoints = Utilities.generatePositions(10, currentFacility.getShape());
+			List<Position> inAreaPoints = currentFacility.generatePositions(10);
 			navigationModule.setGoal(Position.NO_POSITION);
 			navigationModule.setShortTermGoals(inAreaPoints);
 		} else {
-			navigationModule.setGoal(Utilities.generatePosition(currentFacility.getShape()));
+			navigationModule.setGoal(currentFacility.generatePosition());
 		}
 	}
 
@@ -164,7 +163,7 @@ public class BasicFacilityActivity extends FacilityActivity {
 				} else if (!movement.getStopOrder())
 					endActivity();
 			} else if (!waited && navigationModule.isStuck(10))
-				navigationModule.setGoal(Utilities.generatePosition(currentFacility.getShape()));
+				navigationModule.setGoal(currentFacility.generatePosition());
 		} else if (currentFacility instanceof Toilet) {
 			if (navigationModule.getReachedGoal()) {
 				if (!waited) {
@@ -173,7 +172,7 @@ public class BasicFacilityActivity extends FacilityActivity {
 				} else if (!movement.getStopOrder())
 					endActivity();
 			} else if (!waited && navigationModule.isStuck(10))
-				navigationModule.setGoal(Utilities.generatePosition(currentFacility.getShape()));
+				navigationModule.setGoal(currentFacility.generatePosition());
 		}
 	}
 }

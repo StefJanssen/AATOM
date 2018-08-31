@@ -2,7 +2,7 @@ package model.agent.humanAgent.operationalLevel;
 
 import java.util.Collection;
 
-import model.agent.humanAgent.HumanAgent;
+import model.agent.humanAgent.AatomHumanAgent;
 import model.agent.humanAgent.operationalLevel.action.communication.CommunicationModule;
 import model.agent.humanAgent.operationalLevel.action.communication.CommunicationType;
 import model.agent.humanAgent.operationalLevel.action.movement.MovementModel;
@@ -11,6 +11,7 @@ import model.agent.humanAgent.tacticalLevel.activity.ActivityModule;
 import model.agent.humanAgent.tacticalLevel.navigation.NavigationModule;
 import model.environment.objects.physicalObject.Chair;
 import model.environment.position.Vector;
+import model.map.Map;
 import simulation.simulation.util.Updatable;
 
 /**
@@ -126,8 +127,10 @@ public abstract class OperationalModel implements Updatable {
 	}
 
 	/**
-	 * Initializes the {@link HumanAgent}.
+	 * Initializes the {@link AatomHumanAgent}.
 	 * 
+	 * @param map
+	 *            The map.
 	 * @param agent
 	 *            The agent.
 	 * @param navigationModule
@@ -135,9 +138,9 @@ public abstract class OperationalModel implements Updatable {
 	 * @param activityModule
 	 *            The activity module.
 	 */
-	public void init(HumanAgent agent, NavigationModule navigationModule, ActivityModule activityModule) {
+	public void init(Map map, AatomHumanAgent agent, NavigationModule navigationModule, ActivityModule activityModule) {
 		movementModel.init(agent);
-		observationModule.init(movementModel);
+		observationModule.init(map, movementModel);
 		communicationModule.init(movementModel, navigationModule, activityModule);
 	}
 

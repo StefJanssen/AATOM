@@ -2,7 +2,7 @@ package view.mapComponents;
 
 import javax.swing.JComponent;
 
-import model.environment.map.MapComponent;
+import model.map.MapComponent;
 
 /**
  * Superclass for each of the MapComponentViews. It visualizes a

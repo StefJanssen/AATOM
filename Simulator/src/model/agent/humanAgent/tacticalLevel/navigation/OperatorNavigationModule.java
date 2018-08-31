@@ -1,11 +1,8 @@
 package model.agent.humanAgent.tacticalLevel.navigation;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import model.agent.humanAgent.operationalLevel.action.movement.MovementModel;
-import model.agent.humanAgent.operationalLevel.observation.ObservationModule;
-import model.agent.humanAgent.tacticalLevel.activity.ActivityModule;
-import model.environment.map.Map;
 import model.environment.position.Position;
 
 /**
@@ -18,41 +15,19 @@ public class OperatorNavigationModule extends NavigationModule {
 
 	/**
 	 * Creates a navigation module.
-	 * 
-	 * @param map
-	 *            The map.
 	 */
-	public OperatorNavigationModule(Map map) {
-		super(map);
+	public OperatorNavigationModule() {
+		this(new ArrayList<Position>());
 	}
 
 	/**
 	 * Creates a navigation module.
 	 * 
-	 * @param map
-	 *            The map.
 	 * @param goalPositions
 	 *            The goal positions.
 	 */
-	public OperatorNavigationModule(Map map, List<Position> goalPositions) {
-		super(map, goalPositions);
-	}
-
-	/**
-	 * Sets the agent.
-	 * 
-	 * @param movementModel
-	 *            The movement model.
-	 * @param activityModule
-	 *            The activity module.
-	 * @param observation
-	 *            The observation module.
-	 */
-	@Override
-	public void init(MovementModel movementModel, ActivityModule activityModule, ObservationModule observation) {
-		this.movementModel = movementModel;
-		this.activityModule = activityModule;
-		this.observationModule = observation;
+	public OperatorNavigationModule(List<Position> goalPositions) {
+		super(goalPositions);
 	}
 
 	@Override

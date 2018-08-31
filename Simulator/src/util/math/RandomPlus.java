@@ -42,28 +42,4 @@ public class RandomPlus extends Random {
 	public long getSeed() {
 		return seed;
 	}
-
-	// /**
-	// * Generates a random number drawn from an exponential distribution.
-	// *
-	// * @param lambda
-	// * The parameter lambda.
-	// * @return The random number.
-	// */
-	// public double nextExponential(double lambda) {
-	// return Math.log(1 - nextDouble()) / (-lambda);
-	// }
-
-	// /**
-	// * Generates a random number drawn from a normal distribution.
-	// *
-	// * @param mean
-	// * The mean.
-	// * @param standardDeviation
-	// * The standard deviation.
-	// * @return The random number.
-	// */
-	// public double nextNormal(double mean, double standardDeviation) {
-	// return nextGaussian() * standardDeviation + mean;
-	// }
 }

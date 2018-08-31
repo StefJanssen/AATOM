@@ -6,20 +6,19 @@ import java.util.List;
 
 import model.agent.Agent;
 import model.agent.humanAgent.Passenger;
-import model.environment.map.Map;
-import model.environment.map.MapComponent;
 import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.objects.physicalObject.sensor.XRaySystem;
+import model.map.Map;
+import model.map.MapComponent;
 import simulation.simulation.agentGenerator.AgentGenerator;
 import simulation.simulation.agentGenerator.EmptyAgentGenerator;
 import simulation.simulation.endingCondition.BaseEndingConditions;
 import simulation.simulation.endingCondition.EndingConditions;
 import simulation.simulation.util.DirectlyUpdatable;
-import simulation.simulation.util.SimulationConstants;
 import simulation.simulation.util.SimulationObject;
 import simulation.simulation.util.Utilities;
-import util.analytics.Analytics;
 import util.analytics.Analyzer;
+import util.analytics.AnalyzerCollection;
 import util.io.logger.BaseLogger;
 import util.io.logger.Logger;
 import util.math.RandomPlus;
@@ -33,12 +32,168 @@ import view.mapComponents.MapComponentView;
  * @author S.A.M. Janssen
  *
  */
-public class Simulator extends Thread {
+public class Simulator implements Runnable {
+
+	/**
+	 * Builder class for the simulator.
+	 * 
+	 * @author S.A.M. Janssen
+	 * @param <T>
+	 *            The subclass.
+	 */
+	@SuppressWarnings("unchecked")
+	public static class Builder<T extends Builder<T>> {
+		/**
+		 * The {@link Map}.
+		 */
+		private Map map = new Map();
+		/**
+		 * The {@link GUI}.
+		 */
+		private boolean gui = true;
+		/**
+		 * The time step in milliseconds.
+		 */
+		private int timeStep = 100;
+		/**
+		 * The ending conditions.
+		 */
+		private EndingConditions endingConditions = new BaseEndingConditions(10000000);
+		/**
+		 * The agent generator.
+		 */
+		private AgentGenerator agentGenerator = new EmptyAgentGenerator();
+		/**
+		 * The {@link Logger} collects data about our simulation.
+		 */
+		private Logger logger = new BaseLogger();
+		/**
+		 * The random seed.
+		 */
+		private long randomSeed = System.currentTimeMillis();
+		/**
+		 * The name of the simulation.
+		 */
+		private String simulatorName = "Unnamed_Simulator";
+
+		/**
+		 * Creates the simulator.
+		 * 
+		 * @return The simulator.
+		 */
+		public Simulator createSimulator() {
+			return new Simulator(map, gui, timeStep, endingConditions, agentGenerator, logger, randomSeed,
+					simulatorName);
+		}
+
+		/**
+		 * Sets the agent generator.
+		 * 
+		 * @param agentGenerator
+		 *            The {@link AgentGenerator}.
+		 * @return The builder.
+		 * 
+		 */
+		public T setAgentGenerator(AgentGenerator agentGenerator) {
+			this.agentGenerator = agentGenerator;
+			return (T) this;
+		}
+
+		/**
+		 * Sets the ending conditions.
+		 * 
+		 * @param endingConditions
+		 *            The {@link EndingConditions}.
+		 * @return The builder.
+		 * 
+		 */
+		public T setEndingConditions(EndingConditions endingConditions) {
+			this.endingConditions = endingConditions;
+			return (T) this;
+		}
+
+		/**
+		 * Sets the gui.
+		 * 
+		 * @param gui
+		 *            The gui.
+		 * @return The builder.
+		 * 
+		 */
+		public T setGui(boolean gui) {
+			this.gui = gui;
+			return (T) this;
+		}
+
+		/**
+		 * Sets the logger.
+		 * 
+		 * @param logger
+		 *            The {@link Logger}.
+		 * @return The builder.
+		 * 
+		 */
+		public T setLogger(Logger logger) {
+			this.logger = logger;
+			return (T) this;
+		}
+
+		/**
+		 * Sets the map.
+		 * 
+		 * @param map
+		 *            The map.
+		 * @return The builder.
+		 */
+		public T setMap(Map map) {
+			this.map = map;
+			return (T) this;
+		}
+
+		/**
+		 * Sets the random seed.
+		 * 
+		 * @param randomSeed
+		 *            The random seed.
+		 * @return The builder.
+		 * 
+		 */
+		public T setRandomSeed(long randomSeed) {
+			this.randomSeed = randomSeed;
+			return (T) this;
+		}
+
+		/**
+		 * Sets the simulation name.
+		 * 
+		 * @param simulationName
+		 *            The name.
+		 * @return The builder.
+		 * 
+		 */
+		public T setSimulationName(String simulationName) {
+			this.simulatorName = simulationName;
+			return (T) this;
+		}
+
+		/**
+		 * Sets the time step.
+		 * 
+		 * @param timeStep
+		 *            The time step.
+		 * @return The builder.
+		 * 
+		 */
+		public T setTimeStep(int timeStep) {
+			this.timeStep = timeStep;
+			return (T) this;
+		}
+	}
 
 	/**
 	 * The {@link Map}.
 	 */
-	private Map map;
+	private final Map map;
 	/**
 	 * The {@link GUI}.
 	 */
@@ -62,7 +217,7 @@ public class Simulator extends Thread {
 	/**
 	 * The analytics section of the simulation.
 	 */
-	private Analytics analytics;
+	private AnalyzerCollection analytics;
 	/**
 	 * The number of steps that we performed so far.
 	 */
@@ -76,111 +231,18 @@ public class Simulator extends Thread {
 	 */
 	private volatile int speedUpFactor;
 	/**
+	 * The random seed.
+	 */
+	private final long randomSeed;
+
+	/**
 	 * The name of the simulation.
 	 */
-	private String simulationName;
+	private String simulatorName;
 
 	/**
-	 * Creates a simulator with default properties.
-	 */
-	public Simulator() {
-		this(true);
-	}
-
-	/**
-	 * Creates a simulator with a set of properties.
-	 * 
-	 * @param gui
-	 *            With or without {@link GUI}.
-	 */
-	public Simulator(boolean gui) {
-		this(gui, 50);
-	}
-
-	/**
-	 * Creates a simulator with a set of properties.
-	 * 
-	 * @param gui
-	 *            With or without {@link GUI}.
-	 * @param timeStep
-	 *            The time step.
-	 */
-	public Simulator(boolean gui, int timeStep) {
-		this(gui, timeStep, new BaseEndingConditions(10000000));
-	}
-
-	/**
-	 * Creates a simulator with a set of properties.
-	 * 
-	 * @param gui
-	 *            With or without {@link GUI}.
-	 * @param timeStep
-	 *            The time step.
-	 * @param endingConditions
-	 *            The {@link EndingConditions}.
-	 */
-	public Simulator(boolean gui, int timeStep, EndingConditions endingConditions) {
-		this(gui, timeStep, endingConditions, new EmptyAgentGenerator());
-	}
-
-	/**
-	 * Creates a simulator with a set of properties.
-	 * 
-	 * @param gui
-	 *            With or without {@link GUI}.
-	 * @param timeStep
-	 *            The time step.
-	 * @param endingConditions
-	 *            The {@link EndingConditions}.
-	 * @param agentGenerator
-	 *            The {@link AgentGenerator}.
-	 */
-	public Simulator(boolean gui, int timeStep, EndingConditions endingConditions, AgentGenerator agentGenerator) {
-		this(gui, timeStep, endingConditions, agentGenerator, new BaseLogger());
-	}
-
-	/**
-	 * Creates a simulator with a set of properties.
-	 * 
-	 * @param gui
-	 *            With or without {@link GUI}.
-	 * @param timeStep
-	 *            The time step in ms.
-	 * @param endingConditions
-	 *            The {@link EndingConditions}.
-	 * @param agentGenerator
-	 *            The {@link AgentGenerator}.
-	 * @param logger
-	 *            The {@link Logger}.
-	 */
-	public Simulator(boolean gui, int timeStep, EndingConditions endingConditions, AgentGenerator agentGenerator,
-			Logger logger) {
-		this(new Map(), gui, timeStep, endingConditions, agentGenerator, logger);
-	}
-
-	/**
-	 * Creates a simulator with a set of properties.
-	 * 
-	 * @param map
-	 *            The map.
-	 * @param gui
-	 *            With or without {@link GUI}.
-	 * @param timeStep
-	 *            The time step in ms.
-	 * @param endingConditions
-	 *            The {@link EndingConditions}.
-	 * @param agentGenerator
-	 *            The {@link AgentGenerator}.
-	 * @param logger
-	 *            The {@link Logger}.
-	 */
-	public Simulator(Map map, boolean gui, int timeStep, EndingConditions endingConditions,
-			AgentGenerator agentGenerator, Logger logger) {
-		this(map, gui, timeStep, endingConditions, agentGenerator, logger, "");
-	}
-
-	/**
-	 * Creates a simulator with a set of properties.
+	 * Creates a simulator with a set of properties. Use the
+	 * {@link Simulator.Builder} to create the object.
 	 * 
 	 * @param map
 	 *            The {@link Map}.
@@ -194,11 +256,13 @@ public class Simulator extends Thread {
 	 *            The {@link AgentGenerator}.
 	 * @param logger
 	 *            The {@link Logger}.
-	 * @param simulationName
-	 *            The name of the simulation.
+	 * @param randomSeed
+	 *            The random seed.
+	 * @param simulatorName
+	 *            The name of the simulator.
 	 */
-	public Simulator(Map map, boolean gui, int timeStep, EndingConditions endingConditions,
-			AgentGenerator agentGenerator, Logger logger, String simulationName) {
+	private Simulator(Map map, boolean gui, int timeStep, EndingConditions endingConditions,
+			AgentGenerator agentGenerator, Logger logger, long randomSeed, String simulatorName) {
 		this.map = map;
 		if (gui) {
 			this.gui = new GUI(map, this);
@@ -208,23 +272,24 @@ public class Simulator extends Thread {
 		this.endingConditions = endingConditions;
 		this.agentGenerator = agentGenerator;
 		this.logger = logger;
-		analytics = new Analytics(this);
+		this.randomSeed = randomSeed;
+		Utilities.RANDOM_GENERATOR = new RandomPlus(randomSeed);
+		this.simulatorName = simulatorName;
+		analytics = new AnalyzerCollection();
 		endingConditions.setSimulator(this);
 		logger.setSimulator(this);
 		speedUpFactor = 1;
 		numberOfSteps = 0;
-		Utilities.RANDOM_GENERATOR = new RandomPlus(SimulationConstants.randomSeed);
-		this.simulationName = simulationName;
 	}
 
 	/**
 	 * Add a graph to the gui.
 	 * 
-	 * @param tracker
+	 * @param analyzer
 	 *            The parameter tracker.
 	 */
-	public void add(Analyzer tracker) {
-		add(tracker, true);
+	public void add(Analyzer analyzer) {
+		add(analyzer, true);
 	}
 
 	/**
@@ -237,6 +302,7 @@ public class Simulator extends Thread {
 	 */
 	public void add(Analyzer analyzer, boolean visual) {
 		if (analyzer != null) {
+			analyzer.setMap(map);
 			if (gui != null && visual)
 				gui.add(analyzer);
 
@@ -282,7 +348,14 @@ public class Simulator extends Thread {
 			gui.add((MapComponent) object);
 
 		// add to map
-		map.add(object);
+		if (object instanceof MapComponent) {
+			map.add((MapComponent) object);
+		}
+		if (numberOfSteps > 0 || running) {
+			if (object instanceof Agent) {
+				((Agent) object).init();
+			}
+		}
 
 	}
 
@@ -306,7 +379,7 @@ public class Simulator extends Thread {
 		if (logger != null) {
 			analytics.update(timeStep);
 			logger.update(numberOfSteps * timeStep, true);
-			logger.printLine(simulationName);
+			logger.printLine(simulatorName);
 			logger.closeLog();
 		}
 
@@ -323,7 +396,7 @@ public class Simulator extends Thread {
 	 * 
 	 * @return The analytics.
 	 */
-	public Analytics getAnalytics() {
+	public AnalyzerCollection getAnalytics() {
 		return analytics;
 	}
 
@@ -334,6 +407,15 @@ public class Simulator extends Thread {
 	 */
 	public Map getMap() {
 		return map;
+	}
+
+	/**
+	 * Gets the random seed.
+	 * 
+	 * @return The random seed.
+	 */
+	public long getRandomSeed() {
+		return randomSeed;
 	}
 
 	/**
@@ -351,7 +433,7 @@ public class Simulator extends Thread {
 	 * @return The name.
 	 */
 	public String getSimulationName() {
-		return simulationName;
+		return simulatorName;
 	}
 
 	/**
@@ -373,7 +455,6 @@ public class Simulator extends Thread {
 		if (mapComponent == null)
 			return;
 
-		mapComponent.destroy();
 		map.remove(mapComponent);
 		if (mapComponent instanceof XRaySystem)
 			map.remove(((XRaySystem) mapComponent).getXRaySensor());
@@ -402,6 +483,9 @@ public class Simulator extends Thread {
 	public void run() {
 		logger.setSimulator(this);
 		agentGenerator.setSimulator(this);
+
+		for (Agent a : map.getMapComponents(Agent.class))
+			a.init();
 
 		logger.update(numberOfSteps * timeStep, false);
 		running = true;
@@ -476,7 +560,6 @@ public class Simulator extends Thread {
 	public long step() {
 		// keep track of the time the step takes
 		long startTime = System.currentTimeMillis();
-
 		// add agents
 		List<? extends Agent> agents = agentGenerator.generateAgent(numberOfSteps, timeStep, false);
 		if (agents != null) {
@@ -499,6 +582,7 @@ public class Simulator extends Thread {
 
 		// update the simulation step
 		numberOfSteps++;
+		map.updateTime(timeStep);
 
 		// update the log
 		if (logger != null)
@@ -509,7 +593,7 @@ public class Simulator extends Thread {
 
 		// GUI update if necessary
 		if (gui != null)
-			gui.update(timeStep, numberOfSteps * (timeStep / 1000.0));
+			gui.update();
 
 		// return the time the step took
 		return System.currentTimeMillis() - startTime;

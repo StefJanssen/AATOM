@@ -5,6 +5,7 @@ import model.agent.humanAgent.operationalLevel.action.movement.MovementModel;
 import model.agent.humanAgent.operationalLevel.observation.ObservationModule;
 import model.agent.humanAgent.tacticalLevel.navigation.NavigationModule;
 import model.environment.position.Position;
+import model.map.Map;
 import simulation.simulation.util.Updatable;
 
 /**
@@ -44,6 +45,10 @@ public abstract class Activity implements Updatable {
 	 * The activity module.
 	 */
 	protected ActivityModule activityModule;
+	/**
+	 * The map.
+	 */
+	protected Map map;
 
 	/**
 	 * Determines if the activity can start.
@@ -88,6 +93,8 @@ public abstract class Activity implements Updatable {
 	/**
 	 * Sets the agent.
 	 * 
+	 * @param map
+	 *            The map.
 	 * @param agent
 	 *            The agent
 	 * @param movement
@@ -99,8 +106,9 @@ public abstract class Activity implements Updatable {
 	 * @param activityModule
 	 *            The activity module.
 	 */
-	public void init(HumanAgent agent, MovementModel movement, ObservationModule observations,
+	public void init(Map map, HumanAgent agent, MovementModel movement, ObservationModule observations,
 			NavigationModule navigationModule, ActivityModule activityModule) {
+		this.map = map;
 		this.agent = agent;
 		this.navigationModule = navigationModule;
 		this.movement = movement;

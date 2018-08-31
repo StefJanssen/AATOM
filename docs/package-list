@@ -1,4 +1,3 @@
-model
 model.agent
 model.agent.humanAgent
 model.agent.humanAgent.operationalLevel
@@ -22,9 +21,6 @@ model.agent.humanAgent.tacticalLevel.activity.passenger.impl
 model.agent.humanAgent.tacticalLevel.interpretation
 model.agent.humanAgent.tacticalLevel.navigation
 model.agent.humanAgent.tacticalLevel.navigation.pathfinder
-model.environment
-model.environment.map
-model.environment.objects
 model.environment.objects.area
 model.environment.objects.flight
 model.environment.objects.physicalObject
@@ -32,7 +28,8 @@ model.environment.objects.physicalObject.luggage
 model.environment.objects.physicalObject.sensor
 model.environment.objects.physicalObject.sensor.impl
 model.environment.position
-model.environment.shapes
+model.map
+model.map.shapes
 simulation
 simulation.main
 simulation.simulation

@@ -1,14 +1,10 @@
 package model.environment.objects.area;
 
-import java.awt.geom.Path2D;
-import java.util.ArrayList;
 import java.util.List;
 
 import model.agent.humanAgent.HumanAgent;
-import model.environment.map.MapComponent;
 import model.environment.position.Position;
-import model.environment.shapes.PolygonShape;
-import simulation.simulation.util.Utilities;
+import model.map.shapes.PolygonMapComponent;
 
 /**
  * A facility is a publicly accessible place for {@link HumanAgent}s, where they
@@ -16,43 +12,27 @@ import simulation.simulation.util.Utilities;
  * 
  * @author S.A.M. Janssen
  */
-public abstract class Area extends MapComponent implements PolygonShape {
+public abstract class Area extends PolygonMapComponent {
 
 	/**
-	 * The coordinates of the corners of the facility.
-	 */
-	protected final List<Position> corners;
-
-	/**
-	 * The {@link Path2D} shape of the shop.
-	 */
-	protected Path2D shape;
-
-	/**
-	 * Creates a rectangular area from a specified (x,y) coordinate, width and
+	 * Creates a rectangular area with a specified top left corner, width and
 	 * height.
 	 * 
 	 * @param topX
-	 *            The x coordinate.
+	 *            The x coordinate of the top left corner.
 	 * @param topY
-	 *            The y coordinate.
+	 *            The y coordinate of the top left corner.
 	 * @param width
-	 *            The width.
+	 *            The width of the area.
 	 * @param height
-	 *            The height.
+	 *            The height of the area.
 	 */
 	public Area(double topX, double topY, double width, double height) {
-		super(new Position(topX, topY));
-		corners = new ArrayList<>();
-		corners.add(new Position(topX, topY));
-		corners.add(new Position(topX, topY + height));
-		corners.add(new Position(topX + width, topY + height));
-		corners.add(new Position(topX + width, topY));
-		shape = Utilities.getShape(corners);
+		super(topX, topY, width, height);
 	}
 
 	/**
-	 * Creates an area from four corner coordinates.
+	 * Creates a area from four corner coordinates.
 	 * 
 	 * @param x0
 	 *            The first x coordinate.
@@ -72,17 +52,11 @@ public abstract class Area extends MapComponent implements PolygonShape {
 	 *            The fourth y coordinate.
 	 */
 	public Area(double x0, double x1, double x2, double x3, double y0, double y1, double y2, double y3) {
-		super(new Position(x0, y0));
-		corners = new ArrayList<>();
-		corners.add(new Position(x0, y0));
-		corners.add(new Position(x1, y1));
-		corners.add(new Position(x2, y2));
-		corners.add(new Position(x3, y3));
-		shape = Utilities.getShape(corners);
+		super(x0, x1, x2, x3, y0, y1, y2, y3);
 	}
 
 	/**
-	 * Create an area from a list of (x,y) coordinates.
+	 * Create a area from a list of (x,y) coordinates.
 	 * 
 	 * @param x
 	 *            The x coordinates.
@@ -90,42 +64,17 @@ public abstract class Area extends MapComponent implements PolygonShape {
 	 *            The y coordinates.
 	 */
 	public Area(double[] x, double[] y) {
-		super(new Position(x[0], y[0]));
-		corners = new ArrayList<>();
-		for (int i = 0; i < x.length; i++)
-			corners.add(new Position(x[i], y[i]));
-		shape = Utilities.getShape(corners);
+		super(x, y);
 	}
 
 	/**
-	 * Create an area from a list of corner {@link Position}s.
+	 * Create a area from a list of corner {@link Position}s.
 	 * 
 	 * @param corners
 	 *            The list of corner positions.
 	 */
 	public Area(List<Position> corners) {
-		super(corners.get(0));
-		this.corners = corners;
-		shape = Utilities.getShape(corners);
+		super(corners);
 	}
 
-	/**
-	 * Gets the corner points of the facility.
-	 * 
-	 * @return The corner points.
-	 */
-	@Override
-	public List<Position> getCorners() {
-		return corners;
-	}
-
-	/**
-	 * Gets the {@link Path2D} shape of the facility.
-	 * 
-	 * @return The shape.
-	 */
-	@Override
-	public Path2D getShape() {
-		return shape;
-	}
 }

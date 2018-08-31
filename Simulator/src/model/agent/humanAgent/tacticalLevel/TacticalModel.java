@@ -11,6 +11,7 @@ import model.agent.humanAgent.tacticalLevel.activity.Activity;
 import model.agent.humanAgent.tacticalLevel.activity.ActivityModule;
 import model.agent.humanAgent.tacticalLevel.navigation.NavigationModule;
 import model.environment.position.Position;
+import model.map.Map;
 import simulation.simulation.util.Updatable;
 
 /**
@@ -108,6 +109,8 @@ public abstract class TacticalModel implements Updatable {
 	/**
 	 * Initializes the {@link HumanAgent}.
 	 * 
+	 * @param map
+	 *            The map.
 	 * @param agent
 	 *            The agent.
 	 * @param movement
@@ -119,10 +122,10 @@ public abstract class TacticalModel implements Updatable {
 	 * @param activities
 	 *            The activities.
 	 */
-	public void init(HumanAgent agent, MovementModel movement, ObservationModule observations, ActivityPlanner planner,
-			Collection<Activity> activities) {
-		navigationModule.init(movement, activityModule, observations);
-		activityModule.init(agent, movement, observations, activities, planner, navigationModule);
+	public void init(Map map, HumanAgent agent, MovementModel movement, ObservationModule observations,
+			ActivityPlanner planner, Collection<Activity> activities) {
+		navigationModule.init(map, movement, activityModule, observations);
+		activityModule.init(map, agent, movement, observations, activities, planner, navigationModule);
 	}
 
 	/**

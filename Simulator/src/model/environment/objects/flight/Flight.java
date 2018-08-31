@@ -7,15 +7,15 @@ import model.agent.humanAgent.Passenger;
 import model.environment.objects.area.GateArea;
 import model.environment.objects.area.QueuingArea;
 import model.environment.objects.physicalObject.Desk;
+import model.map.MapComponent;
 import simulation.simulation.util.DirectlyUpdatable;
-import simulation.simulation.util.SimulationObject;
 
 /**
  * A flight.
  * 
  * @author S.A.M. Janssen
  */
-public class Flight implements DirectlyUpdatable, SimulationObject {
+public class Flight extends MapComponent implements DirectlyUpdatable {
 
 	/**
 	 * Holder for no flight.
@@ -28,11 +28,11 @@ public class Flight implements DirectlyUpdatable, SimulationObject {
 	/**
 	 * The time of flight (in seconds from the start of the simulation).
 	 */
-	protected double flightTime;
+	private float flightTime;
 	/**
 	 * The time to flight.
 	 */
-	protected double timeToFlight;
+	private float timeToFlight;
 	/**
 	 * The gate area.
 	 */
@@ -99,9 +99,11 @@ public class Flight implements DirectlyUpdatable, SimulationObject {
 	 */
 	public Flight(FlightType flightType, int size, double flightTime, GateArea gateArea, Collection<Desk> checkInDesks,
 			QueuingArea checkInQueue, QueuingArea checkpointQueue) {
+		if (flightTime < 0)
+			throw new IllegalArgumentException("Flight time should be bigger than zero.");
 		this.flightType = flightType;
-		this.flightTime = flightTime;
-		timeToFlight = flightTime;
+		this.flightTime = (float) flightTime;
+		timeToFlight = (float) flightTime;
 		this.checkInQueue = checkInQueue;
 		this.checkPointQueue = checkpointQueue;
 		this.gateArea = gateArea;
@@ -173,8 +175,17 @@ public class Flight implements DirectlyUpdatable, SimulationObject {
 	 * 
 	 * @return The flight time.
 	 */
-	public double getFlightTime() {
+	public float getFlightTime() {
 		return flightTime;
+	}
+
+	/**
+	 * Gets the flight type.
+	 * 
+	 * @return The type.
+	 */
+	public FlightType getFlightType() {
+		return flightType;
 	}
 
 	/**
@@ -191,17 +202,8 @@ public class Flight implements DirectlyUpdatable, SimulationObject {
 	 * 
 	 * @return The time to flight.
 	 */
-	public double getTimeToFlight() {
+	public float getTimeToFlight() {
 		return timeToFlight;
-	}
-
-	/**
-	 * Gets the flight type.
-	 * 
-	 * @return The type.
-	 */
-	public FlightType getType() {
-		return flightType;
 	}
 
 	/**

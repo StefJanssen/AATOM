@@ -8,7 +8,7 @@ import java.util.Set;
 
 import model.agent.humanAgent.Passenger;
 import model.environment.objects.area.QueuingArea;
-import simulation.simulation.Simulator;
+import model.map.Map;
 
 /**
  * A time in queue parameter tracker keeps track of the average time that
@@ -63,11 +63,11 @@ public class TimeInQueueAnalyzer extends Analyzer {
 	}
 
 	@Override
-	public void setSimulator(Simulator simulator) {
-		super.setSimulator(simulator);
+	public void setMap(Map map) {
+		super.setMap(map);
 		queues = new ArrayList<>();
 		times = new ArrayList<>();
-		for (QueuingArea queue : getSimulator().getMap().getMapComponents(QueuingArea.class)) {
+		for (QueuingArea queue : map.getMapComponents(QueuingArea.class)) {
 			queues.add(queue);
 			times.add(new HashMap<Passenger, double[]>());
 		}
@@ -75,12 +75,12 @@ public class TimeInQueueAnalyzer extends Analyzer {
 
 	@Override
 	public void update(int timeStep) {
-		Collection<Passenger> passengers = getSimulator().getMap().getMapComponents(Passenger.class);
+		Collection<Passenger> passengers = map.getMapComponents(Passenger.class);
 		for (int i = 0; i < queues.size(); i++) {
 			HashMap<Passenger, double[]> queueMap = times.get(i);
 			for (Passenger a : passengers) {
 				// the agents currently in the queue
-				if (queues.get(i).getShape().contains(a.getPosition().x, a.getPosition().y)) {
+				if (queues.get(i).contains(a.getPosition())) {
 					// this is an old guy
 					if (queueMap.containsKey(a)) {
 						double[] time = queueMap.get(a);
@@ -89,7 +89,7 @@ public class TimeInQueueAnalyzer extends Analyzer {
 					}
 					// this is a new guy
 					else {
-						queueMap.put(a, new double[] { time, 0.0 });
+						queueMap.put(a, new double[] { map.getTime(), 0.0 });
 					}
 				}
 

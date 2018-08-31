@@ -1,14 +1,10 @@
 package model.environment.objects.physicalObject;
 
-import java.awt.geom.Path2D;
-import java.util.ArrayList;
 import java.util.List;
 
 import model.agent.humanAgent.HumanAgent;
-import model.environment.map.MapComponent;
 import model.environment.position.Position;
-import model.environment.shapes.PolygonShape;
-import simulation.simulation.util.Utilities;
+import model.map.shapes.PolygonMapComponent;
 
 /**
  * A physical obstacle is an object that cannot be accessed by
@@ -18,43 +14,27 @@ import simulation.simulation.util.Utilities;
  * @author S.A.M. Janssen
  *
  */
-public abstract class PhysicalObject extends MapComponent implements PolygonShape {
+public abstract class PhysicalObject extends PolygonMapComponent {
 
 	/**
-	 * The coordinates of the corners of the physical obstacle.
-	 */
-	protected final List<Position> corners;
-
-	/**
-	 * The {@link Path2D} shape of the physical obstacle.
-	 */
-	protected Path2D shape;
-
-	/**
-	 * Creates a rectangular physical obstacle from a specified (x,y)
-	 * coordinate, width and height.
+	 * Creates a rectangular physical object with a specified top left corner,
+	 * width and height.
 	 * 
 	 * @param topX
-	 *            The x coordinate.
+	 *            The x coordinate of the top left corner.
 	 * @param topY
-	 *            The y coordinate.
+	 *            The y coordinate of the top left corner.
 	 * @param width
-	 *            The width.
+	 *            The width of the physical object.
 	 * @param height
-	 *            The height.
+	 *            The height of the physical object.
 	 */
 	public PhysicalObject(double topX, double topY, double width, double height) {
-		super(new Position(topX, topY));
-		corners = new ArrayList<>();
-		corners.add(new Position(topX, topY));
-		corners.add(new Position(topX + width, topY));
-		corners.add(new Position(topX + width, topY + height));
-		corners.add(new Position(topX, topY + height));
-		shape = Utilities.getShape(corners);
+		super(topX, topY, width, height);
 	}
 
 	/**
-	 * Creates a physical obstacle from four corner coordinates.
+	 * Creates a physical object from four corner coordinates.
 	 * 
 	 * @param x0
 	 *            The first x coordinate.
@@ -74,17 +54,11 @@ public abstract class PhysicalObject extends MapComponent implements PolygonShap
 	 *            The fourth y coordinate.
 	 */
 	public PhysicalObject(double x0, double x1, double x2, double x3, double y0, double y1, double y2, double y3) {
-		super(new Position(x0, y0));
-		corners = new ArrayList<>();
-		corners.add(new Position(x0, y0));
-		corners.add(new Position(x1, y1));
-		corners.add(new Position(x2, y2));
-		corners.add(new Position(x3, y3));
-		shape = Utilities.getShape(corners);
+		super(x0, x1, x2, x3, y0, y1, y2, y3);
 	}
 
 	/**
-	 * Create a physical obstacle from a list of (x,y) coordinates.
+	 * Create a physical object from a list of (x,y) coordinates.
 	 * 
 	 * @param x
 	 *            The x coordinates.
@@ -92,47 +66,16 @@ public abstract class PhysicalObject extends MapComponent implements PolygonShap
 	 *            The y coordinates.
 	 */
 	public PhysicalObject(double[] x, double[] y) {
-		super(new Position(x[0], y[0]));
-		corners = new ArrayList<>();
-		for (int i = 0; i < x.length; i++)
-			corners.add(new Position(x[i], y[i]));
-		shape = Utilities.getShape(corners);
+		super(x, y);
 	}
 
 	/**
-	 * Create a physical obstacle from a list of corner {@link Position}s.
+	 * Create a physical object from a list of corner {@link Position}s.
 	 * 
 	 * @param corners
 	 *            The list of corner positions.
 	 */
 	public PhysicalObject(List<Position> corners) {
-		super(corners.get(0));
-		this.corners = corners;
-		shape = Utilities.getShape(corners);
-	}
-
-	/**
-	 * Gets the list of corner {@link Position}s.
-	 * 
-	 * @return The list of corner positions.
-	 */
-	@Override
-	public List<Position> getCorners() {
-		return corners;
-	}
-
-	/**
-	 * Gets the {@link Path2D} shape of the physical obstacle.
-	 * 
-	 * @return The shape.
-	 */
-	@Override
-	public Path2D getShape() {
-		return shape;
-	}
-
-	@Override
-	public String toString() {
-		return corners.toString();
+		super(corners);
 	}
 }

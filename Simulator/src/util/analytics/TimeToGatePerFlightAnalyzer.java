@@ -7,7 +7,7 @@ import java.util.Set;
 
 import model.agent.humanAgent.Passenger;
 import model.environment.objects.flight.Flight;
-import simulation.simulation.Simulator;
+import model.map.Map;
 
 /**
  * A Time To Gate Per Flight Parameter Tracker indicates the average times to
@@ -28,16 +28,16 @@ public class TimeToGatePerFlightAnalyzer extends Analyzer implements PassengerAn
 	/**
 	 * The time to gate hashmap.
 	 */
-	private HashMap<Flight, HashMap<Passenger, Float>> timeToGate;
+	private HashMap<Flight, HashMap<Passenger, Double>> timeToGate;
 	/**
 	 * The arrival times.
 	 */
-	private HashMap<Passenger, Float> arrivalTimes;
+	private HashMap<Passenger, Double> arrivalTimes;
 
 	@Override
 	public void addPassenger(Passenger passenger) {
 		passengers.add(passenger);
-		arrivalTimes.put(passenger, time);
+		arrivalTimes.put(passenger, map.getTime());
 	}
 
 	@Override
@@ -59,9 +59,9 @@ public class TimeToGatePerFlightAnalyzer extends Analyzer implements PassengerAn
 		double[] times = new double[schedule.size()];
 		for (Passenger p : passengers) {
 			if (reachedGate(p)) {
-				HashMap<Passenger, Float> currentHash = timeToGate.get(p.getFlight());
+				HashMap<Passenger, Double> currentHash = timeToGate.get(p.getFlight());
 				if (!currentHash.containsKey(p)) {
-					currentHash.put(p, time - arrivalTimes.get(p));
+					currentHash.put(p, map.getTime() - arrivalTimes.get(p));
 				}
 			}
 		}
@@ -90,26 +90,25 @@ public class TimeToGatePerFlightAnalyzer extends Analyzer implements PassengerAn
 	 * @return True if it reached the gate, false otherwise.
 	 */
 	private boolean reachedGate(Passenger passenger) {
-		return passenger.getFlight().getGateArea().getShape().contains(passenger.getPosition().x,
-				passenger.getPosition().y);
+		return passenger.getFlight().getGateArea().contains(passenger.getPosition());
 	}
 
 	@Override
-	public void setSimulator(Simulator simulator) {
-		super.setSimulator(simulator);
+	public void setMap(Map map) {
+		super.setMap(map);
 		schedule = new ArrayList<>();
 		timeToGate = new HashMap<>();
 		passengers = new ArrayList<>();
 		arrivalTimes = new HashMap<>();
 
-		for (Flight f : getSimulator().getMap().getMapComponents(Flight.class)) {
+		for (Flight f : map.getMapComponents(Flight.class)) {
 			schedule.add(f);
-			timeToGate.put(f, new HashMap<Passenger, Float>());
+			timeToGate.put(f, new HashMap<Passenger, Double>());
 		}
 
-		for (Passenger p : getSimulator().getMap().getMapComponents(Passenger.class)) {
+		for (Passenger p : map.getMapComponents(Passenger.class)) {
 			passengers.add(p);
-			arrivalTimes.put(p, 0.0f);
+			arrivalTimes.put(p, 0.0);
 		}
 	}
 

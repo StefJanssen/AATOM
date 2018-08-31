@@ -1,20 +1,17 @@
 package model.environment.objects.physicalObject.sensor;
 
-import model.environment.map.Map;
-import model.environment.map.MapComponent;
+import java.util.List;
+
 import model.environment.position.Position;
+import model.map.shapes.PolygonMapComponent;
 
 /**
  * A sensor can sense something in the world.
  * 
  * @author S.A.M. Janssen
  */
-public abstract class Sensor extends MapComponent {
+public abstract class Sensor extends PolygonMapComponent {
 
-	/**
-	 * The map.
-	 */
-	protected Map map;
 	/**
 	 * The sensor state.
 	 */
@@ -23,14 +20,11 @@ public abstract class Sensor extends MapComponent {
 	/**
 	 * Creates a sensor.
 	 * 
-	 * @param position
-	 *            The position.
-	 * @param map
-	 *            The map.
+	 * @param corners
+	 *            The positions.
 	 */
-	public Sensor(Position position, Map map) {
-		super(position);
-		this.map = map;
+	public Sensor(List<Position> corners) {
+		super(corners);
 		this.state = SensorState.IDLE;
 	}
 
@@ -40,14 +34,4 @@ public abstract class Sensor extends MapComponent {
 	 * @return The observation.
 	 */
 	public abstract Observation<?> getObservation();
-
-	/**
-	 * Move the sensor to a {@link Position}.
-	 * 
-	 * @param position
-	 *            The position to move to.
-	 */
-	public void move(Position position) {
-		this.position = position;
-	}
 }

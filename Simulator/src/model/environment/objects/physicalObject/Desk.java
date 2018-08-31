@@ -2,7 +2,7 @@ package model.environment.objects.physicalObject;
 
 import java.util.List;
 
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.HumanAgent;
 import model.environment.position.Position;
 
 /**
@@ -19,7 +19,7 @@ public class Desk extends PhysicalObject implements Openable {
 	/**
 	 * The agent at the desk.
 	 */
-	private Passenger agentAtDesk;
+	private HumanAgent agentAtDesk;
 	/**
 	 * The system is open or closed.
 	 */
@@ -50,6 +50,10 @@ public class Desk extends PhysicalObject implements Openable {
 	public Desk(double x0, double x1, double x2, double x3, double y0, double y1, double y2, double y3,
 			Position servingPosition) {
 		super(x0, x1, x2, x3, y0, y1, y2, y3);
+		if (contains(servingPosition))
+			throw new IllegalArgumentException("Entry position should be outside of the area of the chair.");
+		if (getDistance(servingPosition) > 1)
+			throw new IllegalArgumentException("Entry position should be within a distance of 1 of the chair.");
 		this.servingPosition = servingPosition;
 		isOpen = true;
 	}
@@ -71,6 +75,10 @@ public class Desk extends PhysicalObject implements Openable {
 	 */
 	public Desk(double topX, double topY, double width, double height, Position servingPosition) {
 		super(topX, topY, width, height);
+		if (contains(servingPosition))
+			throw new IllegalArgumentException("Entry position should be outside of the area of the chair.");
+		if (getDistance(servingPosition) > 1)
+			throw new IllegalArgumentException("Entry position should be within a distance of 1 of the chair.");
 		this.servingPosition = servingPosition;
 		isOpen = true;
 	}
@@ -87,6 +95,10 @@ public class Desk extends PhysicalObject implements Openable {
 	 */
 	public Desk(double[] x, double[] y, Position servingPosition) {
 		super(x, y);
+		if (contains(servingPosition))
+			throw new IllegalArgumentException("Entry position should be outside of the area of the chair.");
+		if (getDistance(servingPosition) > 1)
+			throw new IllegalArgumentException("Entry position should be within a distance of 1 of the chair.");
 		this.servingPosition = servingPosition;
 		isOpen = true;
 	}
@@ -101,6 +113,10 @@ public class Desk extends PhysicalObject implements Openable {
 	 */
 	public Desk(List<Position> corners, Position servingPosition) {
 		super(corners);
+		if (contains(servingPosition))
+			throw new IllegalArgumentException("Entry position should be outside of the area of the chair.");
+		if (getDistance(servingPosition) > 1)
+			throw new IllegalArgumentException("Entry position should be within a distance of 1 of the chair.");
 		this.servingPosition = servingPosition;
 		isOpen = true;
 	}
@@ -110,7 +126,7 @@ public class Desk extends PhysicalObject implements Openable {
 	 * 
 	 * @return The agent at the desk.
 	 */
-	public Passenger getAgentAtDesk() {
+	public HumanAgent getAgentAtDesk() {
 		if (agentAtDesk != null) {
 			if (agentAtDesk.isDestroyed())
 				agentAtDesk = null;
@@ -153,8 +169,9 @@ public class Desk extends PhysicalObject implements Openable {
 	 * @param agentAtDesk
 	 *            The agent at the desk.
 	 */
-	public void setAgentAtDesk(Passenger agentAtDesk) {
-		this.agentAtDesk = agentAtDesk;
+	public void reserveDeskPosition(HumanAgent agentAtDesk) {
+		if (!isOccupied())
+			this.agentAtDesk = agentAtDesk;
 	}
 
 	@Override

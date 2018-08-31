@@ -12,13 +12,13 @@ import model.agent.humanAgent.tacticalLevel.activity.ActivityModule;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.QueueActivity;
 import model.agent.humanAgent.tacticalLevel.navigation.pathfinder.JumpPointSearchPathFinder;
 import model.agent.humanAgent.tacticalLevel.navigation.pathfinder.PathFinder;
-import model.environment.map.Map;
 import model.environment.objects.area.Area;
 import model.environment.objects.area.QueuingArea;
 import model.environment.objects.physicalObject.PhysicalObject;
 import model.environment.objects.physicalObject.sensor.WalkThroughMetalDetector;
 import model.environment.objects.physicalObject.sensor.XRaySystem;
 import model.environment.position.Position;
+import model.map.Map;
 import simulation.simulation.util.Updatable;
 import simulation.simulation.util.Utilities;
 
@@ -66,26 +66,18 @@ public class NavigationModule implements Updatable {
 
 	/**
 	 * Create a goal activity.
-	 * 
-	 * @param map
-	 *            The map.
-	 * 
 	 */
-	public NavigationModule(Map map) {
-		this(map, new ArrayList<Position>());
+	public NavigationModule() {
+		this(new ArrayList<Position>());
 	}
 
 	/**
 	 * Creates a goal activity.
 	 * 
-	 * @param map
-	 *            The map.
-	 * 
 	 * @param goalPositions
 	 *            The goal positions.
 	 */
-	public NavigationModule(Map map, List<Position> goalPositions) {
-		this.map = map;
+	public NavigationModule(List<Position> goalPositions) {
 		this.goalPositions = goalPositions;
 	}
 
@@ -171,6 +163,8 @@ public class NavigationModule implements Updatable {
 	/**
 	 * Sets the agent.
 	 * 
+	 * @param map
+	 *            The map.
 	 * @param movementModel
 	 *            The movement model.
 	 * @param activityModule
@@ -178,7 +172,9 @@ public class NavigationModule implements Updatable {
 	 * @param observationModule
 	 *            The observation module.
 	 */
-	public void init(MovementModel movementModel, ActivityModule activityModule, ObservationModule observationModule) {
+	public void init(Map map, MovementModel movementModel, ActivityModule activityModule,
+			ObservationModule observationModule) {
+		this.map = map;
 		this.movementModel = movementModel;
 		this.activityModule = activityModule;
 		this.observationModule = observationModule;
@@ -219,7 +215,7 @@ public class NavigationModule implements Updatable {
 			return true;
 
 		for (XRaySystem system : map.getMapComponents(XRaySystem.class))
-			if (Utilities.getDistance(goalPositions.get(goalIndex), system) < 2)
+			if (system.getDistance(goalPositions.get(goalIndex)) < 2)
 				return true;
 
 		return Utilities.isLineCollision(movementModel.getPosition(), goalPositions.get(goalIndex),
@@ -287,10 +283,14 @@ public class NavigationModule implements Updatable {
 	 *            The position.
 	 */
 	public void setGoal(Position position) {
-		stuckDetector.reset();
-		goalPositions.clear();
-		if (!position.equals(Position.NO_POSITION))
-			goalPositions = pathFinder.getPath(movementModel.getPosition(), position);
+		if (position != null) {
+			stuckDetector.reset();
+			goalPositions.clear();
+			if (!position.equals(Position.NO_POSITION))
+				goalPositions = pathFinder.getPath(movementModel.getPosition(), position);
+		} else {
+			System.out.println("warning: you passed a null position to the setGoal() method.");
+		}
 	}
 
 	/**

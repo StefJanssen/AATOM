@@ -1,6 +1,6 @@
 /**
- * Contains all classes that draw a {@link model.environment.map.MapComponent}
- * in the {@link view.GUI}.
+ * Contains all classes that draw a {@link model.map.MapComponent} in the
+ * {@link view.GUI}.
  * 
  * @author S.A.M. Janssen
  */

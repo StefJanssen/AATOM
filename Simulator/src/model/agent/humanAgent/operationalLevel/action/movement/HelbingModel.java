@@ -2,6 +2,7 @@ package model.agent.humanAgent.operationalLevel.action.movement;
 
 import java.util.Collection;
 
+import model.agent.humanAgent.AatomHumanAgent;
 import model.agent.humanAgent.HumanAgent;
 import model.agent.humanAgent.Passenger;
 import model.environment.objects.area.Area;
@@ -9,7 +10,6 @@ import model.environment.objects.area.QueuingArea;
 import model.environment.objects.physicalObject.PhysicalObject;
 import model.environment.position.Position;
 import model.environment.position.Vector;
-import simulation.simulation.util.Utilities;
 
 /**
  * The Helbing Model is an implementation of the Helbing (2000) paper. It uses
@@ -199,7 +199,7 @@ public class HelbingModel extends MovementModel {
 	 */
 	private Vector getSinglePhysicalObstacleForce(PhysicalObject physicalObstacle) { // fiW
 		// niw (direction from physicalObstacle to agent) - to normalize
-		Vector niw = Utilities.getVector(agent, physicalObstacle);
+		Vector niw = physicalObstacle.getVector(agent.getPosition());
 
 		// diw (distance between center of mass and physicalObstacle)
 		double diw = niw.length();
@@ -232,12 +232,8 @@ public class HelbingModel extends MovementModel {
 	}
 
 	@Override
-	public void init(HumanAgent agent) {
+	public void init(AatomHumanAgent agent) {
 		super.init(agent);
-		// currentVelocity = new Vector(agent.getGoalPosition().x -
-		// getPosition().x,
-		// agent.getGoalPosition().y - getPosition().y).normalize();
-		// currentVelocity = currentVelocity.scalarMultiply(desiredSpeed);
 		currentVelocity = new Vector(1, 1).scalarMultiply(desiredSpeed);
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Flight (planning) related packages.
+ * Flight related classes.
  * 
  * @author S.A.M. Janssen
  */

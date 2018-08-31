@@ -3,4 +3,4 @@
  * 
  * @author S.A.M. Janssen
  */
-package model.environment.shapes;
+package model.map.shapes;

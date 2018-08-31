@@ -6,8 +6,6 @@ import java.util.List;
 
 import model.agent.humanAgent.OperatorAgent;
 import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicOperatorCheckInActivity;
-import model.environment.map.Map;
-import model.environment.map.MapBuilder;
 import model.environment.objects.area.EntranceArea;
 import model.environment.objects.area.GateArea;
 import model.environment.objects.area.QueuingArea;
@@ -21,6 +19,8 @@ import model.environment.objects.physicalObject.QueueSeparator;
 import model.environment.objects.physicalObject.Wall;
 import model.environment.objects.physicalObject.sensor.XRaySystem;
 import model.environment.position.Position;
+import model.map.Map;
+import model.map.MapBuilder;
 import simulation.simulation.Simulator;
 import simulation.simulation.agentGenerator.BaseAgentGenerator;
 import simulation.simulation.endingCondition.NoPassengerEndingConditions;
@@ -309,12 +309,9 @@ public final class SimulationBuilder {
 	/**
 	 * Creates the check-in desks.
 	 * 
-	 * @param mapBuilder
-	 *            The map builder.
-	 * 
 	 * @return The check-in desks.
 	 */
-	private static List<SimulationObject> checkInDesks(MapBuilder mapBuilder) {
+	private static List<SimulationObject> checkInDesks() {
 		List<SimulationObject> desks = new ArrayList<>();
 		Desk w;
 
@@ -351,10 +348,10 @@ public final class SimulationBuilder {
 		w = new Desk(73.59, 56.2, 1.17, 0.1, new Position(74.18, 56.7));
 		desks.add(w);
 
-		desks.addAll(mapBuilder.queue(new Position(46.67, 58.7), 4, 6, false, 0));
-		desks.addAll(mapBuilder.queue(new Position(54.17, 58.7), 4, 6, false, 0));
-		desks.addAll(mapBuilder.queue(new Position(61.67, 58.7), 4, 6, false, 0));
-		desks.addAll(mapBuilder.queue(new Position(69.17, 58.7), 4, 5.5, false, 0));
+		desks.addAll(MapBuilder.queue(new Position(46.67, 58.7), 4, 6, false, 0));
+		desks.addAll(MapBuilder.queue(new Position(54.17, 58.7), 4, 6, false, 0));
+		desks.addAll(MapBuilder.queue(new Position(61.67, 58.7), 4, 6, false, 0));
+		desks.addAll(MapBuilder.queue(new Position(69.17, 58.7), 4, 5.5, false, 0));
 		desks.add(new Wall(76, 54.7, 0.1, 8));
 		return desks;
 	}
@@ -370,10 +367,10 @@ public final class SimulationBuilder {
 	 * @return The simulator.
 	 */
 	public static Simulator eindhovenAirport(boolean gui, int timeStep) {
-		BaseAgentGenerator agentGenerator = new BaseAgentGenerator(10);
-		Simulator sim = new Simulator(new Map(), gui, timeStep, new NoPassengerEndingConditions(), agentGenerator,
-				new BaseLogger());
-		MapBuilder mapBuilder = new MapBuilder(sim);
+		Simulator sim = new Simulator.Builder<>().setGui(gui).setTimeStep(timeStep)
+				.setEndingConditions(new NoPassengerEndingConditions()).setAgentGenerator(new BaseAgentGenerator(10))
+				.setLogger(new BaseLogger()).createSimulator();
+
 		Map map = sim.getMap();
 		// agent generation
 		List<Position> agentCorners = new ArrayList<>();
@@ -419,18 +416,18 @@ public final class SimulationBuilder {
 		sim.add(fourthGateArea);
 
 		// gate areas
-		List<SimulationObject> sittingArea = mapBuilder.sittingArea(new Position(3, 3), 6, 10, 0);
+		List<SimulationObject> sittingArea = MapBuilder.sittingArea(new Position(3, 3), 6, 10, 0);
 		sim.addAll(sittingArea);
-		sittingArea = mapBuilder.sittingArea(new Position(18, 3), 6, 10, 0);
+		sittingArea = MapBuilder.sittingArea(new Position(18, 3), 6, 10, 0);
 		sim.addAll(sittingArea);
-		sittingArea = mapBuilder.sittingArea(new Position(33, 3), 6, 10, 0);
+		sittingArea = MapBuilder.sittingArea(new Position(33, 3), 6, 10, 0);
 		sim.addAll(sittingArea);
-		sittingArea = mapBuilder.sittingArea(new Position(48, 3), 6, 10, 0);
+		sittingArea = MapBuilder.sittingArea(new Position(48, 3), 6, 10, 0);
 		sim.addAll(sittingArea);
 		sim.add(new Wall(19.9, 24.5, 0.1, 2.5));
 
 		// check in desks
-		List<SimulationObject> checkinDesks = mapBuilder.checkInArea(new Position(12, 25), 3, 0);
+		List<SimulationObject> checkinDesks = MapBuilder.checkInArea(new Position(12, 25), 3, 0);
 		sim.addAll(checkinDesks);
 		Collection<Desk> desks1 = new ArrayList<>();
 		for (SimulationObject o : checkinDesks) {
@@ -438,7 +435,7 @@ public final class SimulationBuilder {
 				desks1.add((Desk) o);
 		}
 
-		checkinDesks = mapBuilder.checkInArea(new Position(20, 25), 3, 0);
+		checkinDesks = MapBuilder.checkInArea(new Position(20, 25), 3, 0);
 		sim.addAll(checkinDesks);
 		Collection<Desk> desks2 = new ArrayList<>();
 		for (SimulationObject o : checkinDesks) {
@@ -446,7 +443,7 @@ public final class SimulationBuilder {
 				desks2.add((Desk) o);
 		}
 
-		checkinDesks = mapBuilder.checkInArea(new Position(28, 25), 3, 0);
+		checkinDesks = MapBuilder.checkInArea(new Position(28, 25), 3, 0);
 		sim.addAll(checkinDesks);
 		Collection<Desk> desks3 = new ArrayList<>();
 		for (SimulationObject o : checkinDesks) {
@@ -455,7 +452,7 @@ public final class SimulationBuilder {
 		}
 
 		// checkpoint
-		List<SimulationObject> checkpoint = mapBuilder.checkpoint(new Position(61, 40), 2, 10, false, 90);
+		List<SimulationObject> checkpoint = MapBuilder.checkpoint(new Position(61, 40), 2, 10, false, 90);
 		sim.addAll(checkpoint);
 
 		// flights
@@ -653,17 +650,14 @@ public final class SimulationBuilder {
 	/**
 	 * Generates walls for RTHA.
 	 * 
-	 * @param mapBuilder
-	 *            The map builder.
-	 * 
 	 * @return The walls.
 	 */
-	private static Collection<SimulationObject> generateRTHAWalls(MapBuilder mapBuilder) {
+	private static Collection<SimulationObject> generateRTHAWalls() {
 
 		Collection<SimulationObject> objects = new ArrayList<>();
 		objects.addAll(outerWalls());
 		objects.addAll(landside());
-		objects.addAll(checkInDesks(mapBuilder));
+		objects.addAll(checkInDesks());
 		objects.addAll(airsideArrival());
 		objects.addAll(belts());
 		objects.addAll(airsideDeparture());
@@ -838,14 +832,11 @@ public final class SimulationBuilder {
 	 * @return The simulator.
 	 */
 	public static Simulator rotterdamTheHagueAirport(boolean gui, int timeStep) {
+		Simulator sim = new Simulator.Builder<>().setGui(gui).setEndingConditions(new NoPassengerEndingConditions())
+				.setAgentGenerator(new BaseAgentGenerator(10)).setLogger(new BaseLogger()).createSimulator();
 
-		BaseAgentGenerator agentGenerator = new BaseAgentGenerator(10);
-		Simulator sim = new Simulator(gui, timeStep, new NoPassengerEndingConditions(), agentGenerator,
-				new BaseLogger());
-
-		MapBuilder mapBuilder = new MapBuilder(sim);
 		Map map = sim.getMap();
-		sim.addAll(generateRTHAWalls(mapBuilder));
+		sim.addAll(generateRTHAWalls());
 
 		Collection<Desk> desks1 = map.getMapComponents(Desk.class);
 		List<Desk> firstFour = new ArrayList<>();
@@ -857,15 +848,15 @@ public final class SimulationBuilder {
 		}
 
 		GateArea gateaArea = new GateArea(12, 22, 21, 9.5);
-		sim.addAll(mapBuilder.gate(new Position(13, 23), 5, 10, 0));
+		sim.addAll(MapBuilder.gate(new Position(13, 23), 5, 10, 0));
 		sim.add(gateaArea);
-		sim.addAll(mapBuilder.gate(new Position(23, 23), 5, 10, 0));
+		sim.addAll(MapBuilder.gate(new Position(23, 23), 5, 10, 0));
 
 		sim.add(new EntranceArea(50, 74, 10, 2.5));
 		sim.add(new EntranceArea(102, 74, 10, 2.5));
 
-		sim.addAll(mapBuilder.checkpoint(new Position(29, 62), 2, 0, false, 90));
-		sim.addAll(mapBuilder.checkpoint(new Position(31.5, 57), 2, 0, false, 90));
+		sim.addAll(MapBuilder.checkpoint(new Position(29, 62), 2, 0, false, 90));
+		sim.addAll(MapBuilder.checkpoint(new Position(31.5, 57), 2, 0, false, 90));
 
 		sim.add(new QueueSeparator(36, 61, 10.5, 0.1));
 		sim.add(new QueueSeparator(36, 62, 9.5, 0.1));
@@ -938,8 +929,8 @@ public final class SimulationBuilder {
 		sim.addAll(flights);
 
 		for (Desk d : map.getMapComponents(Desk.class)) {
-			sim.add(new OperatorAgent(map, new Position(d.getServingPosition().x, d.getServingPosition().y - 1), 0.25,
-					80, new BasicOperatorCheckInActivity(d, new NormalDistribution(30, 3))));
+			sim.add(new OperatorAgent(new Position(d.getServingPosition().x, d.getServingPosition().y - 1), 0.25, 80,
+					new BasicOperatorCheckInActivity(d, new NormalDistribution(30, 3))));
 		}
 
 		sim.add(new QueueAnalyzer());

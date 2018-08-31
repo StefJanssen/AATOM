@@ -1,4 +1,4 @@
-package model.environment.map;
+package model.map;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -7,19 +7,18 @@ import java.util.List;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-import model.agent.humanAgent.HumanAgent;
 import model.agent.humanAgent.Passenger;
 import model.environment.objects.area.QueuingArea;
 import model.environment.objects.flight.Flight;
 import model.environment.objects.physicalObject.PhysicalObject;
 import model.environment.position.Position;
-import model.environment.shapes.CircularShape;
-import model.environment.shapes.PolygonShape;
+import model.map.shapes.CircularMapComponent;
+import model.map.shapes.PolygonMapComponent;
 import simulation.simulation.util.SimulationObject;
 
 /**
- * The map forms the basis for our model. It gathers all physical elements of
- * the model and contains useful methods for interaction.
+ * The map forms the basis for the agent-based model. It gathers all physical
+ * elements of the model and contains useful methods for interaction.
  * 
  * @author S.A.M. Janssen
  *
@@ -36,31 +35,47 @@ public class Map {
 	/**
 	 * The height of the map.
 	 */
-	private double height;
+	private float height;
 	/**
 	 * The width of the map.
 	 */
-	private double width;
+	private float width;
+	/**
+	 * The minimum height of the map.
+	 */
+	private final float minimumHeight;
+	/**
+	 * The minimum width of the map.
+	 */
+	private final float minimumWidth;
+	/**
+	 * The time.
+	 */
+	private double time;
 
 	/**
 	 * Creates a map that automatically scales to the items that are added.
 	 */
 	public Map() {
-		this(0, 0);
+		this(1, 1);
 	}
 
 	/**
-	 * Creates the map with a minimum size. The size increases if items are
-	 * added that fall outside of the dimensions.
+	 * Creates the map with a minimum width and height. The size increases if
+	 * items are added that fall outside of the dimensions.
 	 * 
 	 * @param width
-	 *            The width of the map (in meter).
+	 *            The minimum width of the map.
 	 * @param height
-	 *            The height of the map (in meter).
+	 *            The minimum height of the map.
 	 */
-	public Map(double width, double height) {
+	public Map(float width, float height) {
+		if (width < 1 || height < 1)
+			throw new IllegalArgumentException("Width and height should be at least 1.");
 		this.width = width;
 		this.height = height;
+		minimumWidth = width;
+		minimumHeight = height;
 		mapComponents = ArrayListMultimap.create();
 	}
 
@@ -70,7 +85,7 @@ public class Map {
 	 * @param object
 	 *            The map component.
 	 */
-	public void add(SimulationObject object) {
+	public void add(MapComponent object) {
 		// throw error messages in case of problems
 		checkForAddIssues(object);
 
@@ -87,6 +102,7 @@ public class Map {
 			mapComponentClass = mapComponentClass.getSuperclass();
 		}
 		mapComponents.put(mapComponentClass, object);
+		object.setMap(this);
 		updateDimensions();
 	}
 
@@ -121,7 +137,7 @@ public class Map {
 	 * 
 	 * @return The height.
 	 */
-	public double getHeight() {
+	public float getHeight() {
 		return height;
 	}
 
@@ -140,11 +156,18 @@ public class Map {
 	}
 
 	/**
+	 * @return the time
+	 */
+	public double getTime() {
+		return time;
+	}
+
+	/**
 	 * Gets the width of the map.
 	 * 
 	 * @return The width.
 	 */
-	public double getWidth() {
+	public float getWidth() {
 		return width;
 	}
 
@@ -168,8 +191,9 @@ public class Map {
 	 *            The map component.
 	 */
 	public void remove(MapComponent mapComponent) {
-		if (mapComponent instanceof HumanAgent)
-			mapComponents.values().removeAll(Collections.singleton(mapComponent));
+		mapComponents.values().removeAll(Collections.singleton(mapComponent));
+		mapComponent.destroy();
+		updateDimensions();
 	}
 
 	/**
@@ -178,16 +202,16 @@ public class Map {
 	private void updateDimensions() {
 		double tempWidth = 0;
 		double tempHeight = 0;
-		for (MapComponent mapComponent : getMapComponents(MapComponent.class)) {
-			if (mapComponent instanceof CircularShape) {
-				double tempX = mapComponent.position.x + ((CircularShape) mapComponent).getRadius();
-				double tempY = mapComponent.position.y + ((CircularShape) mapComponent).getRadius();
+		for (PhysicalMapComponent mapComponent : getMapComponents(PhysicalMapComponent.class)) {
+			if (mapComponent instanceof CircularMapComponent) {
+				double tempX = mapComponent.position.x + ((CircularMapComponent) mapComponent).getRadius();
+				double tempY = mapComponent.position.y + ((CircularMapComponent) mapComponent).getRadius();
 				if (tempX > tempWidth)
 					tempWidth = tempX;
 				if (tempY > tempHeight)
 					tempHeight = tempY;
-			} else if (mapComponent instanceof PolygonShape) {
-				List<Position> corners = ((PolygonShape) mapComponent).getCorners();
+			} else if (mapComponent instanceof PolygonMapComponent) {
+				List<Position> corners = ((PolygonMapComponent) mapComponent).getCorners();
 				double tempX = 0;
 				double tempY = 0;
 				for (Position corner : corners) {
@@ -203,9 +227,19 @@ public class Map {
 			}
 		}
 
-		if (tempWidth + 1 > width)
+		if (tempWidth + 1 >= minimumWidth)
 			width = Math.round(tempWidth + 1);
-		if (tempHeight + 1 > height)
+		if (tempHeight + 1 >= minimumHeight)
 			height = Math.round(tempHeight + 1);
+	}
+
+	/**
+	 * Update the time. Only to be called by the simulator.
+	 * 
+	 * @param timeStep
+	 *            The time step.
+	 */
+	public void updateTime(int timeStep) {
+		time += (timeStep / 1000.0);
 	}
 }

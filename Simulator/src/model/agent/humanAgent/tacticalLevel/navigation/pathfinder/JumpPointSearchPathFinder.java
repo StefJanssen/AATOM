@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import model.environment.map.Map;
 import model.environment.position.Position;
+import model.map.Map;
 
 /**
  * The jump point search path finder uses jump point search to determine paths.

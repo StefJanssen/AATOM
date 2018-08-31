@@ -60,7 +60,8 @@ public class Vector extends Position {
 	}
 
 	/**
-	 * Checks if this vector is an approximate rotation of another vector.
+	 * Checks if this vector is an approximate counterclockwise rotation of
+	 * another vector.
 	 * 
 	 * @param degrees
 	 *            The degrees rotation.
@@ -85,13 +86,13 @@ public class Vector extends Position {
 	}
 
 	/**
-	 * Multiplies this vector with another.
+	 * Multiplies (dot product) this vector with another.
 	 * 
 	 * @param other
 	 *            The other vector.
 	 * @return The multiplication.
 	 */
-	public double multiply(Vector other) {
+	public float multiply(Vector other) {
 		return x * other.x + y * other.y;
 	}
 

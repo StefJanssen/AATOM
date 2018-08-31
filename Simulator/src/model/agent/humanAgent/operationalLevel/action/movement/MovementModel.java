@@ -1,11 +1,10 @@
 package model.agent.humanAgent.operationalLevel.action.movement;
 
-import model.agent.humanAgent.HumanAgent;
+import model.agent.humanAgent.AatomHumanAgent;
 import model.environment.objects.physicalObject.Chair;
 import model.environment.position.Position;
 import model.environment.position.Vector;
 import simulation.simulation.util.Updatable;
-import simulation.simulation.util.Utilities;
 
 /**
  * A movement model is responsible for the movement of a passenger.
@@ -17,7 +16,7 @@ public abstract class MovementModel implements Updatable {
 	/**
 	 * The agent.
 	 */
-	protected HumanAgent agent;
+	protected AatomHumanAgent agent;
 	/**
 	 * The current velocity.
 	 */
@@ -115,7 +114,7 @@ public abstract class MovementModel implements Updatable {
 	 * @param agent
 	 *            The agent.
 	 */
-	public void init(HumanAgent agent) {
+	public void init(AatomHumanAgent agent) {
 		this.agent = agent;
 		currentVelocity = new Vector(0, 0);
 	}
@@ -143,7 +142,7 @@ public abstract class MovementModel implements Updatable {
 		if (chair.isOccupied())
 			return false;
 
-		if (Utilities.getDistance(agent, chair) < 1) {
+		if (agent.getDistance(chair.getEntryPosition()) < 1) {
 			this.chair = chair;
 			chair.setOccupied(agent);
 			setStopOrder(-1);

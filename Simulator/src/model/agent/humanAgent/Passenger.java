@@ -10,7 +10,6 @@ import model.agent.humanAgent.strategicLevel.BasicPassengerStrategicModel;
 import model.agent.humanAgent.strategicLevel.StrategicModel;
 import model.agent.humanAgent.tacticalLevel.BasicPassengerTacticalModel;
 import model.agent.humanAgent.tacticalLevel.TacticalModel;
-import model.environment.map.Map;
 import model.environment.objects.area.Facility;
 import model.environment.objects.flight.Flight;
 import model.environment.objects.physicalObject.Chair;
@@ -26,7 +25,190 @@ import util.math.distributions.NormalDistribution;
  * 
  * @author S.A.M. Janssen
  */
-public class Passenger extends HumanAgent {
+public class Passenger extends AatomHumanAgent {
+
+	/**
+	 * Builder class for passenger. Inheritance based on this post:
+	 * https://stackoverflow.com/questions/17164375/subclassing-a-java-builder-
+	 * class
+	 * 
+	 * @author S.A.M. Janssen
+	 * @param <T>
+	 *            The subclass of the builder.
+	 */
+	@SuppressWarnings("unchecked")
+	public static class Builder<T extends Builder<T>> {
+
+		protected Flight flight = Flight.NO_FLIGHT;
+		protected boolean checkedIn = false;
+		protected Class<? extends Facility> facility = null;
+		protected Position position = Position.NO_POSITION;
+		protected double radius = 0.2;
+		protected double mass = 80;
+		protected double desiredSpeed = 1;
+		protected Luggage luggage = Luggage.NO_LUGGAGE;
+		protected StrategicModel strategicModel;
+		protected TacticalModel tacticalModel;
+		protected OperationalModel operationalModel;
+		protected Color color = Color.RED;
+		protected MathDistribution checkPointDropTime = new NormalDistribution(54.6, 36.09);
+		protected MathDistribution checkPointCollectTime = new NormalDistribution(71.5, 54.95);
+
+		/**
+		 * Creates the passenger.
+		 * 
+		 * @return The passenger.
+		 */
+		public Passenger build() {
+			if (position.equals(Position.NO_POSITION) || flight.equals(Flight.NO_FLIGHT))
+				throw new IllegalArgumentException("No position and/or flight given.");
+			if (strategicModel == null)
+				strategicModel = new BasicPassengerStrategicModel(facility, checkedIn, checkPointDropTime,
+						checkPointCollectTime, flight);
+
+			if (tacticalModel == null)
+				tacticalModel = new BasicPassengerTacticalModel(flight);
+
+			if (operationalModel == null)
+				operationalModel = new BasicPassengerOperationalModel(desiredSpeed);
+
+			return new Passenger(flight, checkedIn, facility, position, radius, mass, luggage, strategicModel,
+					tacticalModel, operationalModel, color);
+		}
+
+		/**
+		 * Set checked in.
+		 * 
+		 * @param checkedIn
+		 *            Checked in or not.
+		 * @return The builder.
+		 */
+		public T setCheckedIn(boolean checkedIn) {
+			this.checkedIn = checkedIn;
+			return (T) this;
+		}
+
+		/**
+		 * Set the color.
+		 * 
+		 * @param color
+		 *            The color.
+		 * @return The builder.
+		 */
+		public T setColor(Color color) {
+			this.color = color;
+			return (T) this;
+		}
+
+		/**
+		 * Set the facility to visit.
+		 * 
+		 * @param facility
+		 *            The facility.
+		 * @return The builder.
+		 */
+		public T setFacility(Class<? extends Facility> facility) {
+			this.facility = facility;
+			return (T) this;
+		}
+
+		/**
+		 * Set the {@link Flight}.
+		 * 
+		 * @param flight
+		 *            The flight.
+		 * @return The builder.
+		 */
+		public T setFlight(Flight flight) {
+			this.flight = flight;
+			return (T) this;
+		}
+
+		/**
+		 * Set the luggage.
+		 * 
+		 * @param luggage
+		 *            The luggage.
+		 * @return The builder.
+		 */
+		public T setLuggage(Luggage luggage) {
+			this.luggage = luggage;
+			return (T) this;
+		}
+
+		/**
+		 * Set the mass.
+		 * 
+		 * @param mass
+		 *            The mass.
+		 * @return The builder.
+		 */
+		public T setMass(double mass) {
+			this.mass = mass;
+			return (T) this;
+		}
+
+		/**
+		 * Set the operational model.
+		 * 
+		 * @param operationalModel
+		 *            The operational model.
+		 * @return The builder.
+		 */
+		public T setOperationalModel(OperationalModel operationalModel) {
+			this.operationalModel = operationalModel;
+			return (T) this;
+		}
+
+		/**
+		 * Set the {@link Position}.
+		 * 
+		 * @param position
+		 *            The position.
+		 * @return The builder.
+		 */
+		public T setPosition(Position position) {
+			this.position = position;
+			return (T) this;
+		}
+
+		/**
+		 * Set the radius.
+		 * 
+		 * @param radius
+		 *            The radius.
+		 * @return The builder.
+		 */
+		public T setRadius(double radius) {
+			this.radius = radius;
+			return (T) this;
+		}
+
+		/**
+		 * Set the strategic model.
+		 * 
+		 * @param strategicModel
+		 *            The strategic model.
+		 * @return The builder.
+		 */
+		public T setStrategicModel(StrategicModel strategicModel) {
+			this.strategicModel = strategicModel;
+			return (T) this;
+		}
+
+		/**
+		 * Set the tactical model.
+		 * 
+		 * @param tacticalModel
+		 *            The tactical model.
+		 * @return The builder.
+		 */
+		public T setTacticalModel(TacticalModel tacticalModel) {
+			this.tacticalModel = tacticalModel;
+			return (T) this;
+		}
+
+	}
 
 	/**
 	 * The {@link Flight} of the agent.
@@ -46,78 +228,9 @@ public class Passenger extends HumanAgent {
 	private boolean checkedIn;
 
 	/**
-	 * Creates a passenger with a specified {@link BasicPassengerStrategicModel}
-	 * , {@link BasicPassengerTacticalModel}, and
-	 * {@link BasicPassengerOperationalModel} and some {@link Luggage}.
-	 * 
-	 * @param map
-	 *            The map it is on.
-	 * @param flight
-	 *            The flight the agent is on.
-	 * @param checkedIn
-	 *            Checked in or not.
-	 * @param facility
-	 *            Facility visit or not.
-	 * @param checkPointDropTime
-	 *            The distribution of checkpoint luggage drop times.
-	 * @param checkPointCollectTime
-	 *            The distribution of checkpoint luggage collect times.
-	 * @param position
-	 *            The position on the map.
-	 * @param radius
-	 *            The radius.
-	 * @param mass
-	 *            The mass.
-	 * @param luggage
-	 *            The Baggage.
-	 * @param color
-	 *            The color.
-	 */
-	public Passenger(Map map, Flight flight, boolean checkedIn, Class<? extends Facility> facility,
-			MathDistribution checkPointDropTime, MathDistribution checkPointCollectTime, Position position,
-			double radius, double mass, Luggage luggage, Color color) {
-		this(map, flight, checkedIn, facility, position, radius, mass, luggage,
-				new BasicPassengerStrategicModel(facility, checkedIn, checkPointDropTime, checkPointCollectTime,
-						flight),
-				new BasicPassengerTacticalModel(map, flight), new BasicPassengerOperationalModel(map, 1), color);
-	}
-
-	/**
-	 * Creates a passenger with a specified {@link BasicPassengerStrategicModel}
-	 * , {@link BasicPassengerTacticalModel}, and
-	 * {@link BasicPassengerOperationalModel} and some {@link Luggage}.
-	 * 
-	 * @param map
-	 *            The map it is on.
-	 * @param flight
-	 *            The flight the agent is on.
-	 * @param checkedIn
-	 *            Checked in or not.
-	 * @param facility
-	 *            Facility visit or not.
-	 * @param position
-	 *            The position on the map.
-	 * @param radius
-	 *            The radius.
-	 * @param mass
-	 *            The mass.
-	 * @param luggage
-	 *            The Baggage.
-	 * @param color
-	 *            The color.
-	 */
-	public Passenger(Map map, Flight flight, boolean checkedIn, Class<? extends Facility> facility, Position position,
-			double radius, double mass, Luggage luggage, Color color) {
-		this(map, flight, checkedIn, facility, new NormalDistribution(54.6, 36.09), new NormalDistribution(71.5, 54.95),
-				position, radius, mass, luggage, color);
-	}
-
-	/**
 	 * Creates a passenger with a specified {@link StrategicModel} and
 	 * {@link OperationalModel} and some {@link Luggage}.
 	 * 
-	 * @param map
-	 *            The map it is on.
 	 * @param flight
 	 *            The flight the agent is on.
 	 * @param checkedIn
@@ -141,7 +254,7 @@ public class Passenger extends HumanAgent {
 	 * @param color
 	 *            The color.
 	 */
-	public Passenger(Map map, Flight flight, boolean checkedIn, Class<? extends Facility> facility, Position position,
+	protected Passenger(Flight flight, boolean checkedIn, Class<? extends Facility> facility, Position position,
 			double radius, double mass, Luggage luggage, StrategicModel strategicModel, TacticalModel tacticalModel,
 			OperationalModel operationalModel, Color color) {
 		super(position, radius, mass, strategicModel, tacticalModel, operationalModel, color);
@@ -162,45 +275,6 @@ public class Passenger extends HumanAgent {
 			}
 		}
 
-	}
-
-	/**
-	 * Creates a passenger with a specified {@link StrategicModel} and
-	 * {@link OperationalModel} with default color red.
-	 * 
-	 * @param map
-	 *            The map it is on.
-	 * @param flight
-	 *            The flight the agent is on.
-	 * @param position
-	 *            The position on the map.
-	 * @param radius
-	 *            The radius.
-	 * @param mass
-	 *            The mass.
-	 */
-	public Passenger(Map map, Flight flight, Position position, double radius, double mass) {
-		this(map, flight, false, null, position, radius, mass, Luggage.NO_LUGGAGE, Color.RED);
-	}
-
-	/**
-	 * Creates a passenger.
-	 * 
-	 * @param map
-	 *            The map it is on.
-	 * @param flight
-	 *            The flight the agent is on.
-	 * @param position
-	 *            The position on the map.
-	 * @param radius
-	 *            The radius.
-	 * @param mass
-	 *            The mass.
-	 * @param color
-	 *            The color.
-	 */
-	public Passenger(Map map, Flight flight, Position position, double radius, double mass, Color color) {
-		this(map, flight, false, null, position, radius, mass, Luggage.NO_LUGGAGE, color);
 	}
 
 	/**

@@ -5,10 +5,10 @@ import java.util.Collections;
 import java.util.List;
 
 import model.agent.humanAgent.tacticalLevel.navigation.DiscretizedMap;
-import model.environment.map.Map;
 import model.environment.objects.physicalObject.PhysicalObject;
 import model.environment.position.Position;
 import model.environment.position.Vector;
+import model.map.Map;
 import simulation.simulation.util.Utilities;
 
 /**

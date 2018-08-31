@@ -6,7 +6,6 @@ import java.util.List;
 
 import model.agent.humanAgent.HumanAgent;
 import model.agent.humanAgent.Passenger;
-import model.environment.map.Map;
 import model.environment.objects.physicalObject.Openable;
 import model.environment.objects.physicalObject.PhysicalObject;
 import model.environment.objects.physicalObject.luggage.Luggage;
@@ -91,12 +90,10 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	 *            The starting position of the luggage.
 	 * @param luggageEnd
 	 *            The ending position of the luggage.
-	 * @param map
-	 *            The map.
 	 */
-	public XRaySystem(List<Position> systemCornerPoints, XRaySensor sensor, Position luggageStart, Position luggageEnd,
-			Map map) {
-		this(systemCornerPoints, sensor, luggageStart, luggageEnd, map, false);
+	public XRaySystem(List<Position> systemCornerPoints, XRaySensor sensor, Position luggageStart,
+			Position luggageEnd) {
+		this(systemCornerPoints, sensor, luggageStart, luggageEnd, false);
 	}
 
 	/**
@@ -110,13 +107,11 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	 *            The starting position of the luggage.
 	 * @param luggageEnd
 	 *            The ending position of the luggage.
-	 * @param map
-	 *            The map.
 	 * @param otherWayAround
 	 *            An mirrored x-ray or not.
 	 */
 	public XRaySystem(List<Position> systemCornerPoints, XRaySensor sensor, Position luggageStart, Position luggageEnd,
-			Map map, boolean otherWayAround) {
+			boolean otherWayAround) {
 		super(systemCornerPoints);
 		xray = sensor;
 

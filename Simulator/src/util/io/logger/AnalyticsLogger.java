@@ -27,12 +27,11 @@ public class AnalyticsLogger extends Logger {
 			return;
 
 		for (Analyzer analyzer : simulator.getAnalytics().getAnalyzers()) {
-			Analyzer tracker = analyzer;
-			float[][][] data = tracker.exportData();
-			printLine("_graph_" + tracker.getYAxis() + "_" + tracker.getTitle());
+			float[][][] data = analyzer.exportData();
+			printLine("_graph_" + analyzer.getYAxis() + "_" + analyzer.getTitle());
 			for (int i = 0; i < data.length; i++) {
-				if (tracker.getLineNames().length > i) {
-					printLine("_line_" + tracker.getLineNames()[i]);
+				if (analyzer.getLineNames().length > i) {
+					printLine("_line_" + analyzer.getLineNames()[i]);
 					for (int j = 0; j < data[0].length; j++) {
 						printLine(data[i][j][0] + "," + data[i][j][1]);
 					}

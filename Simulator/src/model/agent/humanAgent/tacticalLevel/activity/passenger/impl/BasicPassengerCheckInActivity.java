@@ -10,7 +10,6 @@ import model.environment.objects.flight.Flight;
 import model.environment.objects.physicalObject.Desk;
 import model.environment.position.Position;
 import model.environment.position.Vector;
-import simulation.simulation.util.Utilities;
 
 /**
  * The check in activity is responsible for checking in an agent.
@@ -110,7 +109,7 @@ public class BasicPassengerCheckInActivity extends PassengerCheckInActivity {
 	 */
 	private Position getTemporaryPosition() {
 		// vector from queue to serving postion
-		Vector v = Utilities.getVector(servingDesk.getServingPosition(), flight.getCheckInQueue());
+		Vector v = flight.getCheckInQueue().getVector(servingDesk.getServingPosition());
 		// other way around and scaled
 		v = v.scalarMultiply(-0.8);
 		// new position
@@ -137,7 +136,7 @@ public class BasicPassengerCheckInActivity extends PassengerCheckInActivity {
 		activityModule.setQueuing(0);
 		navigationModule.setGoal(servingDesk.getServingPosition());
 		navigationModule.setShortTermGoal(getTemporaryPosition());
-		servingDesk.setAgentAtDesk((Passenger) agent);
+		servingDesk.reserveDeskPosition(agent);
 	}
 
 	@Override

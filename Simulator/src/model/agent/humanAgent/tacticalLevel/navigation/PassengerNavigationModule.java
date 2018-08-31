@@ -6,10 +6,10 @@ import java.util.List;
 import model.agent.humanAgent.operationalLevel.action.movement.MovementModel;
 import model.agent.humanAgent.operationalLevel.observation.ObservationModule;
 import model.agent.humanAgent.tacticalLevel.activity.ActivityModule;
-import model.environment.map.Map;
 import model.environment.objects.area.QueuingArea;
 import model.environment.objects.flight.Flight;
 import model.environment.position.Position;
+import model.map.Map;
 
 /**
  * The Passenger goal activity determines and updates the goals for a passenger
@@ -31,29 +31,24 @@ public class PassengerNavigationModule extends NavigationModule {
 	/**
 	 * Create a goal activity.
 	 * 
-	 * @param map
-	 *            The map.
 	 * @param flight
 	 *            The flight.
 	 * 
 	 */
-	public PassengerNavigationModule(Map map, Flight flight) {
-		super(map);
-		this.flight = flight;
+	public PassengerNavigationModule(Flight flight) {
+		this(flight, new ArrayList<Position>());
 	}
 
 	/**
 	 * Creates a goal activity.
 	 * 
-	 * @param map
-	 *            The map.
 	 * @param flight
 	 *            The flight.
 	 * @param goalPositions
 	 *            The goal positions.
 	 */
-	public PassengerNavigationModule(Map map, Flight flight, List<Position> goalPositions) {
-		super(map, goalPositions);
+	public PassengerNavigationModule(Flight flight, List<Position> goalPositions) {
+		super(goalPositions);
 		this.flight = flight;
 	}
 
@@ -82,7 +77,8 @@ public class PassengerNavigationModule extends NavigationModule {
 	}
 
 	@Override
-	public void init(MovementModel movementModel, ActivityModule activityModule, ObservationModule observation) {
+	public void init(Map map, MovementModel movementModel, ActivityModule activityModule,
+			ObservationModule observation) {
 		checkInGoals = new ArrayList<>();
 		if (!flight.equals(Flight.NO_FLIGHT)) {
 			QueuingArea area = flight.getCheckInQueue();
@@ -96,7 +92,7 @@ public class PassengerNavigationModule extends NavigationModule {
 			checkInGoals.add(middle);
 			checkInGoals.add(area.getEntrancePosition().clone());
 		}
-		super.init(movementModel, activityModule, observation);
+		super.init(map, movementModel, activityModule, observation);
 	}
 
 	@Override
@@ -115,16 +111,7 @@ public class PassengerNavigationModule extends NavigationModule {
 
 	@Override
 	public void setGoal(Position position) {
-		if (flight == null)
-			System.out.println("flight is null");
-		if (flight.getCheckInQueue() == null)
-			System.out.println("flight checkin is null");
-		if (flight.getCheckInQueue().getLeavingPosition() == null)
-			System.out.println("flight checkin queu is null");
-		if (position == null)
-			System.out.println(" position is null");
-
-		if (!flight.equals(Flight.NO_FLIGHT)
+		if (position != null && !flight.equals(Flight.NO_FLIGHT)
 				&& position.distanceTo(flight.getCheckInQueue().getLeavingPosition()) < 0.5)
 			goalPositions = getCheckInGoal(movementModel.getPosition());
 		else

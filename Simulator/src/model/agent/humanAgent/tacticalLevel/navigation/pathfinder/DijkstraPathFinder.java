@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import model.environment.map.Map;
 import model.environment.position.Position;
+import model.map.Map;
 
 /**
  * The Dijkstra Path Finder uses the Dijkstra algorithm to find a path from a

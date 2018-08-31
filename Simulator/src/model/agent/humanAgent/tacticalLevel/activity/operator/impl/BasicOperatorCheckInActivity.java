@@ -50,7 +50,7 @@ public class BasicOperatorCheckInActivity extends OperatorCheckInActivity {
 			if (desk.getAgentAtDesk().getPosition().distanceTo(desk.getServingPosition()) < 0.6)
 				return true;
 			else if (desk.getAgentAtDesk().getPosition().distanceTo(desk.getServingPosition()) < 1
-					&& desk.getAgentAtDesk().getReachedGoal())
+					&& ((Passenger) desk.getAgentAtDesk()).getReachedGoal())
 				return true;
 		}
 		return false;
@@ -70,10 +70,10 @@ public class BasicOperatorCheckInActivity extends OperatorCheckInActivity {
 	@Override
 	public void update(int timeStep) {
 		if (!alreadyInstructed.contains(desk.getAgentAtDesk())) {
-			alreadyInstructed.add(desk.getAgentAtDesk());
-			desk.getAgentAtDesk().getFlight().checkIn(desk.getAgentAtDesk());
+			alreadyInstructed.add((Passenger) desk.getAgentAtDesk());
+			((Passenger) desk.getAgentAtDesk()).getFlight().checkIn((Passenger) desk.getAgentAtDesk());
 		} else if (desk.getAgentAtDesk().getPosition().distanceTo(desk.getServingPosition()) > 1.5) {
-			desk.setAgentAtDesk(null);
+			desk.reserveDeskPosition(null);
 			endActivity();
 		}
 	}

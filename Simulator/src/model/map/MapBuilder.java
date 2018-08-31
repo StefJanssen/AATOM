@@ -1,4 +1,4 @@
-package model.environment.map;
+package model.map;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +23,6 @@ import model.environment.objects.physicalObject.sensor.impl.BasicWalkThroughMeta
 import model.environment.objects.physicalObject.sensor.impl.BasicXRaySensor;
 import model.environment.objects.physicalObject.sensor.impl.BasicXRaySystem;
 import model.environment.position.Position;
-import simulation.simulation.Simulator;
 import simulation.simulation.util.SimulationObject;
 import simulation.simulation.util.Utilities;
 import util.math.distributions.NormalDistribution;
@@ -38,31 +37,6 @@ import util.math.distributions.NormalDistribution;
 public final class MapBuilder {
 
 	/**
-	 * The map.
-	 */
-	private Map map;
-
-	/**
-	 * Creates a map builder.
-	 * 
-	 * @param map
-	 *            The map.
-	 */
-	public MapBuilder(Map map) {
-		this.map = map;
-	}
-
-	/**
-	 * Creates a map builder.
-	 * 
-	 * @param simulator
-	 *            The simulator.
-	 */
-	public MapBuilder(Simulator simulator) {
-		this(simulator.getMap());
-	}
-
-	/**
 	 * Create a check in area.
 	 * 
 	 * @param start
@@ -73,7 +47,7 @@ public final class MapBuilder {
 	 *            The degrees it is rotated.
 	 * @return A list of SimulationObjects that form the check in area.
 	 */
-	public List<SimulationObject> checkInArea(Position start, int numberOfDesks, double degreeRotation) {
+	public static List<SimulationObject> checkInArea(Position start, int numberOfDesks, double degreeRotation) {
 		List<SimulationObject> components = new ArrayList<>();
 
 		// desks
@@ -85,7 +59,7 @@ public final class MapBuilder {
 					degreeRotation);
 			Desk desk = createDesk(new Position(start.x + i * 2, start.y), 1, 0.2, start, degreeRotation, deskPosition);
 			components.add(desk);
-			OperatorAgent agent = new OperatorAgent(map, agentPosition, 0.25, 80,
+			OperatorAgent agent = new OperatorAgent(agentPosition, 0.25, 80,
 					new BasicOperatorCheckInActivity(desk, new NormalDistribution(60, 6)));
 			components.add(agent);
 		}
@@ -118,8 +92,8 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (in deg.).
 	 * @return A list of SimulationObjects that form the checkpoint.
 	 */
-	public List<SimulationObject> checkpoint(Position start, int numberOfLanes, double queueWidth, boolean blockingWall,
-			double degreeRotation) {
+	public static List<SimulationObject> checkpoint(Position start, int numberOfLanes, double queueWidth,
+			boolean blockingWall, double degreeRotation) {
 
 		List<SimulationObject> components = new ArrayList<>();
 
@@ -151,8 +125,8 @@ public final class MapBuilder {
 					degreeRotation);
 
 			boolean otherWayAround = i % 2 == 0;
-			XRaySystem xray = new BasicXRaySystem(cornerPoints, new BasicXRaySensor(machineCornerPoints, map),
-					baggageStart, baggageEnd, map, otherWayAround);
+			XRaySystem xray = new BasicXRaySystem(cornerPoints, new BasicXRaySensor(machineCornerPoints), baggageStart,
+					baggageEnd, otherWayAround);
 			components.add(xray);
 
 			// luggage check
@@ -162,8 +136,7 @@ public final class MapBuilder {
 				agentPosition2 = Utilities.transform(
 						new Position(start.x - 0.3 + xOffsetXray, start.y + yOffsetXray + 0.5), start, degreeRotation);
 
-			OperatorAgent luggageCheck = new OperatorAgent(map, agentPosition2, 0.25, 80,
-					new BasicLuggageCheckActivity());
+			OperatorAgent luggageCheck = new OperatorAgent(agentPosition2, 0.25, 80, new BasicLuggageCheckActivity());
 			components.add(luggageCheck);
 
 			// luggage drop
@@ -175,8 +148,7 @@ public final class MapBuilder {
 						new Position(start.x - 0.3 + xOffsetXray, start.y + yOffsetXray + systemHeight - 0.5), start,
 						degreeRotation);
 
-			OperatorAgent luggageDrop = new OperatorAgent(map, agentPosition3, 0.25, 80,
-					new BasicLuggageDropActivity());
+			OperatorAgent luggageDrop = new OperatorAgent(agentPosition3, 0.25, 80, new BasicLuggageDropActivity());
 			components.add(luggageDrop);
 
 			// x-ray
@@ -188,7 +160,7 @@ public final class MapBuilder {
 				agentPosition = Utilities.transform(
 						new Position(start.x - 0.3 + xOffsetXray, start.y + yOffsetXray + systemHeight / 2 + 0.5),
 						start, degreeRotation);
-			components.add(new OperatorAgent(map, agentPosition, 0.25, 80, new BasicXRayActivity(xray, luggageCheck)));
+			components.add(new OperatorAgent(agentPosition, 0.25, 80, new BasicXRayActivity(xray, luggageCheck)));
 
 			if (otherWayAround) {
 				// WTMD
@@ -202,7 +174,7 @@ public final class MapBuilder {
 				WalkThroughMetalDetector wtmd = new BasicWalkThroughMetalDetector(
 						getCornerPoints(new Position(start.x + xOffsetWTMD, start.y + yOffsetWTMD), wtmdWidth,
 								wtmdHeight, start, degreeRotation),
-						checkPosition, map, 0.1, 0.1);
+						checkPosition, 0.1, 0.1);
 				components.add(wtmd);
 
 				QueueSeparator queue = createQueueSeparator(
@@ -216,15 +188,14 @@ public final class MapBuilder {
 				Position directionsPosition = Utilities.transform(
 						new Position(start.x + xOffsetWTMD + wtmdWidth / 4, start.y + yOffsetWTMD - 2), start,
 						degreeRotation);
-				OperatorAgent physicalCheck = new OperatorAgent(map, directionsPosition, 0.25, 80,
+				OperatorAgent physicalCheck = new OperatorAgent(directionsPosition, 0.25, 80,
 						new BasicPhysicalCheckActivity(wtmd));
 				components.add(physicalCheck);
 
 				Position directionsPosition2 = Utilities.transform(
 						new Position(start.x + xOffsetWTMD + 3 * wtmdWidth / 4, start.y + yOffsetWTMD - 2), start,
 						degreeRotation);
-				OperatorAgent etd = new OperatorAgent(map, directionsPosition2, 0.25, 80,
-						new BasicETDCheckActivity(wtmd));
+				OperatorAgent etd = new OperatorAgent(directionsPosition2, 0.25, 80, new BasicETDCheckActivity(wtmd));
 				components.add(etd);
 			}
 		}
@@ -234,12 +205,10 @@ public final class MapBuilder {
 		double xOffsetQueue = 0.1;
 
 		if (numberOfLanes > 0 && queueWidth > 0) {
-			components
-					.add(new OperatorAgent(map,
-							Utilities.transform(
-									new Position(start.x + xOffsetQueue - 0.35, start.y + yOffsetQueue - 0.35), start,
-									degreeRotation),
-							0.25, 80, new BasicTravelDocumentCheckActivity()));
+			components.add(new OperatorAgent(
+					Utilities.transform(new Position(start.x + xOffsetQueue - 0.35, start.y + yOffsetQueue - 0.35),
+							start, degreeRotation),
+					0.25, 80, new BasicTravelDocumentCheckActivity()));
 		}
 
 		int numberOfQueueLanes = 5;
@@ -269,7 +238,7 @@ public final class MapBuilder {
 	 *            The serving position.
 	 * @return The desk.
 	 */
-	public Desk createDesk(Position start, double width, double height, Position origin, double degreeRotation,
+	public static Desk createDesk(Position start, double width, double height, Position origin, double degreeRotation,
 			Position servingPosition) {
 		return new Desk(getCornerPoints(start, width, height, origin, degreeRotation), servingPosition);
 
@@ -288,7 +257,8 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (in deg.).
 	 * @return The wall.
 	 */
-	public QueueSeparator createQueueSeparator(Position start, double width, double height, double degreeRotation) {
+	public static QueueSeparator createQueueSeparator(Position start, double width, double height,
+			double degreeRotation) {
 		return new QueueSeparator(getCornerPoints(start, width, height, degreeRotation));
 	}
 
@@ -308,7 +278,7 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (in deg.).
 	 * @return The wall.
 	 */
-	public QueueSeparator createQueueSeparator(Position start, double width, double height, Position origin,
+	public static QueueSeparator createQueueSeparator(Position start, double width, double height, Position origin,
 			double degreeRotation) {
 		return new QueueSeparator(getCornerPoints(start, width, height, origin, degreeRotation));
 	}
@@ -324,7 +294,7 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (deg.).
 	 * @return The queue separator.
 	 */
-	public QueueSeparator createQueuSeparator(List<Position> cornerPoints, double degreeRotation) {
+	public static QueueSeparator createQueuSeparator(List<Position> cornerPoints, double degreeRotation) {
 		return new QueueSeparator(getCornerPoints(cornerPoints, degreeRotation));
 	}
 
@@ -341,7 +311,8 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (deg.).
 	 * @return The queue separator.
 	 */
-	public QueueSeparator createQueuSeparator(List<Position> cornerPoints, Position origin, double degreeRotation) {
+	public static QueueSeparator createQueuSeparator(List<Position> cornerPoints, Position origin,
+			double degreeRotation) {
 		return new QueueSeparator(getCornerPoints(cornerPoints, origin, degreeRotation));
 	}
 
@@ -355,7 +326,7 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (deg.).
 	 * @return The wall.
 	 */
-	public Wall createWall(List<Position> cornerPoints, double degreeRotation) {
+	public static Wall createWall(List<Position> cornerPoints, double degreeRotation) {
 		return new Wall(getCornerPoints(cornerPoints, degreeRotation));
 	}
 
@@ -371,7 +342,7 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (deg.).
 	 * @return The wall.
 	 */
-	public Wall createWall(List<Position> cornerPoints, Position origin, double degreeRotation) {
+	public static Wall createWall(List<Position> cornerPoints, Position origin, double degreeRotation) {
 		return new Wall(getCornerPoints(cornerPoints, origin, degreeRotation));
 	}
 
@@ -389,7 +360,7 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (in deg.).
 	 * @return The wall.
 	 */
-	public Wall createWall(Position start, double width, double height, double degreeRotation) {
+	public static Wall createWall(Position start, double width, double height, double degreeRotation) {
 		return new Wall(getCornerPoints(start, width, height, degreeRotation));
 	}
 
@@ -409,7 +380,7 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (in deg.).
 	 * @return The wall.
 	 */
-	public Wall createWall(Position start, double width, double height, Position origin, double degreeRotation) {
+	public static Wall createWall(Position start, double width, double height, Position origin, double degreeRotation) {
 		return new Wall(getCornerPoints(start, width, height, origin, degreeRotation));
 	}
 
@@ -426,7 +397,7 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (in deg.).
 	 * @return A list of SimulationObjects that form the gate area.
 	 */
-	public List<SimulationObject> gate(Position start, int numberOfRows, int numberOfChairsPerRow,
+	public static List<SimulationObject> gate(Position start, int numberOfRows, int numberOfChairsPerRow,
 			double degreeRotation) {
 		List<SimulationObject> components = new ArrayList<>();
 
@@ -447,7 +418,7 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (in deg.).
 	 * @return The rotated corner points.
 	 */
-	public List<Position> getCornerPoints(List<Position> cornerPoints, double degreeRotation) {
+	public static List<Position> getCornerPoints(List<Position> cornerPoints, double degreeRotation) {
 		return getCornerPoints(cornerPoints, cornerPoints.get(0), degreeRotation);
 	}
 
@@ -463,7 +434,7 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (in deg.).
 	 * @return The rotated corner points.
 	 */
-	public List<Position> getCornerPoints(List<Position> cornerPoints, Position origin, double degreeRotation) {
+	public static List<Position> getCornerPoints(List<Position> cornerPoints, Position origin, double degreeRotation) {
 		List<Position> newCornerPoints = new ArrayList<>();
 		for (Position p : cornerPoints) {
 			newCornerPoints.add(Utilities.transform(p, origin, degreeRotation));
@@ -485,7 +456,8 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (deg.).
 	 * @return The rotated positions.
 	 */
-	public List<Position> getCornerPoints(Position position, double width, double height, double degreeRotation) {
+	public static List<Position> getCornerPoints(Position position, double width, double height,
+			double degreeRotation) {
 		return getCornerPoints(position, width, height, position, degreeRotation);
 	}
 
@@ -505,7 +477,7 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (deg.).
 	 * @return The rotated positions.
 	 */
-	public List<Position> getCornerPoints(Position position, double width, double height, Position origin,
+	public static List<Position> getCornerPoints(Position position, double width, double height, Position origin,
 			double degreeRotation) {
 		List<Position> positions = new ArrayList<>();
 		positions.add(position);
@@ -533,8 +505,8 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (in deg.).
 	 * @return A list of SimulationObjects that form the queue.
 	 */
-	public List<SimulationObject> queue(Position start, int numberOfLanes, double queueWidth, boolean addBlockingWall,
-			double degreeRotation) {
+	public static List<SimulationObject> queue(Position start, int numberOfLanes, double queueWidth,
+			boolean addBlockingWall, double degreeRotation) {
 		return queue(start, numberOfLanes, queueWidth, addBlockingWall, start, degreeRotation);
 	}
 
@@ -558,8 +530,8 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (in deg.).
 	 * @return A list of SimulationObjects that form the queue.
 	 */
-	public List<SimulationObject> queue(Position start, int numberOfLanes, double queueWidth, boolean addBlockingWall,
-			Position rotationOrigin, double degreeRotation) {
+	public static List<SimulationObject> queue(Position start, int numberOfLanes, double queueWidth,
+			boolean addBlockingWall, Position rotationOrigin, double degreeRotation) {
 		// Queue
 		double xOffsetQueue = start.x;
 		double yOffsetQueue = start.y;
@@ -642,7 +614,7 @@ public final class MapBuilder {
 	 *            The degrees it is rotated (in deg.).
 	 * @return A list of SimulationObjects that form the sitting area.
 	 */
-	public List<SimulationObject> sittingArea(Position start, int numberOfRows, int numberOfChairsPerRow,
+	public static List<SimulationObject> sittingArea(Position start, int numberOfRows, int numberOfChairsPerRow,
 			double degreeRotation) {
 		List<SimulationObject> components = new ArrayList<>();
 		double chairWidth = 0.6;

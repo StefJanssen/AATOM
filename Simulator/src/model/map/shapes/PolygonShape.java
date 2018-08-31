@@ -1,10 +1,9 @@
-package model.environment.shapes;
+package model.map.shapes;
 
-import java.awt.geom.Path2D;
 import java.util.List;
 
-import model.environment.map.MapComponent;
 import model.environment.position.Position;
+import model.map.MapComponent;
 
 /**
  * All {@link MapComponent}s with a polygon shape implement this interface.
@@ -19,11 +18,4 @@ public interface PolygonShape {
 	 * @return The corner points.
 	 */
 	public List<Position> getCorners();
-
-	/**
-	 * Gets the shape of the polygon.
-	 * 
-	 * @return The shape.
-	 */
-	public Path2D getShape();
 }

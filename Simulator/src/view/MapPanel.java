@@ -18,14 +18,14 @@ import javax.swing.JPanel;
 
 import model.agent.humanAgent.HumanAgent;
 import model.agent.humanAgent.Passenger;
-import model.environment.map.MapComponent;
 import model.environment.objects.area.Area;
+import model.map.MapComponent;
 import view.mapComponents.HumanAgentView;
 import view.mapComponents.MapComponentView;
 import view.mapComponents.ShapeDrawer;
 
 /**
- * Visualizes the {@link Map}.
+ * Visualizes the map.
  * 
  * @author S.A.M. Janssen
  *
@@ -74,10 +74,6 @@ public class MapPanel extends JPanel {
 	 */
 	private long previousTime;
 	/**
-	 * The starting time of the simulation.
-	 */
-	private double time;
-	/**
 	 * Zoom coordinates indicate the coordinates needed to draw the zoom-in
 	 * rectangle.
 	 */
@@ -91,15 +87,20 @@ public class MapPanel extends JPanel {
 	 */
 	private List<Class<? extends MapComponentView>> views;
 
+	private model.map.Map map;
+
 	/**
 	 * Creates the map panel.
+	 * 
+	 * @param map
+	 *            The map.
 	 * 
 	 * @param pixelRatio
 	 *            The pixel ratio.
 	 */
-	public MapPanel(double pixelRatio) {
+	public MapPanel(model.map.Map map, double pixelRatio) {
 		setBackground(Color.WHITE);
-
+		this.map = map;
 		mapComponents = new ConcurrentHashMap<>();
 		drawingOrder = new ArrayList<>();
 		drawingOrder = Collections.synchronizedList(drawingOrder);
@@ -259,6 +260,7 @@ public class MapPanel extends JPanel {
 			g2.drawImage(zoomImage, 5, maxY - 51, 50, 50, null);
 		}
 
+		double time = map.getTime();
 		// Draw the time/date
 		int hours = (int) (time / 3600);
 		int minutes = (int) ((time % 3600) / 60);
@@ -319,7 +321,6 @@ public class MapPanel extends JPanel {
 	 *            The time.
 	 */
 	public void update(int timeStep, double time) {
-		this.time = time;
 		repaint();
 	}
 

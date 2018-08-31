@@ -1,5 +1,5 @@
 /**
- * Baggage related classes.
+ * Luggage related classes.
  *
  * @author S.A.M. Janssen
  */

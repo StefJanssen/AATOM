@@ -3,7 +3,7 @@ package util.analytics;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import simulation.simulation.Simulator;
+import model.map.Map;
 import simulation.simulation.util.DirectlyUpdatable;
 import simulation.simulation.util.SimulationObject;
 
@@ -21,19 +21,15 @@ public abstract class Analyzer implements SimulationObject, DirectlyUpdatable {
 	/**
 	 * The last update time.
 	 */
-	private float lastUpdate;
+	private double lastUpdate;
 	/**
 	 * The seconds delay.
 	 */
-	private float secondsDelay;
+	private double secondsDelay;
 	/**
-	 * The time.
+	 * The map.
 	 */
-	protected float time;
-	/**
-	 * The simulator.
-	 */
-	private Simulator simulator;
+	protected Map map;
 
 	/**
 	 * Creates a parameter tracker without simulator access and 5 seconds delay.
@@ -51,7 +47,6 @@ public abstract class Analyzer implements SimulationObject, DirectlyUpdatable {
 	public Analyzer(float secondsDelay) {
 		dataset = new XYSeriesCollection();
 		this.secondsDelay = secondsDelay;
-		time = 0.0f;
 	}
 
 	/**
@@ -96,8 +91,8 @@ public abstract class Analyzer implements SimulationObject, DirectlyUpdatable {
 	 * 
 	 * @return The simulator.
 	 */
-	public Simulator getSimulator() {
-		return simulator;
+	public Map getSimulator() {
+		return map;
 	}
 
 	/**
@@ -137,13 +132,13 @@ public abstract class Analyzer implements SimulationObject, DirectlyUpdatable {
 	}
 
 	/**
-	 * Sets the simulator.
+	 * Sets the map.
 	 * 
-	 * @param simulator
-	 *            The simulator.
+	 * @param map
+	 *            The map.
 	 */
-	public void setSimulator(Simulator simulator) {
-		this.simulator = simulator;
+	public void setMap(Map map) {
+		this.map = map;
 	}
 
 	/**
@@ -155,12 +150,11 @@ public abstract class Analyzer implements SimulationObject, DirectlyUpdatable {
 	 */
 	@Override
 	public void update(int timeStep) {
-		if (time == 0.0)
+		if (map.getTime() == 0.0)
 			init();
 
-		time += timeStep / 1000.0;
-		if (time > lastUpdate + secondsDelay - (timeStep / 1000.0)) {
-			lastUpdate = time;
+		if (map.getTime() > lastUpdate + secondsDelay - (timeStep / 1000.0)) {
+			lastUpdate = map.getTime();
 			updateValues();
 		}
 	}
@@ -171,7 +165,7 @@ public abstract class Analyzer implements SimulationObject, DirectlyUpdatable {
 	private void updateValues() {
 		double[] values = getValues();
 		for (int i = 0; i < values.length; i++) {
-			dataset.getSeries(i).add(time, values[i]);
+			dataset.getSeries(i).add(map.getTime(), values[i]);
 		}
 	}
 }

@@ -1,8 +1,6 @@
 package util.analytics;
 
 import model.agent.humanAgent.Passenger;
-import model.environment.map.Map;
-import simulation.simulation.Simulator;
 
 /**
  * A parameter tracker for the agent numbers.
@@ -10,11 +8,6 @@ import simulation.simulation.Simulator;
  * @author S.A.M. Janssen
  */
 public class AgentNumberAnalyzer extends Analyzer {
-
-	/**
-	 * The map.
-	 */
-	private Map map;
 
 	@Override
 	public String[] getLineNames() {
@@ -36,11 +29,4 @@ public class AgentNumberAnalyzer extends Analyzer {
 	public String getYAxis() {
 		return "# of agents";
 	}
-
-	@Override
-	public void setSimulator(Simulator simulator) {
-		super.setSimulator(simulator);
-		map = getSimulator().getMap();
-	}
-
 }

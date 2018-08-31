@@ -1,13 +1,9 @@
 package model.environment.objects.physicalObject.sensor;
 
-import java.awt.geom.Path2D;
 import java.util.List;
 
-import model.environment.map.Map;
 import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.position.Position;
-import model.environment.shapes.PolygonShape;
-import simulation.simulation.util.Utilities;
 
 /**
  * An X-Ray sensor is used at an airport checkpoint to scan baggage for illegal
@@ -15,16 +11,8 @@ import simulation.simulation.util.Utilities;
  * 
  * @author S.A.M. Janssen
  */
-public abstract class XRaySensor extends Sensor implements PolygonShape {
+public abstract class XRaySensor extends Sensor {
 
-	/**
-	 * The corner points of the X-Ray sensor.
-	 */
-	protected List<Position> corners;
-	/**
-	 * The shape.
-	 */
-	protected Path2D shape;
 	/**
 	 * The last observed luggage.
 	 */
@@ -35,24 +23,10 @@ public abstract class XRaySensor extends Sensor implements PolygonShape {
 	 * 
 	 * @param corners
 	 *            The corner points.
-	 * @param map
-	 *            The map.
 	 */
-	public XRaySensor(List<Position> corners, Map map) {
-		super(Utilities.getAveragePosition(corners), map);
-		this.corners = corners;
-		shape = Utilities.getShape(corners);
+	public XRaySensor(List<Position> corners) {
+		super(corners);
 		lastObservedLuggage = Luggage.NO_LUGGAGE;
-	}
-
-	/**
-	 * Gets the corner points.
-	 * 
-	 * @return The corner points.
-	 */
-	@Override
-	public List<Position> getCorners() {
-		return corners;
 	}
 
 	/**
@@ -63,10 +37,4 @@ public abstract class XRaySensor extends Sensor implements PolygonShape {
 	public Luggage getLastObservedLuggage() {
 		return lastObservedLuggage;
 	}
-
-	@Override
-	public Path2D getShape() {
-		return shape;
-	}
-
 }

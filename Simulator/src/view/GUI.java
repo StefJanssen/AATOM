@@ -29,8 +29,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import model.environment.map.Map;
-import model.environment.map.MapComponent;
+import model.map.Map;
+import model.map.MapComponent;
 import simulation.simulation.Simulator;
 import util.analytics.Analyzer;
 import view.graphPanel.GraphCollectionPanel;
@@ -330,7 +330,7 @@ public class GUI extends JFrame {
 	private void setMapPanel() {
 		int width = getWidth();
 		int height = getHeight() - 100;
-		mapPanel = new MapPanel(pixelRatio);
+		mapPanel = new MapPanel(map, pixelRatio);
 		mapPanel.setPreferredSize(new Dimension(width, height));
 		ZoomListener z = new ZoomListener();
 		mapPanel.addMouseListener(z);
@@ -462,14 +462,10 @@ public class GUI extends JFrame {
 	}
 
 	/**
-	 * Update the GUI.
-	 * 
-	 * @param timeStep
-	 *            The time step.
-	 * @param time
-	 *            The time.
+	 * Update.
 	 */
-	public void update(int timeStep, double time) {
-		mapPanel.update(timeStep, time);
+	public void update() {
+		mapPanel.repaint();
 	}
+
 }

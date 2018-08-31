@@ -5,7 +5,6 @@ import java.util.Collection;
 import model.agent.humanAgent.tacticalLevel.activity.passenger.ExitActivity;
 import model.environment.objects.area.EntranceArea;
 import model.environment.position.Position;
-import simulation.simulation.util.Utilities;
 
 /**
  * The exit activity allows the departing passenger to leave the airport.
@@ -35,13 +34,13 @@ public class BasicExitActivity extends ExitActivity {
 		double distance = Double.MAX_VALUE;
 		EntranceArea goToArea = null;
 		for (EntranceArea area : entrances) {
-			double d = Utilities.getDistance(movement.getPosition(), area);
+			double d = area.getDistance(movement.getPosition());
 			if (d < distance) {
 				distance = d;
 				goToArea = area;
 			}
 		}
-		navigationModule.setGoal(Utilities.generatePosition(goToArea.getShape()));
+		navigationModule.setGoal(goToArea.generatePosition());
 		super.startActivity();
 	}
 

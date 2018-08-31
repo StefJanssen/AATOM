@@ -3,7 +3,7 @@ package util.math.distributions;
 import util.math.RandomPlus;
 
 /**
- * The normal distribution.
+ * The exponential distribution.
  * 
  * @author S.A.M. Janssen
  */
@@ -41,5 +41,4 @@ public class ExponentialDistribution extends MathDistribution {
 	public double getValue() {
 		return Math.log(1 - random.nextDouble()) / (-lambda);
 	}
-
 }

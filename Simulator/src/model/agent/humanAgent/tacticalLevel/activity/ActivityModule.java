@@ -12,6 +12,7 @@ import model.agent.humanAgent.tacticalLevel.activity.passenger.CheckpointActivit
 import model.agent.humanAgent.tacticalLevel.activity.passenger.QueueActivity;
 import model.agent.humanAgent.tacticalLevel.navigation.NavigationModule;
 import model.environment.position.Position;
+import model.map.Map;
 import simulation.simulation.util.Updatable;
 
 /**
@@ -75,6 +76,8 @@ public class ActivityModule implements Updatable {
 
 	/**
 	 * 
+	 * @param map
+	 *            The map.
 	 * @param agent
 	 *            The agent.
 	 * @param movementModel
@@ -88,17 +91,17 @@ public class ActivityModule implements Updatable {
 	 * @param navigationModule
 	 *            The navigation module.
 	 */
-	public void init(HumanAgent agent, MovementModel movementModel, ObservationModule observationModule,
+	public void init(Map map, HumanAgent agent, MovementModel movementModel, ObservationModule observationModule,
 			Collection<Activity> activities, ActivityPlanner planner, NavigationModule navigationModule) {
 		this.activities = activities;
 		this.planner = planner;
 
 		for (Activity activity : activities)
-			activity.init(agent, movementModel, observationModule, navigationModule, this);
+			activity.init(map, agent, movementModel, observationModule, navigationModule, this);
 
 		if (agent instanceof Passenger) {
 			queueActivity = new QueueActivity();
-			queueActivity.init(agent, movementModel, observationModule, navigationModule, this);
+			queueActivity.init(map, agent, movementModel, observationModule, navigationModule, this);
 		}
 	}
 

@@ -46,7 +46,7 @@ public class BasicPassengerGoalModule extends GoalModule {
 		if (flight.equals(Flight.NO_FLIGHT))
 			return goals;
 
-		if (flight.getType().equals(FlightType.ARRIVING)) {
+		if (flight.getFlightType().equals(FlightType.ARRIVING)) {
 			ExitActivity exit = new BasicExitActivity();
 			goals.add(new Goal(exit, -1));
 			if (facility != null)
