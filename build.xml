@@ -1,199 +1,57 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- WARNING: Eclipse auto-generated file.
-              Any modifications will be overwritten.
-              To include a user specific buildfile here, simply create one in the same
-              directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="Java7_AATOM">
-    <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="C:/Program Files (x86)/eclipse/"/>
-    <property name="JoiningArthurAndStef.location" value="../JoiningArthurAndStef"/>
-    <property name="RelationshipsBetweenIEDandEfficiency.location" value="../RelationshipsBetweenIEDandEfficiency"/>
-    <property name="Tutorials_AATOM.location" value="../Tutorials_AATOM"/>
-    <property name="junit.output.dir" value="junit"/>
-    <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.7"/>
-    <property name="source" value="1.7"/>
-    <path id="JUnit 4.libraryclasspath">
-        <pathelement location="${ECLIPSE_HOME}plugins/org.junit_4.12.0.v201504281640/junit.jar"/>
-        <pathelement location="${ECLIPSE_HOME}plugins/org.hamcrest.core_1.3.0.v201303031735.jar"/>
-    </path>
-    <path id="Java7_AATOM.classpath">
-        <pathelement location="bin"/>
-        <pathelement location="dependencies/guava-19.0.jar"/>
-        <pathelement location="dependencies/jcommon-1.0.23.jar"/>
-        <pathelement location="dependencies/jfreechart-1.0.19.jar"/>
-        <path refid="JUnit 4.libraryclasspath"/>
-    </path>
-    <target name="init">
-        <mkdir dir="bin"/>
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="src">
-                <exclude name="**/*.ucls"/>
-                <exclude name="**/*.useq"/>
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="test">
-                <exclude name="**/*.ucls"/>
-                <exclude name="**/*.useq"/>
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="res">
-                <exclude name="**/*.ucls"/>
-                <exclude name="**/*.useq"/>
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-    </target>
-    <target name="clean">
-        <delete dir="bin"/>
-    </target>
-    <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project" name="build"/>
-    <target name="build-subprojects"/>
-    <target depends="init" name="build-project">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-            <src path="src"/>
-            <src path="test"/>
-            <src path="res"/>
-            <classpath refid="Java7_AATOM.classpath"/>
-        </javac>
-    </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
-        <ant antfile="build.xml" dir="${JoiningArthurAndStef.location}" inheritAll="false" target="clean"/>
-        <ant antfile="build.xml" dir="${JoiningArthurAndStef.location}" inheritAll="false" target="build">
-            <propertyset>
-                <propertyref name="build.compiler"/>
-            </propertyset>
-        </ant>
-        <ant antfile="build.xml" dir="${RelationshipsBetweenIEDandEfficiency.location}" inheritAll="false" target="clean"/>
-        <ant antfile="build.xml" dir="${RelationshipsBetweenIEDandEfficiency.location}" inheritAll="false" target="build">
-            <propertyset>
-                <propertyref name="build.compiler"/>
-            </propertyset>
-        </ant>
-        <ant antfile="build.xml" dir="${Tutorials_AATOM.location}" inheritAll="false" target="clean"/>
-        <ant antfile="build.xml" dir="${Tutorials_AATOM.location}" inheritAll="false" target="build">
-            <propertyset>
-                <propertyref name="build.compiler"/>
-            </propertyset>
-        </ant>
-    </target>
-    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-        <copy todir="${ant.library.dir}">
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </copy>
-        <unzip dest="${ant.library.dir}">
-            <patternset includes="jdtCompilerAdapter.jar"/>
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </unzip>
-    </target>
-    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-        <antcall target="build"/>
-    </target>
-    <target name="AreaTest">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="model.environment.objects.area.AreaTest" todir="${junit.output.dir}"/>
-            <classpath refid="Java7_AATOM.classpath"/>
-        </junit>
-    </target>
-    <target name="AreaTest.testWrongQueuEntrancePosition">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="model.environment.objects.area.AreaTest" todir="${junit.output.dir}"/>
-            <classpath refid="Java7_AATOM.classpath"/>
-        </junit>
-    </target>
-    <target name="ChairTest">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="model.environment.objects.physicalObject.ChairTest" todir="${junit.output.dir}"/>
-            <classpath refid="Java7_AATOM.classpath"/>
-        </junit>
-    </target>
-    <target name="DeskTest">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="model.environment.objects.physicalObject.DeskTest" todir="${junit.output.dir}"/>
-            <classpath refid="Java7_AATOM.classpath"/>
-        </junit>
-    </target>
-    <target name="FlightTest">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="model.environment.objects.flight.FlightTest" todir="${junit.output.dir}"/>
-            <classpath refid="Java7_AATOM.classpath"/>
-        </junit>
-    </target>
-    <target name="LuggageTest">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="model.environment.objects.physicalObject.luggage.LuggageTest" todir="${junit.output.dir}"/>
-            <classpath refid="Java7_AATOM.classpath"/>
-        </junit>
-    </target>
-    <target name="Main (46)">
-        <java classname="simulation.main.Main" failonerror="true" fork="yes">
-            <classpath refid="Java7_AATOM.classpath"/>
-        </java>
-    </target>
-    <target name="MapTest">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="model.map.MapTest" todir="${junit.output.dir}"/>
-            <classpath refid="Java7_AATOM.classpath"/>
-        </junit>
-    </target>
-    <target name="PositionTest">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="model.environment.position.PositionTest" todir="${junit.output.dir}"/>
-            <classpath refid="Java7_AATOM.classpath"/>
-        </junit>
-    </target>
-    <target name="Test">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="model.environment.objects.area.AreaTest" todir="${junit.output.dir}"/>
-            <test name="model.environment.objects.flight.FlightTest" todir="${junit.output.dir}"/>
-            <test name="model.environment.objects.physicalObject.ChairTest" todir="${junit.output.dir}"/>
-            <test name="model.environment.objects.physicalObject.DeskTest" todir="${junit.output.dir}"/>
-            <test name="model.environment.objects.physicalObject.luggage.LuggageTest" todir="${junit.output.dir}"/>
-            <test name="model.environment.position.PositionTest" todir="${junit.output.dir}"/>
-            <test name="model.environment.position.VectorTest" todir="${junit.output.dir}"/>
-            <test name="model.map.MapTest" todir="${junit.output.dir}"/>
-            <classpath refid="Java7_AATOM.classpath"/>
-        </junit>
-    </target>
-    <target name="VectorTest">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="model.environment.position.VectorTest" todir="${junit.output.dir}"/>
-            <classpath refid="Java7_AATOM.classpath"/>
-        </junit>
-    </target>
-    <target name="junitreport">
-        <junitreport todir="${junit.output.dir}">
-            <fileset dir="${junit.output.dir}">
-                <include name="TEST-*.xml"/>
-            </fileset>
-            <report format="frames" todir="${junit.output.dir}"/>
-        </junitreport>
-    </target>
+<?xml version="1.0"?>   
+<project name="Java7_AATOM" default="test" basedir=".">
+  <property name="main.build.dir" value="build/main" />  
+  <property name="main.src.dir" value="src" />
+  <property name="test.build.dir" value="build/test" />
+  <property name="test.src.dir" value="test" />
+
+  <path id="classpath.base" />
+
+  <path id="classpath.test">
+    <pathelement location="lib/junit-4.12.jar" />
+    <pathelement location="lib/hamcrest-core-1.3.jar" />
+    <pathelement location="${main.build.dir}"/>
+    <path refid="classpath.base" />
+  </path>
+
+  <target name="test" depends="run, clean" />
+
+  <target name="compile">
+    <mkdir dir="${main.build.dir}"/>
+    <javac srcdir="${main.src.dir}" destdir="${main.build.dir}" includeantruntime="false">
+      <classpath refid="classpath.base"/>
+    </javac>
+  </target>
+
+  <target name="build" depends="compile">
+    <mkdir dir="${test.build.dir}"/>
+    <javac srcdir="${test.src.dir}" destdir="${test.build.dir}" includeantruntime="false">
+        <classpath refid="classpath.test"/>
+    </javac>
+    <echo message="Build done" />
+  </target>
+   
+  <!-- Test and build all files  -->
+  <!-- To run this: use "ant" (default) or "ant run" -->
+  <target name="run" depends="build">
+    <junit printsummary="on" haltonfailure="yes">
+        <classpath>
+          <path refid="classpath.test" />
+          <pathelement location="${test.build.dir}"/>
+        </classpath>
+        <formatter type="brief" usefile="false" />
+        <batchtest>
+            <fileset dir="${test.src.dir}" includes="**/*Test*.java" />
+        </batchtest>
+    </junit>
+  </target>
+   
+  <!-- delete all class files -->
+  <!-- To run this: use "ant clean" -->
+  <target name="clean">
+    <delete>
+        <fileset dir="${basedir}" includes="**/*.class" />
+    </delete>
+    <echo message="clean done" />
+  </target>
 </project>
