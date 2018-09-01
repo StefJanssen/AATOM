@@ -15,5 +15,5 @@ AATOM depends on a set of other projects that each have their own libraries, out
 
 ## Build status
 
-[![Build Status](https://travis-ci.org/StefJanssen/AATOM.svg?branch=master)](https://travis-ci.org/StefJanssen/AATOM.svg)
+[![Build Status](https://travis-ci.org/StefJanssen/AATOM.svg?branch=master)](https://travis-ci.org/StefJanssen/AATOM)
 
