@@ -1,9 +1,9 @@
 <?xml version="1.0"?>   
 <project name="Java7_AATOM" default="test" basedir=".">
   <property name="main.build.dir" value="build/main" />  
-  <property name="main.src.dir" value="src" />
+  <property name="main.src.dir" value="Simulator/src" />
   <property name="test.build.dir" value="build/test" />
-  <property name="test.src.dir" value="test" />
+  <property name="test.src.dir" value="Simulator/test" />
 
   <path id="classpath.base" />
 
@@ -18,7 +18,7 @@
 
   <target name="compile">
     <mkdir dir="${main.build.dir}"/>
-    <javac srcdir="${main.src.dir}/Simulator" destdir="${main.build.dir}" includeantruntime="false">
+    <javac srcdir="${main.src.dir}" destdir="${main.build.dir}" includeantruntime="false">
       <classpath refid="classpath.base"/>
     </javac>
   </target>
