@@ -39,7 +39,7 @@ public class PassengerTest {
 		Flight f = new Flight(FlightType.ARRIVING, 7200, gate, desks, checkInQueue, checkpointQueue);
 
 		Passenger p = new Passenger.Builder<>().setPosition(new Position(10, 10)).setFlight(f).build();
-		Simulator s = new Simulator.Builder<>().createSimulator();
+		Simulator s = new Simulator.Builder<>().setGui(false).createSimulator();
 		s.add(p);
 
 		Assert.assertEquals(p.getFlight(), f);
