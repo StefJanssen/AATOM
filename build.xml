@@ -9,6 +9,7 @@
     <pathelement location="Simulator/dependencies/guava-19.0.jar"/>
     <pathelement location="Simulator/dependencies/jcommon-1.0.23.jar"/>
     <pathelement location="Simulator/dependencies/jfreechart-1.0.19.jar"/>
+    <pathelement location="Simulator/dependencies/junit.jar"/>
   </path>
 
   <path id="classpath.test">
