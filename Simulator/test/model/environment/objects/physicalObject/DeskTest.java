@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import model.agent.humanAgent.HumanAgent;
-import model.agent.humanAgent.operationalLevel.action.communication.CommunicationType;
+import model.agent.humanAgent.aatom.operationalLevel.action.communication.CommunicationType;
 import model.environment.position.Position;
 import simulation.simulation.Simulator;
 import simulation.simulation.endingCondition.BaseEndingConditions;

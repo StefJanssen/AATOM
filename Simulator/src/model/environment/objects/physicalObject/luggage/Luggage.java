@@ -1,6 +1,6 @@
 package model.environment.objects.physicalObject.luggage;
 
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 import model.environment.position.Position;
 import model.map.shapes.CircularMapComponent;
 

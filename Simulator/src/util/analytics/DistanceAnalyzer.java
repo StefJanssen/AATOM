@@ -5,9 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import model.agent.humanAgent.Passenger;
-import model.agent.humanAgent.tacticalLevel.activity.Activity;
-import model.agent.humanAgent.tacticalLevel.activity.passenger.GateActivity;
+import model.agent.humanAgent.aatom.Passenger;
+import model.agent.humanAgent.aatom.tacticalLevel.activity.passenger.GateActivity;
 import model.environment.position.Position;
 import model.map.Map;
 
@@ -70,10 +69,7 @@ public class DistanceAnalyzer extends Analyzer implements PassengerAnalyzer {
 	 * @return True if it is, false otherwise.
 	 */
 	private boolean isPerformingGateActivity(Passenger p) {
-		for (Activity a : p.getActiveActivities())
-			if (a instanceof GateActivity)
-				return true;
-		return false;
+		return p.getActiveActivity() instanceof GateActivity;
 	}
 
 	@Override

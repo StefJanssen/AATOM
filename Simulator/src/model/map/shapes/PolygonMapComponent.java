@@ -202,7 +202,7 @@ public abstract class PolygonMapComponent extends PhysicalMapComponent implement
 	}
 
 	@Override
-	public Vector getVector(Position position) {
+	public Vector getVectorToPosition(Position position) {
 		// if is contained
 		if (contains(position))
 			return new Vector(0, 0);

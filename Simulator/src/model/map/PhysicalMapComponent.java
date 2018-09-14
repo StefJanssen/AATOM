@@ -22,6 +22,8 @@ public abstract class PhysicalMapComponent extends MapComponent {
 	 *            the Position.
 	 */
 	public PhysicalMapComponent(Position position) {
+		if (position == null)
+			throw new IllegalArgumentException("Position cannot be null");
 		this.position = position;
 	}
 
@@ -33,7 +35,7 @@ public abstract class PhysicalMapComponent extends MapComponent {
 	 * @return The distance.
 	 */
 	public double getDistance(Position position) {
-		return getVector(position).length();
+		return getVectorToPosition(position).length();
 	}
 
 	/**
@@ -52,7 +54,7 @@ public abstract class PhysicalMapComponent extends MapComponent {
 	 *            The first position.
 	 * @return The vector.
 	 */
-	public abstract Vector getVector(Position position);
+	public abstract Vector getVectorToPosition(Position position);
 
 	/**
 	 * Determines if a line intersects with the {@link PhysicalMapComponent}.

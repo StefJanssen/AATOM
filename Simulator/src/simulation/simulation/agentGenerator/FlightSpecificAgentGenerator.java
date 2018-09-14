@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.agent.humanAgent.HumanAgent;
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 import model.environment.objects.area.EntranceArea;
 import model.environment.objects.area.Facility;
 import model.environment.objects.area.Restaurant;

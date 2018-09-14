@@ -3,7 +3,7 @@ package view.mapComponents;
 import java.awt.Color;
 
 import model.agent.humanAgent.HumanAgent;
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.position.Position;
 import model.environment.position.Vector;
@@ -50,7 +50,7 @@ public class PassengerView extends MapComponentView {
 		String goal = "Goal Position:  <i>" + agent.getGoalPosition() + "</i>.<br>";
 		String position = "Position:  <i>" + agent.getPosition() + "</i>.<br>";
 		String baggage = "Baggage: <i>" + agent.getLuggage() + "</i>.<br>";
-		String active = "Active: <i>" + agent.getActiveActivities() + "</i>.<br>";
+		String active = "Active: <i>" + agent.getActiveActivity() + "</i>.<br>";
 		String flight = "Flight information: <i>" + agent.getFlight().getFlightTime() + "</i>.<br>";
 		String other = "Other information?<br>";
 		String end = "</html>";
@@ -72,7 +72,7 @@ public class PassengerView extends MapComponentView {
 		ShapeDrawer.drawCircle(agent.getColor(), agent.getPosition(), agent.getRadius());
 
 		if (drawSpeed) {
-			Vector speed = agent.getCurrentSpeed();
+			Vector speed = agent.getCurrentVelocity();
 			ShapeDrawer.drawLine(ShapeDrawer.getComplementaryColor(agent.getColor()), agent.getPosition(),
 					new Position(speed.x + agent.getPosition().x, speed.y + agent.getPosition().y));
 		}

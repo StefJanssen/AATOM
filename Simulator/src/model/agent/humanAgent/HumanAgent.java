@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.Collection;
 
 import model.agent.Agent;
-import model.agent.humanAgent.operationalLevel.action.communication.CommunicationType;
+import model.agent.humanAgent.aatom.operationalLevel.action.communication.CommunicationType;
 import model.environment.position.Position;
 
 /**
@@ -39,6 +39,10 @@ public abstract class HumanAgent extends Agent {
 	 */
 	public HumanAgent(Position position, double radius, double mass, Color color) {
 		super(position, radius);
+		if (mass < 0)
+			throw new IllegalArgumentException("Mass cannot be negative.");
+		if (color == null)
+			throw new IllegalArgumentException("Color cannot be null");
 		this.mass = mass;
 		this.color = color;
 	}

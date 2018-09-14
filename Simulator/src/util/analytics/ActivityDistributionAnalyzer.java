@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import model.agent.humanAgent.Passenger;
-import model.agent.humanAgent.tacticalLevel.activity.Activity;
+import model.agent.humanAgent.aatom.Passenger;
+import model.agent.humanAgent.aatom.tacticalLevel.activity.Activity;
 
 /**
  * A parameter tracker for the distribution of activities of passengers.
@@ -45,17 +45,14 @@ public class ActivityDistributionAnalyzer extends Analyzer {
 		Collection<Passenger> passengers = map.getMapComponents(Passenger.class);
 		double[] values = new double[activities.size()];
 		for (Passenger passenger : passengers) {
-			Collection<Activity> activeActivities = passenger.getActiveActivities();
-			if (activeActivities.size() > 0) {
-				for (Activity activity : activeActivities) {
-					for (int i = 0; i < activities.size(); i++) {
-						if (activity.getClass().getSimpleName().equals(activities.get(i) + "Activity"))
-							values[i]++;
-					}
-				}
+			Activity activity = passenger.getActiveActivity();
+			for (int i = 0; i < activities.size(); i++) {
+				if (activity.getClass().getSimpleName().equals(activities.get(i) + "Activity"))
+					values[i]++;
 			}
 		}
 		return values;
+
 	}
 
 	@Override

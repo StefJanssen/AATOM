@@ -3,7 +3,7 @@ package util.analytics;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 import simulation.simulation.util.DirectlyUpdatable;
 
 /**

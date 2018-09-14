@@ -1,6 +1,6 @@
 package simulation.simulation.endingCondition;
 
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 
 /**
  * The no passengers ending conditions for a simulation ensure that a simulation

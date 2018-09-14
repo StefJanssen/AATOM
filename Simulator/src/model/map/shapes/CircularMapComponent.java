@@ -28,6 +28,8 @@ public abstract class CircularMapComponent extends PhysicalMapComponent implemen
 	 */
 	public CircularMapComponent(Position position, double radius) {
 		super(position);
+		if (radius < 0)
+			throw new IllegalArgumentException("Radius cannot be negative.");
 		this.radius = (float) radius;
 	}
 
@@ -37,7 +39,7 @@ public abstract class CircularMapComponent extends PhysicalMapComponent implemen
 	}
 
 	@Override
-	public Vector getVector(Position position) {
+	public Vector getVectorToPosition(Position position) {
 		return new Vector(position.x - getPosition().x, position.y - getPosition().y);
 	}
 

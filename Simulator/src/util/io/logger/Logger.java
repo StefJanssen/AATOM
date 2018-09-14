@@ -13,6 +13,16 @@ import simulation.simulation.Simulator;
 public abstract class Logger {
 
 	/**
+	 * Holder for simulation without a logger.
+	 */
+	public static final Logger NO_LOGGER = new Logger() {
+
+		@Override
+		public void update(long time, boolean ended) {
+		}
+	};
+
+	/**
 	 * The {@link PrintWriter}.
 	 */
 	private PrintWriter writer;

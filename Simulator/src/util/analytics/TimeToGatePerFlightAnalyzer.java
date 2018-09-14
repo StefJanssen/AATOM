@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 import model.environment.objects.flight.Flight;
 import model.map.Map;
 

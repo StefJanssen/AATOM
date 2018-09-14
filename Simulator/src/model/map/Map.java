@@ -7,7 +7,7 @@ import java.util.List;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 import model.environment.objects.area.QueuingArea;
 import model.environment.objects.flight.Flight;
 import model.environment.objects.physicalObject.PhysicalObject;

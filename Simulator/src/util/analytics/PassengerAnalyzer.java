@@ -1,6 +1,6 @@
 package util.analytics;
 
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 
 /**
  * A passenger analyzer analyzes the behaviour of passengers.

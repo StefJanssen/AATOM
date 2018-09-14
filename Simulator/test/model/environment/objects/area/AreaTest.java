@@ -57,9 +57,9 @@ public class AreaTest {
 	@Test
 	public void testQueuingArea() {
 		QueuingArea q = new QueuingArea(10, 10, 4, 4, new Position(10, 10), new Position(14, 14));
-		Assert.assertTrue(q.contains(new Position(11,11)));
-		Assert.assertTrue(q.contains(new Position(10,10)));
-		Assert.assertFalse(q.contains(new Position(9,10)));
+		Assert.assertTrue(q.contains(new Position(11, 11)));
+		Assert.assertTrue(q.contains(new Position(10, 10)));
+		Assert.assertFalse(q.contains(new Position(9, 10)));
 	}
 
 	/**
@@ -69,9 +69,9 @@ public class AreaTest {
 	public void testShape() {
 		// rectangular shape
 		Shop s = new Shop(10, 10, 3, 3);
-		Assert.assertTrue(s.contains(new Position(11,11)));
-		Assert.assertTrue(s.contains(new Position(10,10)));
-		Assert.assertFalse(s.contains(new Position(9,10)));
+		Assert.assertTrue(s.contains(new Position(11, 11)));
+		Assert.assertTrue(s.contains(new Position(10, 10)));
+		Assert.assertFalse(s.contains(new Position(9, 10)));
 
 		// u shape
 		List<Position> corners = new ArrayList<>();
@@ -85,9 +85,9 @@ public class AreaTest {
 		corners.add(new Position(10, 14));
 		Shop s2 = new Shop(corners);
 
-		Assert.assertTrue(s2.contains(new Position(10,10)));
-		Assert.assertTrue(s2.contains(new Position(10.5,10)));
-		Assert.assertFalse(s2.contains(new Position(12,10)));
+		Assert.assertTrue(s2.contains(new Position(10, 10)));
+		Assert.assertTrue(s2.contains(new Position(10.5, 10)));
+		Assert.assertFalse(s2.contains(new Position(12, 10)));
 	}
 
 	/**

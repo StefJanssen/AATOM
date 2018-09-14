@@ -164,6 +164,13 @@ public class Desk extends PhysicalObject implements Openable {
 	}
 
 	/**
+	 * Empties the reservation of the desk.
+	 */
+	public void emptyReservation() {
+		agentAtDesk = null;
+	}
+
+	/**
 	 * Sets the agent at the desk.
 	 * 
 	 * @param agentAtDesk

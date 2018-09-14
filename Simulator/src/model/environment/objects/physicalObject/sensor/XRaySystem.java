@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import model.agent.humanAgent.HumanAgent;
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 import model.environment.objects.physicalObject.Openable;
 import model.environment.objects.physicalObject.PhysicalObject;
 import model.environment.objects.physicalObject.luggage.Luggage;

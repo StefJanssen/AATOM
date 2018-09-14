@@ -1,7 +1,7 @@
 package view.mapComponents;
 
 import model.agent.humanAgent.HumanAgent;
-import model.agent.humanAgent.OperatorAgent;
+import model.agent.humanAgent.aatom.OperatorAgent;
 import model.environment.position.Position;
 
 /**

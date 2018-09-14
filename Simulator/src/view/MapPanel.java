@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import model.agent.humanAgent.HumanAgent;
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 import model.environment.objects.area.Area;
 import model.map.MapComponent;
 import view.mapComponents.HumanAgentView;

@@ -3,7 +3,7 @@ package model.environment.objects.flight;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 import model.environment.objects.area.GateArea;
 import model.environment.objects.area.QueuingArea;
 import model.environment.objects.physicalObject.Desk;

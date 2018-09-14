@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import model.agent.humanAgent.OperatorAgent;
-import model.agent.humanAgent.tacticalLevel.activity.operator.impl.BasicOperatorCheckInActivity;
+import model.agent.humanAgent.aatom.OperatorAgent;
+import model.agent.humanAgent.aatom.tacticalLevel.activity.operator.impl.BasicOperatorCheckInActivity;
 import model.environment.objects.area.EntranceArea;
 import model.environment.objects.area.GateArea;
 import model.environment.objects.area.QueuingArea;

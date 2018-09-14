@@ -3,7 +3,7 @@ package util.analytics;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 import model.environment.objects.area.QueuingArea;
 import model.map.Map;
 

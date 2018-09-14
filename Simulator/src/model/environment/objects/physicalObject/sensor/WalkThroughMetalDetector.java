@@ -2,7 +2,7 @@ package model.environment.objects.physicalObject.sensor;
 
 import java.util.List;
 
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 import model.environment.position.Position;
 import simulation.simulation.util.Utilities;
 

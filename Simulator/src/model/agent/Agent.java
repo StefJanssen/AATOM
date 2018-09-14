@@ -51,7 +51,6 @@ public abstract class Agent extends CircularMapComponent implements DirectlyUpda
 	 * This method is used to initialize the agent.
 	 */
 	public void init() {
-
 	}
 
 	/**
@@ -74,5 +73,13 @@ public abstract class Agent extends CircularMapComponent implements DirectlyUpda
 		String[] tmp = log;
 		log = null;
 		return tmp;
+	}
+
+	@Override
+	public void update(int timeStep) {
+		if (isDestroyed())
+			throw new IllegalStateException("The agent cannot be updated when it is destroyed.");
+		if (timeStep <= 0)
+			throw new IllegalArgumentException("The time step should be larger than 0.");
 	}
 }

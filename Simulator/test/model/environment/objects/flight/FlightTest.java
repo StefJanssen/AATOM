@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 import model.environment.objects.area.GateArea;
 import model.environment.objects.area.QueuingArea;
 import model.environment.objects.physicalObject.Desk;

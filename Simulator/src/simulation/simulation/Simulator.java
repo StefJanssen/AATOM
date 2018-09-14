@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import model.agent.Agent;
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.objects.physicalObject.sensor.XRaySystem;
 import model.map.Map;
@@ -376,7 +376,7 @@ public class Simulator implements Runnable {
 	public void endSimulation() {
 
 		// End logger.
-		if (logger != null) {
+		if (!logger.equals(Logger.NO_LOGGER)) {
 			analytics.update(timeStep);
 			logger.update(numberOfSteps * timeStep, true);
 			logger.printLine(simulatorName);
@@ -481,13 +481,16 @@ public class Simulator implements Runnable {
 	 */
 	@Override
 	public void run() {
-		logger.setSimulator(this);
+		if (!logger.equals(Logger.NO_LOGGER))
+			logger.setSimulator(this);
 		agentGenerator.setSimulator(this);
 
 		for (Agent a : map.getMapComponents(Agent.class))
 			a.init();
 
-		logger.update(numberOfSteps * timeStep, false);
+		if (!logger.equals(Logger.NO_LOGGER))
+			logger.update(numberOfSteps * timeStep, false);
+
 		running = true;
 
 		if (gui != null)
@@ -585,7 +588,7 @@ public class Simulator implements Runnable {
 		map.updateTime(timeStep);
 
 		// update the log
-		if (logger != null)
+		if (logger.equals(Logger.NO_LOGGER))
 			logger.update(numberOfSteps * timeStep, false);
 
 		// remove agents that want to leave

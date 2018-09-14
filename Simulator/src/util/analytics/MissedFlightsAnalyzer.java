@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import model.agent.humanAgent.Passenger;
+import model.agent.humanAgent.aatom.Passenger;
 import model.environment.objects.flight.Flight;
 import model.map.Map;
 
@@ -84,7 +84,7 @@ public class MissedFlightsAnalyzer extends Analyzer {
 						if (!reachedGate(passenger)) {
 							passenger.setLog(new String[] { "missed Flight", "Flight name " + f.toString(),
 									"Passenger position " + passenger.getPosition().toString(),
-									"Active activities " + passenger.getActiveActivities().toString(),
+									"Active activities " + passenger.getActiveActivity().toString(),
 									"Gate area corners "
 											+ passenger.getFlight().getGateArea().getCorners().toString() });
 							misses++;
