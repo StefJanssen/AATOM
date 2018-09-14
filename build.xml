@@ -13,6 +13,7 @@
 
   <path id="classpath.test">
     <pathelement location="Simulator/dependencies/junit.jar"/>
+    <pathelement location="Simulator/dependencies/org.hamcrest.core_1.3.0.v201303031735.jar"/>
     <pathelement location="${main.build.dir}"/>
     <path refid="classpath.base" />
   </path>
