@@ -84,7 +84,7 @@ public class MissedFlightsAnalyzer extends Analyzer {
 						if (!reachedGate(passenger)) {
 							passenger.setLog(new String[] { "missed Flight", "Flight name " + f.toString(),
 									"Passenger position " + passenger.getPosition().toString(),
-									"Active activities " + passenger.getActiveActivity().toString(),
+									"Active activities " + passenger.getActiveActivity(),
 									"Gate area corners "
 											+ passenger.getFlight().getGateArea().getCorners().toString() });
 							misses++;

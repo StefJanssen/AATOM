@@ -15,7 +15,7 @@ public class Main {
 	/**
 	 * GUI or not.
 	 */
-	private static boolean gui = true;
+	private static boolean gui = false;
 	/**
 	 * The number of trials.
 	 */
@@ -23,7 +23,7 @@ public class Main {
 	/**
 	 * Print outs or not.
 	 */
-	private static boolean printOuts = false;
+	private static boolean printOuts = true;
 
 	/**
 	 * Run the program.

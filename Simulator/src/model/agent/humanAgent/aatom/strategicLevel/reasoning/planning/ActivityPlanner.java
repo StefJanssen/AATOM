@@ -18,7 +18,7 @@ public abstract class ActivityPlanner implements Updatable {
 	/**
 	 * The planning.
 	 */
-	protected List<Activity> planning = new ArrayList<>();
+	protected List<Activity> planning;
 	/**
 	 * The activities.
 	 */
@@ -37,6 +37,8 @@ public abstract class ActivityPlanner implements Updatable {
 	 * @return The planning.
 	 */
 	public List<Activity> getPlanning() {
+		if (planning == null)
+			planning = new ArrayList<>();
 		return planning;
 	}
 

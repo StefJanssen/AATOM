@@ -17,6 +17,10 @@ public final class DiscretizedMap {
 	 * Singleton object.
 	 */
 	private static DiscretizedMap instance;
+	/**
+	 * The corresponding map.
+	 */
+	private static Map instanceMap;
 
 	/**
 	 * Gets the singleton instance of the map.
@@ -28,8 +32,10 @@ public final class DiscretizedMap {
 	 * @return The discretized map object.
 	 */
 	public static DiscretizedMap getInstance(Map map, double precision) {
-		if (instance == null)
+		if (instance == null || (instanceMap != null && !instanceMap.equals(map))) {
 			instance = new DiscretizedMap(map, precision);
+			instanceMap = map;
+		}
 		return instance;
 	}
 

@@ -22,6 +22,7 @@ import model.agent.humanAgent.aatom.tacticalLevel.TacticalModel;
 import model.agent.humanAgent.aatom.tacticalLevel.activity.Activity;
 import model.agent.humanAgent.aatom.tacticalLevel.activity.ActivityModule;
 import model.agent.humanAgent.aatom.tacticalLevel.navigation.NavigationModule;
+import model.environment.objects.physicalObject.Chair;
 import model.environment.position.Position;
 import model.environment.position.Vector;
 import simulation.simulation.Simulator;
@@ -35,10 +36,11 @@ import simulation.simulation.endingCondition.BaseEndingConditions;
 public class AatomHumanAgentTest {
 
 	/**
-	 * Tests the constructor.
+	 * Generates a base agent.
+	 * 
+	 * @return The agent.
 	 */
-	@Test
-	public void testConstructor() {
+	public AatomHumanAgent generateBaseAgent() {
 		ActivityPlanner planner = new ActivityPlanner() {
 
 			@Override
@@ -96,8 +98,52 @@ public class AatomHumanAgentTest {
 		OperationalModel operational = new OperationalModel(movement, observation, communication) {
 		};
 
-		AatomHumanAgent agent = new AatomHumanAgent(new Position(10, 10), 0.2, 80, strategy, tactical, operational) {
+		return new AatomHumanAgent(new Position(10.25, 10.75), 0.2, 80, strategy, tactical, operational) {
 		};
+	}
+
+	/**
+	 * Tests the sitting of the agent.
+	 */
+	@Test
+	public void testSitDown() {
+		AatomHumanAgent agent = generateBaseAgent();
+
+		Simulator s = new Simulator.Builder<>().setEndingConditions(new BaseEndingConditions(20)).setGui(false)
+				.createSimulator();
+
+		s.add(agent);
+
+		Chair chair = new Chair(new Position(10, 10), new Position(10.25, 10.75), 0.5);
+		s.add(chair);
+		Thread t = new Thread(s);
+		t.start();
+		try {
+			Thread.sleep(1);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		Assert.assertEquals(agent.getPosition(), new Position(10.25, 10.75));
+		Assert.assertFalse(agent.isSitting());
+		Assert.assertTrue(agent.operationalModel.setSitDown(chair));
+		Assert.assertTrue(agent.isSitting());
+		try {
+			Thread.sleep(1);
+			t.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		Assert.assertEquals(agent.getPosition(), new Position(10.25, 10.25));
+
+	}
+
+	/**
+	 * Tests the constructor.
+	 */
+	@Test
+	public void testConstructor() {
+
+		AatomHumanAgent agent = generateBaseAgent();
 
 		Simulator s = new Simulator.Builder<>().setEndingConditions(new BaseEndingConditions(20)).setGui(false)
 				.createSimulator();

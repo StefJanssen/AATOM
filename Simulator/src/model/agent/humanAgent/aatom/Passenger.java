@@ -13,7 +13,6 @@ import model.agent.humanAgent.aatom.tacticalLevel.BasicPassengerTacticalModel;
 import model.agent.humanAgent.aatom.tacticalLevel.TacticalModel;
 import model.environment.objects.area.Facility;
 import model.environment.objects.flight.Flight;
-import model.environment.objects.physicalObject.Chair;
 import model.environment.objects.physicalObject.luggage.Luggage;
 import model.environment.objects.physicalObject.luggage.LuggageType;
 import model.environment.position.Position;
@@ -61,8 +60,6 @@ public class Passenger extends AatomHumanAgent {
 		 * @return The passenger.
 		 */
 		public Passenger build() {
-			if (position.equals(Position.NO_POSITION) || flight.equals(Flight.NO_FLIGHT))
-				throw new IllegalArgumentException("No position and/or flight given.");
 			if (strategicModel == null)
 				strategicModel = new BasicPassengerStrategicModel(facility, checkedIn, checkPointDropTime,
 						checkPointCollectTime, flight);
@@ -271,6 +268,9 @@ public class Passenger extends AatomHumanAgent {
 			double radius, double mass, Collection<Luggage> luggage, StrategicModel strategicModel,
 			TacticalModel tacticalModel, OperationalModel operationalModel, Color color) {
 		super(position, radius, mass, strategicModel, tacticalModel, operationalModel, color);
+		if (position.equals(Position.NO_POSITION) || flight.equals(Flight.NO_FLIGHT))
+			throw new IllegalArgumentException("No position and/or flight given.");
+
 		this.flight = flight;
 		this.checkedIn = checkedIn;
 		if (checkedIn)
@@ -288,7 +288,6 @@ public class Passenger extends AatomHumanAgent {
 					throw new RuntimeException("You cannot be checked in already if you have checked luggage as well.");
 			}
 		}
-
 	}
 
 	/**
@@ -331,17 +330,6 @@ public class Passenger extends AatomHumanAgent {
 	public void update(int timeStep) {
 		Position prev = position;
 		super.update(timeStep);
-
-		// sitting routine
-		if (!tacticalModel.getGoalPosition().equals(Position.NO_POSITION)) {
-			if (operationalModel.isSitting()) {
-				tacticalModel.setGoal(Position.NO_POSITION);
-				Chair chair = operationalModel.getMovementModel().getChair();
-				position = new Position(chair.getPosition().x + 0.5 * chair.getWidth(),
-						chair.getPosition().y + 0.5 * chair.getWidth());
-
-			}
-		}
 
 		// move luggage with the passenger
 		for (Luggage l : luggage) {

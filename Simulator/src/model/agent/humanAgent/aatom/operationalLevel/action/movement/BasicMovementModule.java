@@ -1,6 +1,5 @@
 package model.agent.humanAgent.aatom.operationalLevel.action.movement;
 
-import model.agent.humanAgent.aatom.Passenger;
 import model.environment.position.Position;
 import model.environment.position.Vector;
 
@@ -25,12 +24,12 @@ public class BasicMovementModule extends MovementModule {
 
 	@Override
 	public Vector getMove(int timeStep) {
-		if (((Passenger) agent).getGoalPosition().equals(Position.NO_POSITION)) {
+		if (agent.getGoalPosition().equals(Position.NO_POSITION)) {
 			currentVelocity = new Vector(0, 0);
 			return currentVelocity;
 		}
-		double xDiff = ((Passenger) agent).getGoalPosition().x - getPosition().x;
-		double yDiff = ((Passenger) agent).getGoalPosition().y - getPosition().y;
+		double xDiff = agent.getGoalPosition().x - getPosition().x;
+		double yDiff = agent.getGoalPosition().y - getPosition().y;
 		double distance = Math.sqrt(Math.abs(xDiff) * Math.abs(xDiff) + Math.abs(yDiff) * Math.abs(yDiff));
 		if (distance < 0.00001) {
 			currentVelocity = new Vector(0, 0);

@@ -46,9 +46,11 @@ public class ActivityDistributionAnalyzer extends Analyzer {
 		double[] values = new double[activities.size()];
 		for (Passenger passenger : passengers) {
 			Activity activity = passenger.getActiveActivity();
-			for (int i = 0; i < activities.size(); i++) {
-				if (activity.getClass().getSimpleName().equals(activities.get(i) + "Activity"))
-					values[i]++;
+			if (activity != null) {
+				for (int i = 0; i < activities.size(); i++) {
+					if (activity.getClass().getSimpleName().equals(activities.get(i) + "Activity"))
+						values[i]++;
+				}
 			}
 		}
 		return values;

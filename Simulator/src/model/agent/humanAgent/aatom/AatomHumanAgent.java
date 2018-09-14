@@ -10,6 +10,7 @@ import model.agent.humanAgent.aatom.operationalLevel.action.communication.Commun
 import model.agent.humanAgent.aatom.strategicLevel.StrategicModel;
 import model.agent.humanAgent.aatom.tacticalLevel.TacticalModel;
 import model.agent.humanAgent.aatom.tacticalLevel.activity.Activity;
+import model.environment.objects.physicalObject.Chair;
 import model.environment.position.Position;
 import model.environment.position.Vector;
 
@@ -242,5 +243,14 @@ public abstract class AatomHumanAgent extends HumanAgent {
 		operationalModel.update(timeStep);
 		Vector move = operationalModel.getMove(timeStep);
 		position = new Position(position.x + move.x, position.y + move.y);
+
+		// sitting routine
+		if (operationalModel.isSitting()) {
+			tacticalModel.setGoal(Position.NO_POSITION);
+			Chair chair = operationalModel.getMovementModel().getChair();
+			position = new Position(chair.getPosition().x + 0.5 * chair.getWidth(),
+					chair.getPosition().y + 0.5 * chair.getWidth());
+		}
+
 	}
 }
