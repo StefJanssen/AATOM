@@ -1,7 +1,7 @@
 # AATOM - An Agent-based Airport Terminal Operations Model
 
 Important resources can be found below.
-* [Model description](https://pure.tudelft.nl/portal/en/publications/aatom--an-agentbased-airport-terminal-operations-model(eb03ba8b-a4ec-4754-9f63-41a0774c531a).html)
+* [Model description](http://stefjanssen.com/AATOMarchticeture.pdf)
 * [Documentation](https://stefjanssen.github.io/AATOM/)
 
 A comprehensive tutorial is provided in the Tutorials folder. It contains a [pdf](https://github.com/StefJanssen/AATOM/raw/master/Tutorials/Tutorial.pdf), and the corresponding code.
