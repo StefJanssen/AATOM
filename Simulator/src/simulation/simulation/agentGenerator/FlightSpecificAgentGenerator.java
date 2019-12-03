@@ -23,7 +23,6 @@ import simulation.simulation.util.Utilities;
  * @author S.A.M. Janssen
  */
 public class FlightSpecificAgentGenerator extends AgentGenerator {
-
 	/**
 	 * The area in which the agent is generated.
 	 */
@@ -65,14 +64,11 @@ public class FlightSpecificAgentGenerator extends AgentGenerator {
 		double sum = 0;
 		for (double d : percentageOfPassengers)
 			sum += d;
-
 		if (Math.abs(sum - 1) > 0.01)
 			throw new RuntimeException("The sum of the percentages of people should equal 1.");
-
 		if (earliestTime < latestTime)
 			throw new RuntimeException("The earliest time should be before the latest time. "
 					+ "This means that the value should be HIGHER than the latest time value.");
-
 		this.percentageOfPassengers = percentageOfPassengers;
 		this.earliestTime = earliestTime;
 		this.latestTime = latestTime;
@@ -89,24 +85,19 @@ public class FlightSpecificAgentGenerator extends AgentGenerator {
 	 * @return True if it is, false otherwise.
 	 */
 	protected boolean canGenerate(double timeStep, Flight flight) {
-
 		if (flight.getTimeToFlight() > earliestTime || flight.getTimeToFlight() < latestTime)
 			return false;
-
 		// the number of buckets in which passengers are generated
 		int numberOfBuckets = percentageOfPassengers.length;
 		// the size of the window in which passengers arrive (in seconds)
 		double window = earliestTime - latestTime;
 		// the size of the buckets (in seconds)
 		double bucketSize = window / numberOfBuckets;
-
 		// define border values
 		double[] borderValues = new double[numberOfBuckets - 1];
 		for (int i = 0; i < borderValues.length; i++) {
 			borderValues[i] = earliestTime - (i + 1) * bucketSize;
-
 		}
-
 		// determine bucket
 		int bucket = 0;
 		for (int i = 0; i < borderValues.length; i++) {
@@ -115,22 +106,17 @@ public class FlightSpecificAgentGenerator extends AgentGenerator {
 			} else
 				bucket++;
 		}
-
 		// the number of passengers
 		int numberOfPassengers = flight.getFlightSize();
-
 		// the interarrival time
 		double interArrivalTime = bucketSize / (percentageOfPassengers[bucket] * numberOfPassengers);
-
 		// poission distributed variable
 		return Utilities.RANDOM_GENERATOR.nextDouble() < 1.0 / interArrivalTime / (1000.0 / timeStep);
 	}
 
 	@Override
 	public List<HumanAgent> generateAgent(long numberOfSteps, int timeStep, boolean forced) {
-
 		List<HumanAgent> list = new ArrayList<>();
-
 		for (Flight f : getEligibleFlights()) {
 			if (forced || canGenerate(timeStep, f)) {
 				Luggage luggage = new Luggage(LuggageType.CARRY_ON, Utilities.RANDOM_GENERATOR.nextDouble(),

@@ -23,6 +23,7 @@ import model.map.Map;
 import model.map.ModelComponentBuilder;
 import simulation.simulation.Simulator;
 import simulation.simulation.agentGenerator.BaseAgentGenerator;
+import simulation.simulation.agentGenerator.FlightSpecificAgentGenerator;
 import simulation.simulation.endingCondition.NoPassengerEndingConditions;
 import simulation.simulation.util.SimulationObject;
 import simulation.simulation.util.Utilities;
@@ -43,7 +44,6 @@ import util.math.distributions.NormalDistribution;
  * @author S.A.M. Janssen
  */
 public final class ModelBuilder {
-
 	/**
 	 * Creates the airside arrival objects.
 	 * 
@@ -52,7 +52,6 @@ public final class ModelBuilder {
 	private static List<SimulationObject> airsideArrival() {
 		SimulationObject w;
 		List<SimulationObject> walls = new ArrayList<>();
-
 		w = new Wall(103.8, 49.48, 0.11, 5.33);
 		walls.add(w);
 		w = new Wall(103.8, 49.48, 5.32, 0.12);
@@ -160,7 +159,6 @@ public final class ModelBuilder {
 	private static List<SimulationObject> airsideDeparture() {
 		SimulationObject w;
 		List<SimulationObject> walls = new ArrayList<>();
-
 		w = new Wall(8.85, 25.62, 0.1, 4.07);
 		walls.add(w);
 		w = new Wall(5.16, 29.59, 3.78, 0.1);
@@ -239,12 +237,10 @@ public final class ModelBuilder {
 		walls.add(w);
 		w = new Wall(37.77, 28.82, 2.2, 0.1);
 		walls.add(w);
-
 		// facilities
 		walls.add(new Shop(11.6, 32, 19.8, 16.7));
 		walls.add(new Toilet(5.3, 32, 6.0, 3.3));
 		walls.add(new Restaurant(48.6, 36, 27, 12.7));
-
 		return walls;
 	}
 
@@ -256,7 +252,6 @@ public final class ModelBuilder {
 	private static List<SimulationObject> belts() {
 		SimulationObject w;
 		List<SimulationObject> walls = new ArrayList<>();
-
 		w = new Wall(151.91, 12.46, 18.31, 1.02);
 		walls.add(w);
 		w = new Wall(169.19, 12.46, 1.02, 15.27);
@@ -314,7 +309,6 @@ public final class ModelBuilder {
 	private static List<SimulationObject> checkInDesks() {
 		List<SimulationObject> desks = new ArrayList<>();
 		Desk w;
-
 		w = new Desk(46.67, 56.2, 1.17, 0.1, new Position(47.25, 56.7));
 		desks.add(w);
 		w = new Desk(48.46, 56.2, 1.17, 0.1, new Position(49.04, 56.7));
@@ -347,7 +341,6 @@ public final class ModelBuilder {
 		desks.add(w);
 		w = new Desk(73.59, 56.2, 1.17, 0.1, new Position(74.18, 56.7));
 		desks.add(w);
-
 		desks.addAll(ModelComponentBuilder.queue(new Position(46.67, 58.7), 4, 6, false, 0));
 		desks.addAll(ModelComponentBuilder.queue(new Position(54.17, 58.7), 4, 6, false, 0));
 		desks.addAll(ModelComponentBuilder.queue(new Position(61.67, 58.7), 4, 6, false, 0));
@@ -368,9 +361,9 @@ public final class ModelBuilder {
 	 */
 	public static Simulator eindhovenAirport(boolean gui, int timeStep) {
 		Simulator sim = new Simulator.Builder<>().setGui(gui).setTimeStep(timeStep)
-				.setEndingConditions(new NoPassengerEndingConditions()).setAgentGenerator(new BaseAgentGenerator(10))
+				.setEndingConditions(new NoPassengerEndingConditions())
+				.setAgentGenerator(new FlightSpecificAgentGenerator(new double[] { 0.2, 0.6, 0.2 }, 7200, 1800))
 				.setLogger(new BaseLogger()).build();
-
 		Map map = sim.getMap();
 		// agent generation
 		List<Position> agentCorners = new ArrayList<>();
@@ -380,7 +373,6 @@ public final class ModelBuilder {
 		agentCorners.add(new Position(40, 35.5));
 		EntranceArea entrance = new EntranceArea(agentCorners);
 		sim.add(entrance);
-
 		// gate positions
 		List<Position> firstGate = new ArrayList<>();
 		firstGate.add(new Position(2, 2));
@@ -388,33 +380,28 @@ public final class ModelBuilder {
 		firstGate.add(new Position(11, 15));
 		firstGate.add(new Position(11, 2));
 		GateArea firstGateArea = new GateArea(firstGate);
-
 		List<Position> secondGate = new ArrayList<>();
 		secondGate.add(new Position(17, 2));
 		secondGate.add(new Position(17, 15));
 		secondGate.add(new Position(26, 15));
 		secondGate.add(new Position(26, 2));
 		GateArea secondGateArea = new GateArea(secondGate);
-
 		List<Position> thirdGate = new ArrayList<>();
 		thirdGate.add(new Position(32, 2));
 		thirdGate.add(new Position(32, 15));
 		thirdGate.add(new Position(41, 15));
 		thirdGate.add(new Position(41, 2));
 		GateArea thirdGateArea = new GateArea(thirdGate);
-
 		List<Position> fourthGate = new ArrayList<>();
 		fourthGate.add(new Position(47, 2));
 		fourthGate.add(new Position(47, 15));
 		fourthGate.add(new Position(56, 15));
 		fourthGate.add(new Position(56, 2));
 		GateArea fourthGateArea = new GateArea(fourthGate);
-
 		sim.add(firstGateArea);
 		sim.add(secondGateArea);
 		sim.add(thirdGateArea);
 		sim.add(fourthGateArea);
-
 		// gate areas
 		List<SimulationObject> sittingArea = ModelComponentBuilder.sittingArea(new Position(3, 3), 6, 10, 0);
 		sim.addAll(sittingArea);
@@ -425,7 +412,6 @@ public final class ModelBuilder {
 		sittingArea = ModelComponentBuilder.sittingArea(new Position(48, 3), 6, 10, 0);
 		sim.addAll(sittingArea);
 		sim.add(new Wall(19.9, 24.5, 0.1, 2.5));
-
 		// check in desks
 		List<SimulationObject> checkinDesks = ModelComponentBuilder.checkInArea(new Position(12, 25), 3, 0);
 		sim.addAll(checkinDesks);
@@ -434,7 +420,6 @@ public final class ModelBuilder {
 			if (o instanceof Desk)
 				desks1.add((Desk) o);
 		}
-
 		checkinDesks = ModelComponentBuilder.checkInArea(new Position(20, 25), 3, 0);
 		sim.addAll(checkinDesks);
 		Collection<Desk> desks2 = new ArrayList<>();
@@ -442,7 +427,6 @@ public final class ModelBuilder {
 			if (o instanceof Desk)
 				desks2.add((Desk) o);
 		}
-
 		checkinDesks = ModelComponentBuilder.checkInArea(new Position(28, 25), 3, 0);
 		sim.addAll(checkinDesks);
 		Collection<Desk> desks3 = new ArrayList<>();
@@ -450,56 +434,65 @@ public final class ModelBuilder {
 			if (o instanceof Desk)
 				desks3.add((Desk) o);
 		}
-
 		// checkpoint
 		List<SimulationObject> checkpoint = ModelComponentBuilder.checkpoint(new Position(61, 40), 2, 10, false, 90);
 		sim.addAll(checkpoint);
-
 		// flights
 		List<Flight> flights = new ArrayList<>();
-		flights.add(new Flight(FlightType.DEPARTING, 3600 * 1, firstGateArea, desks1,
+		flights.add(new Flight(FlightType.DEPARTING, 60, 3600 * 1, firstGateArea, desks1,
 				Utilities.getClosestQueuingArea(desks1, map.getMapComponents(QueuingArea.class)),
 				Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
 						map.getMapComponents(QueuingArea.class))));
-		flights.add(new Flight(FlightType.DEPARTING, 3600 * 1.25, secondGateArea, desks1,
+		// flights.add(new Flight(FlightType.DEPARTING, 3600 * 1.25,
+		// secondGateArea, desks1,
+		// Utilities.getClosestQueuingArea(desks1,
+		// map.getMapComponents(QueuingArea.class)),
+		// Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
+		// map.getMapComponents(QueuingArea.class))));
+		// flights.add(new Flight(FlightType.DEPARTING, 3600 * 1.42,
+		// thirdGateArea, desks2,
+		// Utilities.getClosestQueuingArea(desks2,
+		// map.getMapComponents(QueuingArea.class)),
+		// Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
+		// map.getMapComponents(QueuingArea.class))));
+		// flights.add(new Flight(FlightType.DEPARTING, 3600 * 1.5,
+		// firstGateArea, desks1,
+		// Utilities.getClosestQueuingArea(desks1,
+		// map.getMapComponents(QueuingArea.class)),
+		// Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
+		// map.getMapComponents(QueuingArea.class))));
+		// flights.add(new Flight(FlightType.DEPARTING, 3600 * 1.83,
+		// thirdGateArea, desks2,
+		// Utilities.getClosestQueuingArea(desks2,
+		// map.getMapComponents(QueuingArea.class)),
+		// Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
+		// map.getMapComponents(QueuingArea.class))));
+		// flights.add(new Flight(FlightType.DEPARTING, 3600 * 1.92,
+		// fourthGateArea, desks2,
+		// Utilities.getClosestQueuingArea(desks2,
+		// map.getMapComponents(QueuingArea.class)),
+		// Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),map.getMapComponents(QueuingArea.class))));
+		flights.add(new Flight(FlightType.DEPARTING, 60, 3600 * 2.08, thirdGateArea, desks1,
 				Utilities.getClosestQueuingArea(desks1, map.getMapComponents(QueuingArea.class)),
 				Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
 						map.getMapComponents(QueuingArea.class))));
-		flights.add(new Flight(FlightType.DEPARTING, 3600 * 1.42, thirdGateArea, desks2,
-				Utilities.getClosestQueuingArea(desks2, map.getMapComponents(QueuingArea.class)),
-				Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
-						map.getMapComponents(QueuingArea.class))));
-		flights.add(new Flight(FlightType.DEPARTING, 3600 * 1.5, firstGateArea, desks1,
-				Utilities.getClosestQueuingArea(desks1, map.getMapComponents(QueuingArea.class)),
-				Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
-						map.getMapComponents(QueuingArea.class))));
-		flights.add(new Flight(FlightType.DEPARTING, 3600 * 1.83, thirdGateArea, desks2,
-				Utilities.getClosestQueuingArea(desks2, map.getMapComponents(QueuingArea.class)),
-				Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
-						map.getMapComponents(QueuingArea.class))));
-		flights.add(new Flight(FlightType.DEPARTING, 3600 * 1.92, fourthGateArea, desks2,
-				Utilities.getClosestQueuingArea(desks2, map.getMapComponents(QueuingArea.class)),
-				Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
-						map.getMapComponents(QueuingArea.class))));
-		flights.add(new Flight(FlightType.DEPARTING, 3600 * 2.08, firstGateArea, desks1,
-				Utilities.getClosestQueuingArea(desks1, map.getMapComponents(QueuingArea.class)),
-				Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
-						map.getMapComponents(QueuingArea.class))));
-		flights.add(new Flight(FlightType.DEPARTING, 3600 * 2.33, thirdGateArea, desks2,
-				Utilities.getClosestQueuingArea(desks2, map.getMapComponents(QueuingArea.class)),
-				Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
-						map.getMapComponents(QueuingArea.class))));
-		flights.add(new Flight(FlightType.DEPARTING, 3600 * 3.08, secondGateArea, desks3,
+		// flights.add(new Flight(FlightType.DEPARTING, 3600 * 2.33,
+		// thirdGateArea, desks2,
+		// Utilities.getClosestQueuingArea(desks2,
+		// map.getMapComponents(QueuingArea.class)),
+		// Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
+		// map.getMapComponents(QueuingArea.class))));
+		// flights.add(new Flight(FlightType.DEPARTING, 3600 * 3.08,
+		// secondGateArea, desks3,
+		// Utilities.getClosestQueuingArea(desks3,
+		// map.getMapComponents(QueuingArea.class)),
+		// Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
+		// map.getMapComponents(QueuingArea.class))));
+		flights.add(new Flight(FlightType.DEPARTING, 60, 3600 * 3.08, secondGateArea, desks3,
 				Utilities.getClosestQueuingArea(desks3, map.getMapComponents(QueuingArea.class)),
 				Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
 						map.getMapComponents(QueuingArea.class))));
-		flights.add(new Flight(FlightType.DEPARTING, 3600 * 3.08, secondGateArea, desks3,
-				Utilities.getClosestQueuingArea(desks3, map.getMapComponents(QueuingArea.class)),
-				Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
-						map.getMapComponents(QueuingArea.class))));
-
 		sim.addAll(flights);
-
 		// walls
 		Wall wall = new Wall(80, 28, 0.1, 17);
 		sim.add(wall);
@@ -535,7 +528,6 @@ public final class ModelBuilder {
 		sim.add(wall);
 		wall = new Wall(11, 30, 0.9, 1.1);
 		sim.add(wall);
-
 		// Facilities
 		List<Position> corners = new ArrayList<>();
 		corners.add(new Position(0, 24));
@@ -620,22 +612,21 @@ public final class ModelBuilder {
 		corners12.add(new Position(6, 55));
 		corners12.add(new Position(6, 45));
 		Restaurant restaurant = new Restaurant(corners12);
-		sim.add(restaurant);
+		// sim.add(restaurant);
 		List<Position> corners13 = new ArrayList<>();
 		corners13.add(new Position(6.1, 45));
 		corners13.add(new Position(6.1, 55));
 		corners13.add(new Position(12, 55));
 		corners13.add(new Position(12, 45));
 		Restaurant restaurant2 = new Restaurant(corners13);
-		sim.add(restaurant2);
+		// sim.add(restaurant2);
 		List<Position> corners14 = new ArrayList<>();
 		corners14.add(new Position(40, 34));
 		corners14.add(new Position(40, 41));
 		corners14.add(new Position(43, 41));
 		corners14.add(new Position(43, 34));
 		Restaurant restaurant3 = new Restaurant(corners14);
-		sim.add(restaurant3);
-
+		// sim.add(restaurant3);
 		sim.add(new QueueAnalyzer());
 		sim.add(new TimeInQueueAnalyzer());
 		sim.add(new ActivityDistributionAnalyzer());
@@ -653,7 +644,6 @@ public final class ModelBuilder {
 	 * @return The walls.
 	 */
 	private static Collection<SimulationObject> generateRTHAWalls() {
-
 		Collection<SimulationObject> objects = new ArrayList<>();
 		objects.addAll(outerWalls());
 		objects.addAll(landside());
@@ -672,10 +662,8 @@ public final class ModelBuilder {
 	private static List<SimulationObject> landside() {
 		SimulationObject w;
 		List<SimulationObject> walls = new ArrayList<>();
-
 		w = new QueueSeparator(37.5, 52.65, 6.95, 0.1);
 		walls.add(w);
-
 		w = new Wall(43.54, 55.97, 0.98, 0.1);
 		walls.add(w);
 		w = new Wall(44.43, 48.94, 0.1, 7.12);
@@ -761,7 +749,6 @@ public final class ModelBuilder {
 	private static Collection<SimulationObject> outerWalls() {
 		SimulationObject w;
 		List<SimulationObject> walls = new ArrayList<>();
-
 		w = new Wall(8.82, 21.76, 97.57, 0.11);
 		walls.add(w);
 		w = new Wall(106.38, 21.76, 0.11, 2.46);
@@ -818,7 +805,6 @@ public final class ModelBuilder {
 		walls.add(w);
 		w = new Wall(8.82, 21.76, 0.11, 3.85);
 		walls.add(w);
-
 		return walls;
 	}
 
@@ -834,10 +820,8 @@ public final class ModelBuilder {
 	public static Simulator rotterdamTheHagueAirport(boolean gui, int timeStep) {
 		Simulator sim = new Simulator.Builder<>().setGui(gui).setEndingConditions(new NoPassengerEndingConditions())
 				.setAgentGenerator(new BaseAgentGenerator(10)).setLogger(new BaseLogger()).build();
-
 		Map map = sim.getMap();
 		sim.addAll(generateRTHAWalls());
-
 		Collection<Desk> desks1 = map.getMapComponents(Desk.class);
 		List<Desk> firstFour = new ArrayList<>();
 		for (Desk d : desks1) {
@@ -846,18 +830,14 @@ public final class ModelBuilder {
 			else
 				break;
 		}
-
 		GateArea gateaArea = new GateArea(12, 22, 21, 9.5);
 		sim.addAll(ModelComponentBuilder.gate(new Position(13, 23), 5, 10, 0));
 		sim.add(gateaArea);
 		sim.addAll(ModelComponentBuilder.gate(new Position(23, 23), 5, 10, 0));
-
 		sim.add(new EntranceArea(50, 74, 10, 2.5));
 		sim.add(new EntranceArea(102, 74, 10, 2.5));
-
 		sim.addAll(ModelComponentBuilder.checkpoint(new Position(29, 62), 2, 0, false, 90));
 		sim.addAll(ModelComponentBuilder.checkpoint(new Position(31.5, 57), 2, 0, false, 90));
-
 		sim.add(new QueueSeparator(36, 61, 10.5, 0.1));
 		sim.add(new QueueSeparator(36, 62, 9.5, 0.1));
 		sim.add(new QueueSeparator(37.65, 62, 0.1, 1.1));
@@ -866,7 +846,6 @@ public final class ModelBuilder {
 		sim.add(new QueueSeparator(39, 65, 7.5, 0.1));
 		sim.add(new QueueSeparator(37.8, 66, 8.8, 0.1));
 		sim.add(new QueueSeparator(46.57, 62.7, 0.1, 2.4));
-
 		List<Position> corners = new ArrayList<>();
 		corners.add(new Position(36, 61));
 		corners.add(new Position(46.5, 61));
@@ -875,7 +854,6 @@ public final class ModelBuilder {
 		corners.add(new Position(37.8, 62));
 		corners.add(new Position(36, 62));
 		sim.add(new QueuingArea(corners, new Position(46.5, 65.6), new Position(36, 61.4)));
-
 		// flights
 		List<Flight> flights = new ArrayList<>();
 		flights.add(new Flight(FlightType.DEPARTING, 3600 * 1, gateaArea, firstFour,
@@ -927,12 +905,10 @@ public final class ModelBuilder {
 		// Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
 		// map.getMapComponents(QueuingArea.class))));
 		sim.addAll(flights);
-
 		for (Desk d : map.getMapComponents(Desk.class)) {
 			sim.add(new OperatorAgent(new Position(d.getServingPosition().x, d.getServingPosition().y - 1), 0.25, 80,
 					new BasicOperatorCheckInActivity(d, new NormalDistribution(30, 3))));
 		}
-
 		sim.add(new QueueAnalyzer());
 		sim.add(new TimeInQueueAnalyzer());
 		sim.add(new ActivityDistributionAnalyzer());
@@ -941,7 +917,6 @@ public final class ModelBuilder {
 		sim.add(new AgentNumberAnalyzer());
 		sim.add(new MissedFlightsAnalyzer());
 		sim.add(new DistanceAnalyzer());
-
 		return sim;
 	}
 

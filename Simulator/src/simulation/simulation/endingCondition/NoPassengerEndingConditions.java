@@ -9,7 +9,6 @@ import model.agent.humanAgent.aatom.Passenger;
  * @author S.A.M. Janssen
  */
 public class NoPassengerEndingConditions extends EndingConditions {
-
 	@Override
 	public Object[] getReturnValues() {
 		return null;
@@ -17,6 +16,8 @@ public class NoPassengerEndingConditions extends EndingConditions {
 
 	@Override
 	public boolean hasEnded(long numberOfSteps) {
+		if (simulator.getMap().getTime() < 10)
+			return false;
 		return simulator.getMap().getMapComponents(Passenger.class).size() == 0 || super.hasEnded(numberOfSteps);
 	}
 }
