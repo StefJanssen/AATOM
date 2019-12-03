@@ -168,7 +168,6 @@ public class QueueActivity extends Activity {
 			time -= timeStep / 1000.0;
 			return;
 		}
-
 		time = 1.0;
 		if (!canStart(timeStep))
 			endActivity();

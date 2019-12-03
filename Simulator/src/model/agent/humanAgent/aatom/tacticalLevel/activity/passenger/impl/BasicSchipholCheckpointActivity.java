@@ -145,7 +145,7 @@ public class BasicSchipholCheckpointActivity extends CheckpointActivity {
 					// go to wtmd
 					xRaySystem.setDropOffPassenger(null, dropOffPosition);
 					for (Luggage l : ((Passenger) agent).getLuggage()) {
-						xRaySystem.addBaggage(l);
+						xRaySystem.addLuggage(l);
 					}
 					wtmd.setPersonsInConsideration((Passenger) agent);
 					navigationModule.setGoal(wtmd.getPosition());
@@ -164,7 +164,7 @@ public class BasicSchipholCheckpointActivity extends CheckpointActivity {
 				&& movement.getPosition().distanceTo(xRaySystem.getCollectPosition(collectPosition)) < 0.3) {
 			xRaySystem.setCollectPassenger(null, collectPosition);
 			for (Luggage l : ((Passenger) agent).getLuggage()) {
-				xRaySystem.removeBaggage(l);
+				xRaySystem.removeLuggage(l);
 			}
 			navigationModule.setGoal(xRaySystem.getLeavePosition());
 			phase++;

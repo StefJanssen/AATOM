@@ -36,7 +36,6 @@ import util.io.logger.BaseLogger;
  * @author S.A.M. Janssen
  */
 public class Tutorials {
-
 	/**
 	 * Main method.
 	 * 
@@ -64,7 +63,6 @@ public class Tutorials {
 	private static void tutorial1() {
 		Simulator sim = ModelBuilder.eindhovenAirport(true, 100);
 		// Simulator sim = ModelBuilder.rotterdamTheHagueAirport(true, 100);
-
 		new Thread(sim).start();
 	}
 
@@ -110,7 +108,6 @@ public class Tutorials {
 		Flight flight = new Flight(FlightType.DEPARTING, 3600, gate, map.getMapComponents(Desk.class), checkInQueue,
 				checkpointQueue);
 		sim.add(flight);
-
 		sim.add(new Passenger.Builder<>().setFlight(flight).setCheckedIn(false).setPosition(new Position(20, 40))
 				.setLuggage(new Luggage(LuggageType.CARRY_ON, 0.1, 0.1)).build());
 		new Thread(sim).start();
@@ -123,7 +120,6 @@ public class Tutorials {
 		Simulator sim = new Simulator.Builder<>().setAgentGenerator(new BaseAgentGenerator(30))
 				.setEndingConditions(new BaseEndingConditions(3600)).setGui(true).build();
 		Map map = sim.getMap();
-
 		sim.add(new EntranceArea(10, 30, 10, 10));
 		GateArea gate = new GateArea(0.5, 1, 9, 9);
 		sim.add(gate);
@@ -132,7 +128,6 @@ public class Tutorials {
 		sim.addAll(ModelComponentBuilder.checkpoint(new Position(10, 5), 2, 20, true, 0));
 		sim.add(new Wall(65, 0, 0.1, 48));
 		sim.add(new Wall(0, 48, 65, 0.1));
-
 		QueuingArea checkInQueue = Utilities.getClosestQueuingArea(map.getMapComponents(Desk.class),
 				map.getMapComponents(QueuingArea.class));
 		QueuingArea checkpointQueue = Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
@@ -140,7 +135,6 @@ public class Tutorials {
 		Flight flight = new Flight(FlightType.DEPARTING, 3600, gate, map.getMapComponents(Desk.class), checkInQueue,
 				checkpointQueue);
 		sim.add(flight);
-
 		new Thread(sim).start();
 	}
 
@@ -159,16 +153,13 @@ public class Tutorials {
 		sim.addAll(ModelComponentBuilder.checkpoint(new Position(10, 5), 2, 20, true, 0));
 		sim.add(new Wall(65, 0, 0.1, 48));
 		sim.add(new Wall(0, 48, 65, 0.1));
-
 		QueuingArea checkInQueue = Utilities.getClosestQueuingArea(map.getMapComponents(Desk.class),
 				map.getMapComponents(QueuingArea.class));
 		QueuingArea checkpointQueue = Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
 				map.getMapComponents(QueuingArea.class));
 		Flight flight = new Flight(FlightType.DEPARTING, 3600, gate, map.getMapComponents(Desk.class), checkInQueue,
 				checkpointQueue);
-
 		sim.add(flight);
-
 		sim.add(new QueueAnalyzer());
 		sim.add(new TimeInQueueAnalyzer());
 		sim.add(new ActivityDistributionAnalyzer());
@@ -194,16 +185,13 @@ public class Tutorials {
 		sim.addAll(ModelComponentBuilder.checkpoint(new Position(10, 5), 2, 20, true, 0));
 		sim.add(new Wall(65, 0, 0.1, 48));
 		sim.add(new Wall(0, 48, 65, 0.1));
-
 		QueuingArea checkInQueue = Utilities.getClosestQueuingArea(map.getMapComponents(Desk.class),
 				map.getMapComponents(QueuingArea.class));
 		QueuingArea checkpointQueue = Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
 				map.getMapComponents(QueuingArea.class));
 		Flight flight = new Flight(FlightType.DEPARTING, 3600, gate, map.getMapComponents(Desk.class), checkInQueue,
 				checkpointQueue);
-
 		sim.add(flight);
-
 		sim.add(new QueueAnalyzer());
 		sim.add(new TimeInQueueAnalyzer());
 		sim.add(new ActivityDistributionAnalyzer());
@@ -230,14 +218,12 @@ public class Tutorials {
 		sim.addAll(ModelComponentBuilder.checkpoint(new Position(10, 5), 2, 20, true, 0));
 		sim.add(new Wall(65, 0, 0.1, 48));
 		sim.add(new Wall(0, 48, 65, 0.1));
-
 		QueuingArea checkInQueue = Utilities.getClosestQueuingArea(map.getMapComponents(Desk.class),
 				map.getMapComponents(QueuingArea.class));
 		QueuingArea checkpointQueue = Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
 				map.getMapComponents(QueuingArea.class));
 		Flight flight = new Flight(FlightType.DEPARTING, 3600, gate, map.getMapComponents(Desk.class), checkInQueue,
 				checkpointQueue);
-
 		sim.add(flight);
 		sim.add(new QueueAnalyzer());
 		sim.add(new TimeInQueueAnalyzer());
@@ -265,14 +251,12 @@ public class Tutorials {
 		sim.addAll(ModelComponentBuilder.checkpoint(new Position(10, 5), 2, 20, true, 0));
 		sim.add(new Wall(65, 0, 0.1, 48));
 		sim.add(new Wall(0, 48, 65, 0.1));
-
 		QueuingArea checkInQueue = Utilities.getClosestQueuingArea(map.getMapComponents(Desk.class),
 				map.getMapComponents(QueuingArea.class));
 		QueuingArea checkpointQueue = Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
 				map.getMapComponents(QueuingArea.class));
 		Flight flight = new Flight(FlightType.DEPARTING, 3600, gate, map.getMapComponents(Desk.class), checkInQueue,
 				checkpointQueue);
-
 		sim.add(flight);
 		sim.add(new QueueAnalyzer());
 		sim.add(new TimeInQueueAnalyzer());
@@ -301,14 +285,12 @@ public class Tutorials {
 		sim.addAll(ModelComponentBuilder.checkpoint(new Position(10, 5), 2, 20, true, 0));
 		sim.add(new Wall(65, 0, 0.1, 48));
 		sim.add(new Wall(0, 48, 65, 0.1));
-
 		QueuingArea checkInQueue = Utilities.getClosestQueuingArea(map.getMapComponents(Desk.class),
 				map.getMapComponents(QueuingArea.class));
 		QueuingArea checkpointQueue = Utilities.getClosestQueuingArea(map.getMapComponents(XRaySystem.class),
 				map.getMapComponents(QueuingArea.class));
 		Flight flight = new Flight(FlightType.DEPARTING, 3600, gate, map.getMapComponents(Desk.class), checkInQueue,
 				checkpointQueue);
-
 		sim.add(flight);
 		sim.add(new QueueAnalyzer());
 		sim.add(new TimeInQueueAnalyzer());
@@ -332,5 +314,4 @@ public class Tutorials {
 		Experimenter experimenter = new Experimenter(inputs, ExperimenterMain.class);
 		new Thread(experimenter).start();
 	}
-
 }

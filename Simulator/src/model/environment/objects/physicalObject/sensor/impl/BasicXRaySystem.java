@@ -41,11 +41,16 @@ public class BasicXRaySystem extends XRaySystem {
 	 *            The starting position of the luggage.
 	 * @param luggageEnd
 	 *            The ending position of the luggage.
+	 * @param numberOfDropOffPositions
+	 *            Number of drop positions.
+	 * @param numberOfCollectPositions
+	 *            Number of collect positions.
 	 * @param otherWayAround
 	 *            An mirrored x-ray or not.
 	 */
 	public BasicXRaySystem(List<Position> systemCornerPoints, XRaySensor sensor, Position luggageStart,
-			Position luggageEnd, boolean otherWayAround) {
-		super(systemCornerPoints, sensor, luggageStart, luggageEnd, otherWayAround);
+			Position luggageEnd, int numberOfDropOffPositions, int numberOfCollectPositions, boolean otherWayAround) {
+		super(systemCornerPoints, sensor, luggageStart, luggageEnd, numberOfDropOffPositions, numberOfCollectPositions,
+				otherWayAround);
 	}
 }

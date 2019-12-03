@@ -25,6 +25,8 @@ import model.environment.objects.physicalObject.sensor.impl.BasicXRaySystem;
 import model.environment.position.Position;
 import simulation.simulation.util.SimulationObject;
 import simulation.simulation.util.Utilities;
+import util.math.distributions.GeneralizedExtremeValueMathDistribution;
+import util.math.distributions.MathDistribution;
 import util.math.distributions.NormalDistribution;
 
 /**
@@ -35,7 +37,6 @@ import util.math.distributions.NormalDistribution;
  *
  */
 public final class ModelComponentBuilder {
-
 	/**
 	 * Create a check in area.
 	 * 
@@ -49,10 +50,8 @@ public final class ModelComponentBuilder {
 	 */
 	public static List<SimulationObject> checkInArea(Position start, int numberOfDesks, double degreeRotation) {
 		List<SimulationObject> components = new ArrayList<>();
-
 		// desks
 		for (int i = 0; i < numberOfDesks; i++) {
-
 			Position agentPosition = Utilities.transform(new Position(start.x + i * 2 + 0.5, start.y - 0.3), start,
 					degreeRotation);
 			Position deskPosition = Utilities.transform(new Position(start.x + i * 2 + 0.5, start.y + 0.35), start,
@@ -63,17 +62,13 @@ public final class ModelComponentBuilder {
 					new BasicOperatorCheckInActivity(desk, new NormalDistribution(60, 6)));
 			components.add(agent);
 		}
-
 		// queue
 		double xOffsetQueue = 0;
 		double yOffsetQueue = 2;
-
 		List<SimulationObject> queueComponents = queue(new Position(start.x + xOffsetQueue, start.y + yOffsetQueue), 4,
 				numberOfDesks * 2, false, start, degreeRotation);
 		components.addAll(queueComponents);
-
 		// other
-
 		return components;
 	}
 
@@ -94,26 +89,79 @@ public final class ModelComponentBuilder {
 	 */
 	public static List<SimulationObject> checkpoint(Position start, int numberOfLanes, double queueWidth,
 			boolean blockingWall, double degreeRotation) {
+		return checkpoint(start, numberOfLanes, queueWidth, 3, 3, blockingWall, degreeRotation);
+	}
 
+	/**
+	 * Creates a checkpoint.
+	 * 
+	 * @param start
+	 *            The starting position.
+	 * @param numberOfLanes
+	 *            The number of lanes.
+	 * @param queueWidth
+	 *            The width of the queue.
+	 * @param numberOfDropOffPositions
+	 *            Number of drop positions.
+	 * @param numberOfCollectPositions
+	 *            Number of collect positions.
+	 * @param blockingWall
+	 *            Add a blocking wall or not.
+	 * @param degreeRotation
+	 *            The degrees it is rotated (in deg.).
+	 * @return A list of SimulationObjects that form the checkpoint.
+	 */
+	public static List<SimulationObject> checkpoint(Position start, int numberOfLanes, double queueWidth,
+			int numberOfDropOffPositions, int numberOfCollectPositions, boolean blockingWall, double degreeRotation) {
+		return checkpoint(start, numberOfLanes, queueWidth, numberOfDropOffPositions, numberOfCollectPositions,
+				blockingWall, 0.1312, new GeneralizedExtremeValueMathDistribution(6.72857, 4.36284, 0.68788), 0.0787,
+				new GeneralizedExtremeValueMathDistribution(19.1871, 9.3506, -0.0119512), 1 - 0.0757,
+				new GeneralizedExtremeValueMathDistribution(35.198, 27.779, 0.329342), degreeRotation);
+	}
+
+	/**
+	 * Creates a checkpoint.
+	 * 
+	 * @param start
+	 *            The starting position.
+	 * @param numberOfLanes
+	 *            The number of lanes.
+	 * @param queueWidth
+	 *            The width of the queue.
+	 * @param numberOfDropOffPositions
+	 *            Number of drop positions.
+	 * @param numberOfCollectPositions
+	 *            Number of collect positions.
+	 * @param blockingWall
+	 *            Add a blocking wall or not.
+	 * @param proportionETD
+	 * @param ETDCheckDistribution
+	 * @param proportionWTMD
+	 * @param WTMDCheckDistribution
+	 * @param illegalLuggageObjectThreshold
+	 * @param luggageCheckDistribution
+	 * @param degreeRotation
+	 *            The degrees it is rotated (in deg.).
+	 * @return A list of SimulationObjects that form the checkpoint.
+	 */
+	public static List<SimulationObject> checkpoint(Position start, int numberOfLanes, double queueWidth,
+			int numberOfDropOffPositions, int numberOfCollectPositions, boolean blockingWall, double proportionETD,
+			MathDistribution ETDCheckDistribution, double proportionWTMD, MathDistribution WTMDCheckDistribution,
+			double illegalLuggageObjectThreshold, MathDistribution luggageCheckDistribution, double degreeRotation) {
 		List<SimulationObject> components = new ArrayList<>();
-
 		double yOffsetXray = 0;
 		double systemWidth = 0.75;
 		double systemHeight = 6.0;
 		double wtmdWidth = 1;
 		double wtmdHeight = 0.4;
-
 		double distanceBetweenLanes = 3.5;
-
 		for (int i = 0; i < numberOfLanes; i++) {
 			// x ray
 			double xOffsetXray = distanceBetweenLanes * i;
 			if (i >= 2)
 				xOffsetXray -= 1.5;
-
 			List<Position> cornerPoints = getCornerPoints(new Position(start.x + xOffsetXray, start.y + yOffsetXray),
 					systemWidth, systemHeight, start, degreeRotation);
-
 			List<Position> machineCornerPoints = getCornerPoints(
 					new Position(start.x + xOffsetXray, start.y + yOffsetXray + systemHeight / 2), systemWidth,
 					systemWidth, start, degreeRotation);
@@ -123,22 +171,19 @@ public final class ModelComponentBuilder {
 			Position baggageEnd = Utilities.transform(
 					new Position(start.x + systemWidth / 2 + xOffsetXray, start.y + yOffsetXray + 0.5), start,
 					degreeRotation);
-
 			boolean otherWayAround = i % 2 == 0;
 			XRaySystem xray = new BasicXRaySystem(cornerPoints, new BasicXRaySensor(machineCornerPoints), baggageStart,
-					baggageEnd, otherWayAround);
+					baggageEnd, numberOfDropOffPositions, numberOfCollectPositions, otherWayAround);
 			components.add(xray);
-
 			// luggage check
 			Position agentPosition2 = Utilities.transform(
 					new Position(start.x + 1.05 + xOffsetXray, start.y + yOffsetXray + 0.5), start, degreeRotation);
 			if (otherWayAround)
 				agentPosition2 = Utilities.transform(
 						new Position(start.x - 0.3 + xOffsetXray, start.y + yOffsetXray + 0.5), start, degreeRotation);
-
-			OperatorAgent luggageCheck = new OperatorAgent(agentPosition2, 0.25, 80, new BasicLuggageCheckActivity());
+			OperatorAgent luggageCheck = new OperatorAgent(agentPosition2, 0.25, 80,
+					new BasicLuggageCheckActivity(luggageCheckDistribution));
 			components.add(luggageCheck);
-
 			// luggage drop
 			Position agentPosition3 = Utilities.transform(
 					new Position(start.x + 1.05 + xOffsetXray, start.y + yOffsetXray + systemHeight - 0.5), start,
@@ -147,36 +192,30 @@ public final class ModelComponentBuilder {
 				agentPosition3 = Utilities.transform(
 						new Position(start.x - 0.3 + xOffsetXray, start.y + yOffsetXray + systemHeight - 0.5), start,
 						degreeRotation);
-
 			OperatorAgent luggageDrop = new OperatorAgent(agentPosition3, 0.25, 80, new BasicLuggageDropActivity());
 			components.add(luggageDrop);
-
 			// x-ray
 			Position agentPosition = Utilities.transform(
 					new Position(start.x + 1.05 + xOffsetXray, start.y + yOffsetXray + systemHeight / 2 + 0.5), start,
 					degreeRotation);
-
 			if (otherWayAround)
 				agentPosition = Utilities.transform(
 						new Position(start.x - 0.3 + xOffsetXray, start.y + yOffsetXray + systemHeight / 2 + 0.5),
 						start, degreeRotation);
-			components.add(new OperatorAgent(agentPosition, 0.25, 80, new BasicXRayActivity(xray, luggageCheck)));
-
+			components.add(new OperatorAgent(agentPosition, 0.25, 80,
+					new BasicXRayActivity(xray, luggageCheck, illegalLuggageObjectThreshold)));
 			if (otherWayAround) {
 				// WTMD
 				double xOffsetWTMD = xOffsetXray + systemWidth + (distanceBetweenLanes - systemWidth) / 2
 						- wtmdWidth / 2;
 				double yOffsetWTMD = yOffsetXray + systemHeight / 2;
-
 				Position checkPosition = Utilities.transform(
 						new Position(start.x + xOffsetWTMD, start.y + yOffsetWTMD - 1.25), start, degreeRotation);
-
 				WalkThroughMetalDetector wtmd = new BasicWalkThroughMetalDetector(
 						getCornerPoints(new Position(start.x + xOffsetWTMD, start.y + yOffsetWTMD), wtmdWidth,
 								wtmdHeight, start, degreeRotation),
-						checkPosition, 0.1, 0.1);
+						checkPosition, proportionWTMD, proportionETD);
 				components.add(wtmd);
-
 				QueueSeparator queue = createQueueSeparator(
 						new Position(start.x + xOffsetXray + systemWidth, start.y + yOffsetWTMD),
 						xOffsetWTMD - xOffsetXray - systemWidth, 0.1, start, degreeRotation);
@@ -184,33 +223,29 @@ public final class ModelComponentBuilder {
 				queue = createQueueSeparator(new Position(start.x + xOffsetWTMD + wtmdWidth, start.y + yOffsetWTMD),
 						xOffsetWTMD - xOffsetXray - systemWidth, 0.1, start, degreeRotation);
 				components.add(queue);
-
 				Position directionsPosition = Utilities.transform(
 						new Position(start.x + xOffsetWTMD + wtmdWidth / 4, start.y + yOffsetWTMD - 2), start,
 						degreeRotation);
 				OperatorAgent physicalCheck = new OperatorAgent(directionsPosition, 0.25, 80,
 						new BasicPhysicalCheckActivity(wtmd));
 				components.add(physicalCheck);
-
 				Position directionsPosition2 = Utilities.transform(
 						new Position(start.x + xOffsetWTMD + 3 * wtmdWidth / 4, start.y + yOffsetWTMD - 2), start,
 						degreeRotation);
-				OperatorAgent etd = new OperatorAgent(directionsPosition2, 0.25, 80, new BasicETDCheckActivity(wtmd));
+				OperatorAgent etd = new OperatorAgent(directionsPosition2, 0.25, 80,
+						new BasicETDCheckActivity(wtmd, WTMDCheckDistribution, ETDCheckDistribution));
 				components.add(etd);
 			}
 		}
-
 		// Queue
 		double yOffsetQueue = yOffsetXray + systemHeight + 2;
 		double xOffsetQueue = 0.1;
-
 		if (numberOfLanes > 0 && queueWidth > 0) {
 			components.add(new OperatorAgent(
 					Utilities.transform(new Position(start.x + xOffsetQueue - 0.35, start.y + yOffsetQueue - 0.35),
 							start, degreeRotation),
 					0.25, 80, new BasicTravelDocumentCheckActivity()));
 		}
-
 		int numberOfQueueLanes = 5;
 		if (queueWidth > 0) {
 			List<SimulationObject> queue = queue(new Position(start.x + xOffsetQueue, start.y + yOffsetQueue),
@@ -241,7 +276,6 @@ public final class ModelComponentBuilder {
 	public static Desk createDesk(Position start, double width, double height, Position origin, double degreeRotation,
 			Position servingPosition) {
 		return new Desk(getCornerPoints(start, width, height, origin, degreeRotation), servingPosition);
-
 	}
 
 	/**
@@ -400,7 +434,6 @@ public final class ModelComponentBuilder {
 	public static List<SimulationObject> gate(Position start, int numberOfRows, int numberOfChairsPerRow,
 			double degreeRotation) {
 		List<SimulationObject> components = new ArrayList<>();
-
 		List<SimulationObject> sittingArea = sittingArea(new Position(start.x, start.y), numberOfRows,
 				numberOfChairsPerRow, degreeRotation);
 		components.addAll(sittingArea);
@@ -537,9 +570,7 @@ public final class ModelComponentBuilder {
 		double yOffsetQueue = start.y;
 		double walkWidth = 1;
 		double queueHeight = 0.1;
-
 		List<SimulationObject> components = new ArrayList<>();
-
 		for (int i = 0; i <= numberOfLanes; i++) {
 			QueueSeparator queueSeparationUnit = null;
 			if (i % 2 == 0)
@@ -551,17 +582,14 @@ public final class ModelComponentBuilder {
 						queueWidth - 1, queueHeight, rotationOrigin, degreeRotation);
 			components.add(queueSeparationUnit);
 		}
-
 		// left queue separation unit
 		QueueSeparator queueSeparationUnit = createQueueSeparator(new Position(xOffsetQueue - 0.1, yOffsetQueue), 0.1,
 				numberOfLanes * walkWidth + queueHeight, rotationOrigin, degreeRotation);
 		components.add(queueSeparationUnit);
-
 		// right queue separation unit
 		queueSeparationUnit = createQueueSeparator(new Position(xOffsetQueue + queueWidth, yOffsetQueue), 0.1,
 				numberOfLanes * walkWidth + queueHeight, rotationOrigin, degreeRotation);
 		components.add(queueSeparationUnit);
-
 		if (addBlockingWall) {
 			// huge wall
 			Wall blockingWall = createWall(new Position(0, yOffsetQueue), xOffsetQueue, queueHeight, rotationOrigin,
@@ -571,7 +599,6 @@ public final class ModelComponentBuilder {
 					rotationOrigin, degreeRotation);
 			components.add(blockingWall);
 		}
-
 		// auto create queuing areas
 		List<Position> corners = new ArrayList<>();
 		corners.add(Utilities.transform(start, rotationOrigin, degreeRotation));
@@ -583,7 +610,6 @@ public final class ModelComponentBuilder {
 		corners.add(Utilities.transform(
 				new Position(start.x, start.y + numberOfLanes * (walkWidth + queueHeight / 2) - queueHeight),
 				rotationOrigin, degreeRotation));
-
 		Position entrance = Utilities.transform(new Position(start.x + 0.5, start.y), rotationOrigin, degreeRotation);
 		Position leaving = Position.NO_POSITION;
 		if (numberOfLanes % 2 != 0) {
@@ -597,7 +623,6 @@ public final class ModelComponentBuilder {
 					rotationOrigin, degreeRotation);
 		}
 		components.add(new QueuingArea(corners, leaving, entrance));
-
 		return components;
 	}
 
@@ -626,7 +651,6 @@ public final class ModelComponentBuilder {
 				Position chairEntry = new Position(start.x + 0.5 * chairWidth + i * (chairWidth + chairSpacing),
 						start.y - 0.5 + j * 3 * chairWidth);
 				Position transformedEntry = Utilities.transform(chairEntry, start, degreeRotation);
-
 				Position transformedPos = Utilities.transform(chairPos, start, degreeRotation);
 				Chair c = new Chair(transformedPos, transformedEntry, chairWidth);
 				components.add(c);

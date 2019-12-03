@@ -89,11 +89,11 @@ public class BasicRegionalCheckpointActivity extends CheckpointActivity {
 
 	@Override
 	public boolean canStart(int timeStep) {
+
 		// we are at the right position
 		if (movement.getPosition().distanceTo(activityPosition) < 0.5) {
 			// set front of queue
 			activityModule.setInFrontOfQueue();
-
 			// Get the closest desks
 			List<XRaySystem> systems = getClosestSystems();
 			XRaySystem currentBest = null;
@@ -123,7 +123,6 @@ public class BasicRegionalCheckpointActivity extends CheckpointActivity {
 			}
 		}
 		return false;
-
 	}
 
 	/**
@@ -172,7 +171,7 @@ public class BasicRegionalCheckpointActivity extends CheckpointActivity {
 					// go to wtmd
 					xRaySystem.setDropOffPassenger(null, dropOffPosition);
 					for (Luggage l : ((Passenger) agent).getLuggage()) {
-						xRaySystem.addBaggage(l);
+						xRaySystem.addLuggage(l);
 					}
 					wtmd.setPersonsInConsideration((Passenger) agent);
 					navigationModule.setGoal(wtmd.getPosition());
@@ -191,7 +190,7 @@ public class BasicRegionalCheckpointActivity extends CheckpointActivity {
 				&& movement.getPosition().distanceTo(xRaySystem.getCollectPosition(collectPosition)) < 0.3) {
 			xRaySystem.setCollectPassenger(null, collectPosition);
 			for (Luggage l : ((Passenger) agent).getLuggage()) {
-				xRaySystem.removeBaggage(l);
+				xRaySystem.removeLuggage(l);
 			}
 			navigationModule.setGoal(xRaySystem.getLeavePosition());
 			phase++;

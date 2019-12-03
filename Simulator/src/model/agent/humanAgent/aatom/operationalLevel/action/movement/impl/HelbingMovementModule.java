@@ -7,6 +7,7 @@ import model.agent.humanAgent.aatom.AatomHumanAgent;
 import model.agent.humanAgent.aatom.Passenger;
 import model.agent.humanAgent.aatom.operationalLevel.action.movement.MovementModule;
 import model.agent.humanAgent.aatom.operationalLevel.observation.ObservationModule;
+import model.agent.humanAgent.aatom.tacticalLevel.activity.passenger.CheckpointActivity;
 import model.environment.objects.area.Area;
 import model.environment.objects.area.QueuingArea;
 import model.environment.objects.physicalObject.PhysicalObject;
@@ -86,8 +87,11 @@ public class HelbingMovementModule extends MovementModule {
 
 		// we only care about passengers
 		for (HumanAgent other : humanAgents) {
-			if (!other.equals(agent) && (other instanceof Passenger || !onlyPassengers))
-				agentInteractionForce = agentInteractionForce.addVector(getSingleAgentInteractionForce(other));
+			if (!other.equals(agent) && (other instanceof Passenger || !onlyPassengers)) {
+				if (!(((Passenger) other).getActiveActivity() instanceof CheckpointActivity)) {
+					agentInteractionForce = agentInteractionForce.addVector(getSingleAgentInteractionForce(other));
+				}
+			}
 		}
 		return agentInteractionForce;
 	}

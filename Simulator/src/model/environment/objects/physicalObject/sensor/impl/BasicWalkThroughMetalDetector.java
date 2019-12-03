@@ -21,7 +21,7 @@ public class BasicWalkThroughMetalDetector extends WalkThroughMetalDetector {
 	/**
 	 * The random check threshold.
 	 */
-	private double randomCheckThreshold;
+	private double wtmdThreshold;
 
 	/**
 	 * Creates a WTMD from its corner {@link Position}s.
@@ -32,14 +32,14 @@ public class BasicWalkThroughMetalDetector extends WalkThroughMetalDetector {
 	 *            The check position.
 	 * @param etdThreshold
 	 *            The etd threshold.
-	 * @param randomCheckThreshold
+	 * @param wtmdThreshold
 	 *            The random check threshold.
 	 */
 	public BasicWalkThroughMetalDetector(List<Position> corners, Position checkPosition, double etdThreshold,
-			double randomCheckThreshold) {
+			double wtmdThreshold) {
 		super(corners, checkPosition);
 		this.etdThreshold = etdThreshold;
-		this.randomCheckThreshold = randomCheckThreshold;
+		this.wtmdThreshold = wtmdThreshold;
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class BasicWalkThroughMetalDetector extends WalkThroughMetalDetector {
 			if (shape.contains(getLastObservedPassenger().getPosition().x, getLastObservedPassenger().getPosition().y))
 				lastPassengerGone = false;
 		}
-		return personsInCosideration == null && lastPassengerGone;
+		return getPersonInConsideration() == null && lastPassengerGone;
 	}
 
 	@Override
@@ -68,8 +68,8 @@ public class BasicWalkThroughMetalDetector extends WalkThroughMetalDetector {
 				if (Utilities.RANDOM_GENERATOR.nextDouble() < etdThreshold) {
 					return new Observation<Integer>(1);
 				}
-				// random check.
-				if (Utilities.RANDOM_GENERATOR.nextDouble() < randomCheckThreshold) {
+				// wtmd check.
+				if (Utilities.RANDOM_GENERATOR.nextDouble() < wtmdThreshold) {
 					return new Observation<Integer>(2);
 				}
 				// Detected nothing.

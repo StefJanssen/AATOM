@@ -57,6 +57,11 @@ public class Flight extends MapComponent implements DirectlyUpdatable {
 	 * The flight size.
 	 */
 	private final int size;
+	/**
+	 * Missed flights.
+	 */
+	private int missedFlights = 0;
+	private boolean setMissed;
 
 	/**
 	 * Creates a new flight.
@@ -223,5 +228,28 @@ public class Flight extends MapComponent implements DirectlyUpdatable {
 	@Override
 	public void update(int timeStep) {
 		timeToFlight -= timeStep / 1000.0;
+		if (timeToFlightExceeded() && !setMissed) {
+			setNumberOfPassengersMissedFlight();
+			setMissed = true;
+		}
 	}
+
+	/**
+	 * The number of passengers that missed their flight.
+	 * 
+	 * @return The number.
+	 */
+	public int getNumberOfPassengersMissedFlight() {
+		return missedFlights;
+	}
+
+	/**
+	 * Sets the number of passengers that missed their flight.
+	 */
+	private void setNumberOfPassengersMissedFlight() {
+		for (Passenger p : map.getMapComponents(Passenger.class))
+			if (gateArea.getDistance(p.getPosition()) >= 5)
+				missedFlights++;
+	}
+
 }

@@ -353,4 +353,15 @@ public class NavigationModule implements Updatable {
 			}
 		}
 	}
+
+	/**
+	 * Gets the final goal position.
+	 * 
+	 * @return The final goal position.
+	 */
+	public Position getFinalGoalPosition() {
+		if (goalPositions.isEmpty())
+			return Position.NO_POSITION;
+		return goalPositions.get(goalPositions.size() - 1);
+	}
 }

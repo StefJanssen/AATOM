@@ -83,4 +83,16 @@ public abstract class WalkThroughMetalDetector extends Sensor {
 	public void setPersonsInConsideration(Passenger passenger) {
 		personsInCosideration = passenger;
 	}
+
+	/**
+	 * Gets the person in consideration.
+	 * 
+	 * @return The passenger.
+	 */
+	public Passenger getPersonInConsideration() {
+		if (personsInCosideration != null)
+			if (personsInCosideration.getDistance(position) > 1)
+				personsInCosideration = null;
+		return personsInCosideration;
+	}
 }

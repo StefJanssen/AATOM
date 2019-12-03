@@ -106,7 +106,7 @@ public class BaseLogger extends Logger {
 	@Override
 	public void printLine(String string) {
 		for (Logger logger : loggerList) {
-			if (logger instanceof AgentLogger) {
+			if (logger instanceof ReturnValueLogger) {
 				logger.printLine(string);
 			}
 		}

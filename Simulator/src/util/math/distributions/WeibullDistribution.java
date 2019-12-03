@@ -51,5 +51,4 @@ public class WeibullDistribution extends MathDistribution {
 	public double getValue() {
 		return Math.pow(a * (-Math.log(random.nextDouble())), 1 / b);
 	}
-
 }

@@ -106,7 +106,7 @@ public class Experimenter implements Runnable {
 		String classpath = System.getProperty("java.class.path");
 		String path = System.getProperty("java.home") + separator + "bin" + separator + "java";
 		String className = mainClass.getName();
-		mainLocation = new String[] { path, "-cp", classpath, className };
+		mainLocation = new String[] { path, "-Xmx1024M", "-cp", classpath, className };
 
 		// set the inputs.
 		this.inputs = inputs;

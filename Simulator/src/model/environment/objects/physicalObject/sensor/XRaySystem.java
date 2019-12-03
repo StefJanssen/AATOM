@@ -24,23 +24,23 @@ import simulation.simulation.util.Utilities;
 public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdatable, Openable {
 
 	/**
-	 * The collect position for bags.
+	 * The collect position for luggage.
 	 */
 	private Position[] luggageCollectPositions;
 
 	/**
-	 * The drop off position for bags.
+	 * The drop off position for luggage.
 	 */
 	private Position[] luggageDropOffPositions;
 
 	/**
 	 * The ending position of the luggage.
 	 */
-	private Position luggageEndPosition;
+	protected Position luggageEndPosition;
 	/**
 	 * The luggage that is in the system.
 	 */
-	private Collection<Luggage> luggageInSystem;
+	protected Collection<Luggage> luggageInSystem;
 	/**
 	 * The starting position of the luggage.
 	 */
@@ -49,7 +49,7 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	 * The vector point in the direction of the luggage end position, from the
 	 * luggage start position.
 	 */
-	private Vector moveLuggageVector;
+	protected Vector moveLuggageVector;
 	/**
 	 * The {@link XRaySensor}.
 	 */
@@ -65,7 +65,7 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	/**
 	 * The system is paused.
 	 */
-	private boolean paused;
+	protected boolean paused;
 	/**
 	 * The system is open or closed.
 	 */
@@ -93,7 +93,7 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	 */
 	public XRaySystem(List<Position> systemCornerPoints, XRaySensor sensor, Position luggageStart,
 			Position luggageEnd) {
-		this(systemCornerPoints, sensor, luggageStart, luggageEnd, false);
+		this(systemCornerPoints, sensor, luggageStart, luggageEnd, 3, 3, false);
 	}
 
 	/**
@@ -107,11 +107,15 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	 *            The starting position of the luggage.
 	 * @param luggageEnd
 	 *            The ending position of the luggage.
+	 * @param numberOfDropOffPositions
+	 *            Number of drop positions.
+	 * @param numberOfCollectPositions
+	 *            Number of collect positions.
 	 * @param otherWayAround
 	 *            An mirrored x-ray or not.
 	 */
 	public XRaySystem(List<Position> systemCornerPoints, XRaySensor sensor, Position luggageStart, Position luggageEnd,
-			boolean otherWayAround) {
+			int numberOfDropOffPositions, int numberOfCollectPositions, boolean otherWayAround) {
 		super(systemCornerPoints);
 		xray = sensor;
 
@@ -119,11 +123,10 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 		luggageStartPosition = luggageStart;
 		luggageEndPosition = luggageEnd;
 
-		int numberOfDropOffPositions = 3;
 		luggageDropOffPositions = new Position[numberOfDropOffPositions];
-		luggageCollectPositions = new Position[numberOfDropOffPositions];
+		luggageCollectPositions = new Position[numberOfCollectPositions];
 		dropOffPassengers = new Passenger[numberOfDropOffPositions];
-		collectPassengers = new Passenger[numberOfDropOffPositions];
+		collectPassengers = new Passenger[numberOfCollectPositions];
 
 		Vector start = new Vector(luggageStart.x, luggageStart.y);
 		Vector end = new Vector(luggageEnd.x, luggageEnd.y);
@@ -139,20 +142,24 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 		Vector v = end.subtractVector(start);
 		v = v.normalize();
 
-		luggageDropOffPositions[1] = Utilities
-				.transform(new Position(luggageStart0.x + 0.6 * v.x, luggageStart0.y + 0.6 * v.y), luggageStart0, 90);
-		luggageDropOffPositions[2] = Utilities
-				.transform(new Position(luggageStart.x + 0.6 * v.x, luggageStart.y + 0.6 * v.y), luggageStart, 90);
 		luggageDropOffPositions[0] = Utilities
 				.transform(new Position(luggageStart2.x + 0.6 * v.x, luggageStart2.y + 0.6 * v.y), luggageStart2, 90);
+		if (numberOfDropOffPositions > 1)
+			luggageDropOffPositions[1] = Utilities.transform(
+					new Position(luggageStart0.x + 0.6 * v.x, luggageStart0.y + 0.6 * v.y), luggageStart0, 90);
+		if (numberOfDropOffPositions > 2)
+			luggageDropOffPositions[2] = Utilities
+					.transform(new Position(luggageStart.x + 0.6 * v.x, luggageStart.y + 0.6 * v.y), luggageStart, 90);
 
 		if (otherWayAround) {
-			luggageDropOffPositions[1] = Utilities.transform(
-					new Position(luggageStart0.x + 0.6 * v.x, luggageStart0.y + 0.6 * v.y), luggageStart0, 270);
-			luggageDropOffPositions[2] = Utilities
-					.transform(new Position(luggageStart.x + 0.6 * v.x, luggageStart.y + 0.6 * v.y), luggageStart, 270);
 			luggageDropOffPositions[0] = Utilities.transform(
 					new Position(luggageStart2.x + 0.6 * v.x, luggageStart2.y + 0.6 * v.y), luggageStart2, 270);
+			if (numberOfDropOffPositions > 1)
+				luggageDropOffPositions[1] = Utilities.transform(
+						new Position(luggageStart0.x + 0.6 * v.x, luggageStart0.y + 0.6 * v.y), luggageStart0, 270);
+			if (numberOfDropOffPositions > 2)
+				luggageDropOffPositions[2] = Utilities.transform(
+						new Position(luggageStart.x + 0.6 * v.x, luggageStart.y + 0.6 * v.y), luggageStart, 270);
 		}
 
 		v = start.subtractVector(end);
@@ -163,20 +170,24 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 		Position luggageEnd2 = new Position(luggageEnd.x - 4.5 * moveLuggageVector.x,
 				luggageEnd.y - 4.5 * moveLuggageVector.y);
 
-		luggageCollectPositions[1] = Utilities
-				.transform(new Position(luggageEnd0.x + 0.6 * v.x, luggageEnd0.y + 0.6 * v.y), luggageEnd0, 270);
 		luggageCollectPositions[0] = Utilities
 				.transform(new Position(luggageEnd.x + 0.6 * v.x, luggageEnd.y + 0.6 * v.y), luggageEnd, 270);
-		luggageCollectPositions[2] = Utilities
-				.transform(new Position(luggageEnd2.x + 0.6 * v.x, luggageEnd2.y + 0.6 * v.y), luggageEnd2, 270);
+		if (numberOfCollectPositions > 1)
+			luggageCollectPositions[1] = Utilities
+					.transform(new Position(luggageEnd0.x + 0.6 * v.x, luggageEnd0.y + 0.6 * v.y), luggageEnd0, 270);
+		if (numberOfCollectPositions > 2)
+			luggageCollectPositions[2] = Utilities
+					.transform(new Position(luggageEnd2.x + 0.6 * v.x, luggageEnd2.y + 0.6 * v.y), luggageEnd2, 270);
 
 		if (otherWayAround) {
-			luggageCollectPositions[1] = Utilities
-					.transform(new Position(luggageEnd0.x + 0.6 * v.x, luggageEnd0.y + 0.6 * v.y), luggageEnd0, 90);
 			luggageCollectPositions[0] = Utilities
 					.transform(new Position(luggageEnd.x + 0.6 * v.x, luggageEnd.y + 0.6 * v.y), luggageEnd, 90);
-			luggageCollectPositions[2] = Utilities
-					.transform(new Position(luggageEnd2.x + 0.6 * v.x, luggageEnd2.y + 0.6 * v.y), luggageEnd2, 90);
+			if (numberOfCollectPositions > 1)
+				luggageCollectPositions[1] = Utilities
+						.transform(new Position(luggageEnd0.x + 0.6 * v.x, luggageEnd0.y + 0.6 * v.y), luggageEnd0, 90);
+			if (numberOfCollectPositions > 2)
+				luggageCollectPositions[2] = Utilities
+						.transform(new Position(luggageEnd2.x + 0.6 * v.x, luggageEnd2.y + 0.6 * v.y), luggageEnd2, 90);
 		}
 
 		Position tmpLeave = new Position(luggageEnd.x + 2 * moveLuggageVector.x,
@@ -205,7 +216,7 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	 * @param luggage
 	 *            The luggage.
 	 */
-	public void addBaggage(Luggage luggage) {
+	public void addLuggage(Luggage luggage) {
 		luggageInSystem.add(luggage);
 		luggage.setPosition(luggageStartPosition);
 	}
@@ -213,14 +224,14 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	/**
 	 * Collect {@link Luggage} from the system.
 	 * 
-	 * @param bag
-	 *            The bag.
+	 * @param luggage
+	 *            The luggage.
 	 * @return True if successful, false otherwise.
 	 */
-	public boolean collectBaggage(Luggage bag) {
-		if (bag.getPosition().distanceTo(luggageEndPosition) <= 0.1) {
-			bag.setPosition(bag.getOwner().getPosition());
-			luggageInSystem.remove(bag);
+	public boolean collectLuggage(Luggage luggage) {
+		if (luggage.getPosition().distanceTo(luggageEndPosition) <= 0.1) {
+			luggage.setPosition(luggage.getOwner().getPosition());
+			luggageInSystem.remove(luggage);
 			return true;
 		}
 		return false;
@@ -231,7 +242,7 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	 * 
 	 * @return The luggage.
 	 */
-	public Collection<Luggage> getBaggageInSystem() {
+	public Collection<Luggage> getLuggageInSystem() {
 		return luggageInSystem;
 	}
 
@@ -394,7 +405,7 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	 * @param luggage
 	 *            The luggage.
 	 */
-	public void removeBaggage(Luggage luggage) {
+	public void removeLuggage(Luggage luggage) {
 		luggageInSystem.remove(luggage);
 		Position ownerPosition = luggage.getOwner().getPosition();
 		luggage.setPosition(ownerPosition);
@@ -436,11 +447,11 @@ public abstract class XRaySystem extends PhysicalObject implements DirectlyUpdat
 	@Override
 	public void update(int timeStep) {
 		if (!paused) {
-			for (Luggage bag : luggageInSystem) {
-				if (bag.getPosition().distanceTo(luggageEndPosition) > 0.1) {
-					Position current = bag.getPosition();
+			for (Luggage luggage : luggageInSystem) {
+				if (luggage.getPosition().distanceTo(luggageEndPosition) > 0.1) {
+					Position current = luggage.getPosition();
 					Vector move = moveLuggageVector.scalarMultiply(timeStep / 1000.0);
-					bag.setPosition(new Position(current.x + move.x, current.y + move.y));
+					luggage.setPosition(new Position(current.x + move.x, current.y + move.y));
 				}
 			}
 		}

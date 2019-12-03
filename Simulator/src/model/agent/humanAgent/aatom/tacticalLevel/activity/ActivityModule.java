@@ -134,6 +134,17 @@ public class ActivityModule implements Updatable {
 	}
 
 	/**
+	 * Determines if the agent is in front of the queue.
+	 * 
+	 * @return True if it is, false otherwise.
+	 */
+	public boolean isInFrontOfQueue() {
+		if (queueActivity == null)
+			return false;
+		return queueActivity.isInFrontOfQueue();
+	}
+
+	/**
 	 * Sets the agents queuing mode.
 	 * 
 	 * @param time

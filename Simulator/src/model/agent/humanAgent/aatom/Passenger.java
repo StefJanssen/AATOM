@@ -87,6 +87,17 @@ public class Passenger extends AatomHumanAgent {
 		}
 
 		/**
+		 * @param desiredSpeed
+		 *            the desiredSpeed to set
+		 * @return The builder.
+		 * 
+		 */
+		public T setDesiredSpeed(double desiredSpeed) {
+			this.desiredSpeed = desiredSpeed;
+			return (T) this;
+		}
+
+		/**
 		 * Set the color.
 		 * 
 		 * @param color
@@ -143,6 +154,30 @@ public class Passenger extends AatomHumanAgent {
 		 */
 		public T setLuggage(Luggage luggage) {
 			this.luggage.add(luggage);
+			return (T) this;
+		}
+
+		/**
+		 * Set the checkPointDropTime.
+		 * 
+		 * @param checkPointDropTime
+		 *            The checkPointDropTime.
+		 * @return The builder.
+		 */
+		public T setCheckpointDropTime(MathDistribution checkPointDropTime) {
+			this.checkPointDropTime = checkPointDropTime;
+			return (T) this;
+		}
+
+		/**
+		 * Set the checkPointCollectTime.
+		 * 
+		 * @param checkPointCollectTime
+		 *            The checkPointCollectTime.
+		 * @return The builder.
+		 */
+		public T setCheckpointCollectTime(MathDistribution checkPointCollectTime) {
+			this.checkPointCollectTime = checkPointCollectTime;
 			return (T) this;
 		}
 

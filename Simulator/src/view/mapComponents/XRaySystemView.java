@@ -34,8 +34,11 @@ public class XRaySystemView extends MapComponentView {
 
 		for (int i = 0; i < xray.getNumberOfCollectIndices(); i++) {
 			ShapeDrawer.drawCircle(Color.BLACK, xray.getCollectPosition(i), 0.1);
+		}
+		for (int i = 0; i < xray.getNumberOfDropoffIndices(); i++) {
 			ShapeDrawer.drawCircle(Color.BLACK, xray.getDropOffPosition(i), 0.1);
 		}
+
 	}
 
 }

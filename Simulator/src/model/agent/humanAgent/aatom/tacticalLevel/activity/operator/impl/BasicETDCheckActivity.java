@@ -37,9 +37,17 @@ public class BasicETDCheckActivity extends ETDCheckActivity {
 	 */
 	private Passenger nextPassenger;
 	/**
-	 * The passenger waiting time.
+	 * The passenger wtmd waiting time.
 	 */
 	private MathDistribution waitingDistribution;
+	/**
+	 * The passenger etd waiting time.
+	 */
+	private MathDistribution etdDistribution;
+	/**
+	 * The next check should be an etd check (true) or wtmd check (false)
+	 */
+	private boolean etdCheck;
 
 	/**
 	 * Creates an ETD check activity.
@@ -48,7 +56,7 @@ public class BasicETDCheckActivity extends ETDCheckActivity {
 	 *            The WTMD.
 	 */
 	public BasicETDCheckActivity(WalkThroughMetalDetector wtmd) {
-		this(wtmd, new NormalDistribution(34.8, 15.17));
+		this(wtmd, new NormalDistribution(34.8, 15.17), new NormalDistribution(34.8, 15.17));
 	}
 
 	/**
@@ -58,10 +66,13 @@ public class BasicETDCheckActivity extends ETDCheckActivity {
 	 *            The WTMD.
 	 * @param waitingDistribution
 	 *            The distribution of waiting times.
+	 * @param etdDistribution 
 	 */
-	public BasicETDCheckActivity(WalkThroughMetalDetector wtmd, MathDistribution waitingDistribution) {
+	public BasicETDCheckActivity(WalkThroughMetalDetector wtmd, MathDistribution waitingDistribution,
+			MathDistribution etdDistribution) {
 		this.wtmd = wtmd;
 		this.waitingDistribution = waitingDistribution;
+		this.etdDistribution = etdDistribution;
 	}
 
 	@Override
@@ -82,8 +93,11 @@ public class BasicETDCheckActivity extends ETDCheckActivity {
 		Observation<?> observation = wtmd.getObservation();
 		if (!observation.equals(Observation.NO_OBSERVATION)) {
 			if ((Integer) observation.getObservation() == 2) {
+				etdCheck = false;
 				return wtmd.getLastObservedPassenger();
 			} else if ((Integer) observation.getObservation() == 1) {
+				etdCheck = true;
+				return wtmd.getLastObservedPassenger();
 			}
 		}
 		return null;
@@ -110,12 +124,14 @@ public class BasicETDCheckActivity extends ETDCheckActivity {
 		if (passengerToCheck.getPosition().distanceTo(wtmd.getCheckPosition()) < 0.5) {
 			// set waiting order
 			if (!waited) {
-				passengerToCheck.communicate(CommunicationType.WAIT, waitingDistribution.getValue());
+				if (etdCheck)
+					passengerToCheck.communicate(CommunicationType.WAIT, etdDistribution.getValue());
+				else
+					passengerToCheck.communicate(CommunicationType.WAIT, waitingDistribution.getValue());
 				waited = true;
 			}
 			// check when done
 			else if (!passengerToCheck.getStopOrder()) {
-				// wtmd.setPassengerToCheck(null);
 				passengerToCheck = nextPassenger;
 				nextPassenger = null;
 				waited = false;
