@@ -148,6 +148,19 @@ public class BasicETDCheckActivity extends ETDCheckActivity {
 			passengerToCheck.communicate(CommunicationType.GOTO, wtmd.getCheckPosition());
 			goTo = true;
 		}
+		
+		// This statement fixes a rare but impactful bug that when a passenger gets destroyed during the
+		// ETD check (e.g., because of missing the flight), it keeps blocking the security checkpoint
+		// because the operator is not informed.
+		if (passengerToCheck.isDestroyed()) {
+			passengerToCheck = nextPassenger;
+			nextPassenger = null;
+			waited = false;
+			goTo = false;
+			if (passengerToCheck == null) {
+				endActivity();
+			}
+			return;
+		}
 	}
-
 }
